@@ -29,3 +29,49 @@ test typechecking5 [():Unit]
 		type M
 			class A
 				def create() : A = new
+test typechecking6 [IntegerConstant(2):Int]
+	type M
+		type Foo
+		def test(t:Foo):Int
+	val test : M[Int] = new
+		def test(t:Int):Int = t
+	test.test(2)
+test typechecking7 [():Unit]
+	module TestModule
+		type M
+			type Foo = objtype
+				def bar():Int
+test typechecking8 [TupleValue(IntegerConstant(2), StringConstant("foo")):Int*Str]
+	type M
+		type Foo
+		type Bar
+		def store(a:Foo,b:Bar):Unit
+		def get():Foo*Bar
+	val test : M[Int,Str] = new
+		var a : Int = 0
+		var b : Str = ""
+		def store(a:Int,b:Str):Unit
+			this.a = a
+			this.b = b
+			()
+		def get():Int*Str = (this.a,this.b)
+	test.store(2,"foo")
+	test.get()
+test typechecking9[():Unit]
+	module M
+	type Opt
+		type Obj
+		type Res
+		def nextOrElse(ifPresent:Obj -> Res, els : Unit -> Res):Res
+	class Some
+		type Obj
+		type Res
+		class def create(el:Obj):Some = new
+			val iobj = el
+		val iobj : Obj
+		def nextOrElse(ifp:Obj -> Res, els : Unit -> Res):Res = ifp(this.iobj)
+	class None
+		type Obj
+		type Res
+		class def create():None = new
+		def nextOrElse(ifp:Obj -> Res, els : Unit -> Res):Res = els()

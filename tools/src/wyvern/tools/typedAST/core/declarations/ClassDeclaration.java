@@ -4,6 +4,7 @@ import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.FileLocation;
 import wyvern.tools.errors.ToolError;
 import wyvern.tools.typedAST.abs.Declaration;
+import wyvern.tools.typedAST.core.TypeVarDecl;
 import wyvern.tools.typedAST.core.binding.*;
 import wyvern.tools.typedAST.core.expressions.TaggedInfo;
 import wyvern.tools.typedAST.core.binding.evaluation.LateValueBinding;
@@ -19,16 +20,15 @@ import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.interfaces.Value;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
-import wyvern.tools.types.extensions.ClassType;
-import wyvern.tools.types.extensions.TypeDeclUtils;
-import wyvern.tools.types.extensions.TypeType;
-import wyvern.tools.types.extensions.Unit;
+import wyvern.tools.types.extensions.*;
 import wyvern.tools.util.Pair;
 import wyvern.tools.util.Reference;
 import wyvern.tools.util.TreeWriter;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class ClassDeclaration extends Declaration implements CoreAST {
 	protected DeclSequence decls = new DeclSequence(new LinkedList<Declaration>());
@@ -451,8 +451,33 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 		return typeParams;
 	}
 
+	private Environment typeArgsEnv;
+
+	private boolean hasParameterized = false;
 	@Override
 	public Environment extendType(Environment env, Environment against) {
+
+		if (decls != null && !hasParameterized) {
+			List<TypeVar> typeParams = StreamSupport.stream(decls.getDeclIterator().spliterator(), false)
+					.filter(el -> el instanceof TypeVarDecl)
+					.<TypeVarDecl>map(el -> (TypeVarDecl) el)
+					.filter(TypeVarDecl::isAbstract)
+					.map(TypeVarDecl::getTypeVar).collect(Collectors.toList());
+
+			if (!typeParams.isEmpty())
+				typeBinding = new TypeBinding(typeBinding.getName(), new TypeLambda(typeParams, typeBinding.getType()));
+
+			Environment ienv = Optional.ofNullable(declEnvRef.get()).orElse(Environment.getEmptyEnvironment());
+			if (decls != null)
+				for (Declaration decl : decls.getDeclIterator()) {
+					ienv = decl.extendType(ienv, against);
+				}
+			declEnvRef.set(ienv);
+			typeArgsEnv = ienv;
+
+			hasParameterized = true;
+		}
+
 		return env.extend(typeBinding);
 	}
 
@@ -462,12 +487,12 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 		TypeBinding objBinding = new LateTypeBinding(nameBinding.getName(), this::getObjectType);
 
 		if (!envGuard && decls != null) {
-			declEnvRef.set(Environment.getEmptyEnvironment());
+			//declEnvRef.set(Environment.getEmptyEnvironment());
 			for (Declaration decl : decls.getDeclIterator()) {
 				if (decl.isClass())
-					declEnvRef.set(decl.extendName(declEnvRef.get(), against.extend(objBinding)));
+					declEnvRef.set(decl.extendName(declEnvRef.get(), against.extend(objBinding).extend(typeArgsEnv)));
 				else
-					objEnv.set(decl.extendName(objEnv.get(), against.extend(objBinding)));
+					objEnv.set(decl.extendName(objEnv.get(), against.extend(objBinding).extend(typeArgsEnv)));
 			}
 			envGuard = true;
 		}

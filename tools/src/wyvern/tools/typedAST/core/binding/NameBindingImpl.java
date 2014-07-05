@@ -26,7 +26,7 @@ public class NameBindingImpl extends AbstractBinding implements NameBinding {
 	}
 	@Override
 	public String toString() {
-		return "{" + getName() + " : " + getType() + "}";
+		return "[" + getName() + " : " + getType() + "]";
 	}
 
 }

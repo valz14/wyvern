@@ -5,6 +5,7 @@ import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.FileLocation;
 import wyvern.tools.errors.ToolError;
 import wyvern.tools.typedAST.abs.Declaration;
+import wyvern.tools.typedAST.core.TypeVarDecl;
 import wyvern.tools.typedAST.core.binding.*;
 import wyvern.tools.typedAST.core.expressions.TaggedInfo;
 import wyvern.tools.typedAST.core.binding.compiler.MetadataInnerBinding;
@@ -21,14 +22,15 @@ import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.TypeResolver;
 import wyvern.tools.types.extensions.ClassType;
+import wyvern.tools.types.extensions.TypeLambda;
 import wyvern.tools.types.extensions.TypeType;
+import wyvern.tools.types.extensions.TypeVar;
 import wyvern.tools.util.Reference;
 import wyvern.tools.util.TreeWriter;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 public class TypeDeclaration extends Declaration implements CoreAST {
 	protected DeclSequence decls;
@@ -62,15 +64,26 @@ public class TypeDeclaration extends Declaration implements CoreAST {
 	@Override
 	public Environment extendType(Environment env, Environment against) {
 		if (!typeGuard) {
-			env = env.extend(typeBinding);
+			List<TypeVar> typeParams = StreamSupport.stream(decls.getDeclIterator().spliterator(), false)
+					.filter(el->el instanceof TypeVarDecl)
+					.<TypeVarDecl>map(el->(TypeVarDecl)el)
+					.filter(TypeVarDecl::isAbstract)
+					.map(TypeVarDecl::getTypeVar).collect(Collectors.toList());
+
+			if (!typeParams.isEmpty())
+				typeBinding = new TypeBinding(typeBinding.getName(), new TypeLambda(typeParams, typeBinding.getType()));
+
+			against = against.extend(typeBinding);
+			Environment ienv = declEnv.get();
 			for (Declaration decl : decls.getDeclIterator()) {
 				if (decl instanceof EnvironmentExtender) {
-					env = ((EnvironmentExtender) decl).extendType(env, against);
+					ienv = ((EnvironmentExtender) decl).extendType(ienv, against.extend(ienv));
 				}
 			}
+			declEnv.set(ienv);
 			typeGuard = true;
 		}
-		return env;
+		return env.extend(typeBinding);
 	}
 
 	private boolean declGuard = false;
@@ -83,7 +96,7 @@ public class TypeDeclaration extends Declaration implements CoreAST {
 				
 				// System.out.println("Processing inside " + this.getName() + " member " + decl.getName() + " and decl.getClass " + decl.getClass());
 				
-				declEnv.set(decl.extendName(declEnv.get(), against));
+				declEnv.set(decl.extendName(declEnv.get(), against.extend(declEnv.get())));
 				if (decl instanceof AttributeDeclaration) {
 					env = env.extend(new NameBindingImpl(getName(), decl.getType()));
 					nameBinding = new NameBindingImpl(nameBinding.getName(), decl.getType());
