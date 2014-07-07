@@ -61,17 +61,15 @@ test typechecking9[():Unit]
 	module M
 	type Opt
 		type Obj
-		type Res
-		def nextOrElse(ifPresent:Obj -> Res, els : Unit -> Res):Res
+		def nextOrElse[Res](ifPresent:Obj -> Res, els : Unit -> Res):Res
 	class Some
 		type Obj
-		type Res
-		class def create(el:Obj):Some = new
+		class def create[Obj](el:Obj):Some[Obj] = new
 			val iobj = el
 		val iobj : Obj
-		def nextOrElse(ifp:Obj -> Res, els : Unit -> Res):Res = ifp(this.iobj)
+		def nextOrElse[Res](ifp:Obj -> Res, els : Unit -> Res):Res = ifp(this.iobj)
 	class None
 		type Obj
-		type Res
-		class def create():None = new
-		def nextOrElse(ifp:Obj -> Res, els : Unit -> Res):Res = els()
+		class def create[Obj]():None[Obj] = new
+		def nextOrElse[Res](ifp:Obj -> Res, els : Unit -> Res):Res = els()
+	val foo : Opt[Int] = None.create[Int]()

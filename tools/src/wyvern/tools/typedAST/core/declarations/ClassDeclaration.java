@@ -54,6 +54,8 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 	protected Environment getObjEnvV() { return objEnv.get(); }
 	protected void setObjEnv(Environment newEnv) { objEnv.set(newEnv); }
 
+	private Environment typeBindArgsEnv = Environment.getEmptyEnvironment();
+
 	private ClassType objType = new ClassType(objEnv, new Reference<>(), new LinkedList<>(), "");
 
 	public ClassType getOType() {
@@ -112,14 +114,32 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 		this.implementsName = implementsName;
 		this.implementsClassName = implementsClassName;
 		this.location = location;
+
+		Type output = typeBinding.getType();
+		output = makeLambda(decls, output);
+		typeBinding = new TypeBinding(typeBinding.getName(),output);
+	}
+
+	private Type makeLambda(DeclSequence decls, Type input) {
+		if (decls != null) {
+			List<TypeVar> itypeParams = StreamSupport.stream(decls.getDeclIterator().spliterator(), false)
+					.filter(el -> el instanceof TypeVarDecl)
+					.<TypeVarDecl>map(el -> (TypeVarDecl) el)
+					.filter(TypeVarDecl::isAbstract)
+					.map(TypeVarDecl::getTypeVar).collect(Collectors.toList());
+
+			if (!itypeParams.isEmpty())
+				input = new TypeLambda(itypeParams, input);
+		}
+		return input;
 	}
 
 	protected ClassType getObjType() {
 		return objType;
 	}
 
-	
-	
+
+
 	protected void updateEnv() {
 		typeEquivalentEnvironmentRef.set(TypeDeclUtils.getTypeEquivalentEnvironment(getDecls(), false));
 	}
@@ -170,7 +190,7 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 				if (decl.isClass()) {
 					decl.typecheckSelf(genv.extend(binding));
 				} else {
-					decl.typecheckSelf(oenv.extend(binding));
+					decl.typecheckSelf(oenv.extend(binding).extend(typeArgsEnv));
 				}
 			}
 		}
@@ -484,13 +504,14 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 	boolean envGuard = false;
 	@Override
 	public Environment extendName(Environment env, Environment against) {
-		TypeBinding objBinding = new LateTypeBinding(nameBinding.getName(), this::getObjectType);
+		TypeBinding objBinding = new LateTypeBinding(nameBinding.getName(), () -> makeLambda(decls, getObjectType()));
 
 		if (!envGuard && decls != null) {
-			//declEnvRef.set(Environment.getEmptyEnvironment());
+			if (declEnvRef.get() == null)
+				declEnvRef.set(Environment.getEmptyEnvironment());
 			for (Declaration decl : decls.getDeclIterator()) {
 				if (decl.isClass())
-					declEnvRef.set(decl.extendName(declEnvRef.get(), against.extend(objBinding).extend(typeArgsEnv)));
+					declEnvRef.set(decl.extendName(declEnvRef.get(), against.extend(objBinding)));
 				else
 					objEnv.set(decl.extendName(objEnv.get(), against.extend(objBinding).extend(typeArgsEnv)));
 			}

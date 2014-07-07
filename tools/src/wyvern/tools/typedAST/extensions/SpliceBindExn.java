@@ -31,7 +31,7 @@ public class SpliceBindExn extends AbstractTypedAST implements BoundCode {
 	private Optional<Type> cached = Optional.empty();
 	@Override
 	public Type getType() {
-		return DefDeclaration.getMethodType(bindings, cached.get());
+		return DefDeclaration.getMethodType(bindings, cached.get(), new LinkedList<>());
 	}
 
 	@Override

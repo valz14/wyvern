@@ -72,7 +72,7 @@ public class JavaMeth extends DefDeclaration {
 			methTypes.add(
 					DefDeclaration
 							.getMethodType(getNameBindings(meth.getParamNames(), meth.getParameterTypes()),
-									meth.getReturnType()));
+									meth.getReturnType(), new LinkedList<>()));
 		}
 		if (methTypes.size() == 1)
 			return methTypes.get(0);

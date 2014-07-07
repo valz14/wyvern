@@ -85,14 +85,18 @@ public class TypeApp implements Type, TypeResolver.Resolvable {
 
 		Type rec = newTypes.get("tgt");
 
+		return getAppliedType(newList, rec);
+	}
+
+	public static Type getAppliedType(List<Type> newList, Type rec) {
 		Iterator<Type> inp = newList.iterator();
 		if (!(rec instanceof TypeLambda))
 			throw new RuntimeException();
 
-		if (((TypeLambda) rec).getArguments().size() != list.size())
+		if (((TypeLambda) rec).getArguments().size() != newList.size())
 			throw new RuntimeException();
 
-		return new ArgReplacer(((TypeLambda) rec).getArguments().stream().collect(Collectors.toMap(e->e, e->inp.next())))
+		return new ArgReplacer(((TypeLambda) rec).getArguments().stream().collect(Collectors.toMap(e -> e, e -> inp.next())))
 				.transform(((TypeLambda) rec).getBody());
 	}
 }

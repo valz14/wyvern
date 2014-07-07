@@ -429,6 +429,10 @@ import java.net.URI;
    	non terminal mnrd;
    	non terminal ptl;
    	non terminal TypedAST impSeq;
+   	non terminal List<String> typeNameList;
+    non terminal List<String> typeiNamelist;
+
+    non terminal List<Type> typeList;
 
    	non terminal TypedAST typeVar;
    	non terminal DeclSequence typeVarBody;
@@ -533,6 +537,7 @@ import java.net.URI;
     val ::= valKwd_t identifier_t:id otypeasc:ty declbody:body {: RESULT = new ValDeclaration((String)id, (Type)ty, (TypedAST)body, new FileLocation(currentState.pos)); :};
 
     def ::= defKwd_t identifier_t:name params:argNames typeasc:fullType declbody:body {: RESULT = new DefDeclaration((String)name, (Type)fullType, (List<NameBinding>)argNames, (TypedAST)body, false, new FileLocation(currentState.pos));:}
+    |		defKwd_t identifier_t:name typeNameList:tl params:argNames typeasc:fullType declbody:body {: RESULT = new DefDeclaration((String)name, (Type)fullType, (List<NameBinding>)argNames, tl, (TypedAST)body, false, new FileLocation(currentState.pos));:}
     	;
 
     var ::= varKwd_t identifier_t:id typeasc:type declbody:body {: RESULT = new VarDeclaration((String)id, (Type)type, (TypedAST)body); :}
@@ -561,6 +566,7 @@ import java.net.URI;
     	;
 
     objcd ::= classKwd_t defKwd_t identifier_t:name params:argNames typeasc:fullType declbody:body {: RESULT = new DefDeclaration((String)name, (Type)fullType, (List<NameBinding>)argNames, (TypedAST)body, true, new FileLocation(currentState.pos));:}
+    |		  classKwd_t defKwd_t identifier_t:name typeNameList:tl params:argNames typeasc:fullType declbody:body {: RESULT = new DefDeclaration((String)name, (Type)fullType, (List<NameBinding>)argNames, tl, (TypedAST)body, true, new FileLocation(currentState.pos));:}
                             	;
 
     non terminal Declaration cbval;
@@ -578,8 +584,6 @@ import java.net.URI;
 
     cbval ::= valKwd_t identifier_t:id otypeasc:ty cbvalbody:body {: RESULT = new ValDeclaration((String)id, (Type)ty, (TypedAST)body, new FileLocation(currentState.pos)); :};
 
-    objcd ::= classKwd_t defKwd_t identifier_t:name params:argNames typeasc:fullType declbody:body {: RESULT = new DefDeclaration((String)name, (Type)fullType, (List<NameBinding>)argNames, (TypedAST)body, true, new FileLocation(currentState.pos));:}
-                            	;
 
     typeVar ::= typeKwd_t identifier_t:name equals_t typeVarBody:body {: RESULT = new TypeVarDecl(name, body, new FileLocation(currentState.pos)); :}
     		|   typeKwd_t identifier_t:name {: RESULT = new TypeVarDecl(name, new FileLocation(currentState.pos)); :};
@@ -609,7 +613,8 @@ import java.net.URI;
 		| typedec:r {: RESULT = r; :}
 		| class:r {: RESULT = r; :};
 	
-    tdef ::= defKwd_t identifier_t:name params:argNames typeasc:type {: RESULT = new DefDeclaration((String)name, (Type)type, (List<NameBinding>)argNames, null, false, new FileLocation(currentState.pos)); :};
+    tdef ::= defKwd_t identifier_t:name params:argNames typeasc:type {: RESULT = new DefDeclaration((String)name, (Type)type, (List<NameBinding>)argNames, null, false, new FileLocation(currentState.pos)); :}
+    |		 defKwd_t identifier_t:name typeNameList:tl params:argNames typeasc:type {: RESULT = new DefDeclaration((String)name, (Type)type, (List<NameBinding>)argNames, tl, null, false, new FileLocation(currentState.pos)); :};
 
     metadata ::= metadataKwd_t typeasc:type equals_t dsle:inner {: RESULT = new TypeDeclaration.AttributeDeclaration((TypedAST)inner, (Type)type); :};
 
@@ -700,6 +705,7 @@ import java.net.URI;
     	|	 openParen_t e:inner closeParen_t {: RESULT = inner; :}
     	|	 etuple:tpe {: RESULT = tpe; :}
     	|	 term:src tuple:tgt {: RESULT = new Application((TypedAST)src, (TypedAST)tgt, new FileLocation(currentState.pos)); :}
+    	|	 term:src typeList:lst {: RESULT = new TypeApplication((TypedAST)src, lst, new FileLocation(currentState.pos)); :}
     	|	 inlinelit:lit {: RESULT = new DSLLit(Optional.of((String)lit)); :}
     	|	 decimalInteger_t:res {: RESULT = new IntegerConstant((Integer)res); :}
     	|	 newKwd_t {: RESULT = new New(new HashMap<String,TypedAST>(), new FileLocation(currentState.pos)); :}
@@ -796,7 +802,6 @@ import java.net.URI;
                 ;
 
     // end hierarchical tags
-
     non terminal List<Type> typeilist;
 
    	type ::= type:t1 tarrow_t type:t2 {: RESULT = new Arrow((Type)t1,(Type)t2); :}
@@ -804,8 +809,14 @@ import java.net.URI;
    		|    type:t dot_t identifier_t:el {: RESULT = new TypeInv((Type)t, (String)el); :}
    		|	 openParen_t type:ta closeParen_t {: RESULT = ta; :}
    		|	 identifier_t:id {: RESULT = new UnresolvedType((String)id); :}
-   		|	 type:rec oSquareBracket_t typeilist:list cSquareBracket_t {: RESULT = new TypeApp(rec, list); :}
+   		|	 type:rec typeList:list {: RESULT = new TypeApp(rec, list); :}
    		;
+
+   	typeList ::= oSquareBracket_t typeilist:list cSquareBracket_t {: RESULT = list; :};
+
+   	typeNameList ::= oSquareBracket_t typeiNamelist:list cSquareBracket_t {: RESULT = list; :};
+	typeiNamelist ::= identifier_t:t {: List<String> res = new LinkedList<String>(); res.add(t); RESULT = res; :}
+	|			      typeiNamelist:l comma_t identifier_t:r {: l.add(r); RESULT = l; :};
 
 	typeilist ::= type:t {: List<Type> res = new LinkedList<Type>(); res.add(t); RESULT = res; :}
 	|			  typeilist:l comma_t type:r {: l.add(r); RESULT = l; :};

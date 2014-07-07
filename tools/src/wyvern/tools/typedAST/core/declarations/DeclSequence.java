@@ -135,8 +135,6 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 		env = extendName(wtypes, wtypes);
 		for (Declaration d : this.getDeclIterator()) {
 			Environment againstEnv = env;
-			if ((d instanceof ValDeclaration) || (d instanceof VarDeclaration))
-				againstEnv = ienv;
 			env = d.extend(env, againstEnv);
 		}
 

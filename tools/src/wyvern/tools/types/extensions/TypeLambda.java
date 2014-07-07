@@ -7,10 +7,7 @@ import wyvern.tools.util.AbstractTreeWritable;
 import wyvern.tools.util.TreeWritable;
 import wyvern.tools.util.TreeWriter;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TypeLambda extends AbstractTreeWritable implements Type, TreeWritable {
 	private List<TypeVar> bindings = new LinkedList<>();
@@ -43,12 +40,14 @@ public class TypeLambda extends AbstractTreeWritable implements Type, TreeWritab
 
 	@Override
 	public Map<String, Type> getChildren() {
-		return null;
+		Map<String, Type> out = new HashMap<>();
+		out.put("body", body);
+		return out;
 	}
 
 	@Override
 	public Type cloneWithChildren(Map<String, Type> newChildren) {
-		return null;
+		return new TypeLambda(bindings, newChildren.get("body"));
 	}
 
 	@Override

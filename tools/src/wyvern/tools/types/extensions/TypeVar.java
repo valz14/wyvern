@@ -5,6 +5,7 @@ import wyvern.tools.types.Type;
 import wyvern.tools.util.AbstractTreeWritable;
 import wyvern.tools.util.TreeWriter;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,12 +16,13 @@ public class TypeVar extends AbstractTreeWritable implements Type {
 
 	@Override
 	public boolean subtype(Type other, HashSet<SubtypeRelation> subtypes) {
-		return false;
+		return other instanceof TypeVar && ((TypeVar) other).inum == inum;
 	}
 
 	@Override
 	public boolean subtype(Type other) {
-		return false;
+
+		return other instanceof TypeVar && ((TypeVar) other).inum == inum;
 	}
 
 	@Override
@@ -30,12 +32,12 @@ public class TypeVar extends AbstractTreeWritable implements Type {
 
 	@Override
 	public Map<String, Type> getChildren() {
-		return null;
+		return new HashMap<>();
 	}
 
 	@Override
 	public Type cloneWithChildren(Map<String, Type> newChildren) {
-		return null;
+		return this;
 	}
 
 	@Override

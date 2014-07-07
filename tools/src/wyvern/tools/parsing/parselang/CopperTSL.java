@@ -317,7 +317,7 @@ public class CopperTSL implements ExtParser {
 		AtomicInteger cdIdx = new AtomicInteger();
 		TypedAST[] classDecls = new TypedAST[toGen.size() + toGenDefs.size() + 1];
 		toGen.entrySet().stream().forEach(entry->classDecls[cdIdx.getAndIncrement()]
-				= new ValDeclaration(entry.getKey(), DefDeclaration.getMethodType(entry.getValue().second().getArgBindings(), entry.getValue().first()), entry.getValue().second(), unkLoc));
+				= new ValDeclaration(entry.getKey(), DefDeclaration.getMethodType(entry.getValue().second().getArgBindings(), entry.getValue().first(), new LinkedList<>()), entry.getValue().second(), unkLoc));
 
 		toGenDefs.entrySet().stream().forEach(entry->classDecls[cdIdx.getAndIncrement()]
 				= new DefDeclaration(entry.getKey(), new Arrow(Unit.getInstance(), Unit.getInstance()), new LinkedList<>(), entry.getValue(), false));
