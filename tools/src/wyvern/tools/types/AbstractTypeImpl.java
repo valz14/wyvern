@@ -1,5 +1,7 @@
 package wyvern.tools.types;
 
+import wyvern.tools.typedAST.transformers.Types.TypeTransformer;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -48,7 +50,7 @@ public abstract class AbstractTypeImpl implements Type {
 	}
 
 	@Override
-	public Type cloneWithChildren(Map<String, Type> newChildren) {
+	public Type cloneWithChildren(Map<String, Type> newChildren, TypeTransformer transformer) {
 		return this;
 	}
 }

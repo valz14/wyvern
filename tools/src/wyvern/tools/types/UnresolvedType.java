@@ -4,6 +4,7 @@ import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.HasLocation;
 import wyvern.tools.errors.ToolError;
 import wyvern.tools.typedAST.core.binding.NameBinding;
+import wyvern.tools.typedAST.transformers.Types.TypeTransformer;
 import wyvern.tools.util.TreeWriter;
 
 import java.util.HashMap;
@@ -72,7 +73,7 @@ public class UnresolvedType implements Type {
 	}
 
 	@Override
-	public Type cloneWithChildren(Map<String, Type> newChildren) {
+	public Type cloneWithChildren(Map<String, Type> newChildren, TypeTransformer transformer) {
 		throw new RuntimeException("Cannot specify a ref type");
 	}
 }

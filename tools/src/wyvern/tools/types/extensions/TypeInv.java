@@ -1,5 +1,6 @@
 package wyvern.tools.types.extensions;
 
+import wyvern.tools.typedAST.transformers.Types.TypeTransformer;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.RecordType;
 import wyvern.tools.types.SubtypeRelation;
@@ -56,7 +57,7 @@ public class TypeInv implements Type {
 	}
 
 	@Override
-	public Type cloneWithChildren(Map<String, Type> newChildren) {
+	public Type cloneWithChildren(Map<String, Type> newChildren, TypeTransformer transformer) {
 		throw new RuntimeException("Invalid operation (forgot to resolve)?");
 	}
 

@@ -3,6 +3,7 @@ package wyvern.tools.types.extensions;
 import wyvern.tools.errors.ToolError;
 import wyvern.tools.typedAST.core.expressions.Application;
 import wyvern.tools.typedAST.core.expressions.Invocation;
+import wyvern.tools.typedAST.transformers.Types.TypeTransformer;
 import wyvern.tools.types.*;
 import wyvern.tools.util.TreeWriter;
 
@@ -107,13 +108,13 @@ public class Intersection implements Type, OperatableType, ApplyableType {
 	public Map<String, Type> getChildren() {
 		HashMap<String, Type> map = new HashMap<>();
 		for (int i = 0; i < types.size(); i++) {
-			map.put(i +"", types.get(i));
+			map.put(i + "", types.get(i));
 		}
 		return map;
 	}
 
 	@Override
-	public Type cloneWithChildren(Map<String, Type> newChildren) {
+	public Type cloneWithChildren(Map<String, Type> newChildren, TypeTransformer transformer) {
 		List<Type> result = new ArrayList<>(types.size());
 		for (int i = 0; i < types.size(); i++) {
 			result.add(newChildren.get(i + ""));

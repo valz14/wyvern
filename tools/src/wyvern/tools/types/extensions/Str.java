@@ -4,6 +4,7 @@ import wyvern.tools.typedAST.core.expressions.Invocation;
 import wyvern.tools.typedAST.extensions.interop.java.Util;
 import wyvern.tools.typedAST.extensions.interop.java.typedAST.JavaClassDecl;
 import wyvern.tools.typedAST.extensions.interop.java.types.JavaClassType;
+import wyvern.tools.typedAST.transformers.Types.TypeTransformer;
 import wyvern.tools.types.*;
 import wyvern.tools.util.TreeWriter;
 
@@ -72,7 +73,7 @@ public class Str extends AbstractTypeImpl implements OperatableType {
 	}
 
 	@Override
-	public Type cloneWithChildren(Map<String, Type> newChildren) {
+	public Type cloneWithChildren(Map<String, Type> newChildren, TypeTransformer transformer) {
 		return this;
 	}
 }

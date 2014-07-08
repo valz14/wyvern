@@ -8,6 +8,7 @@ import wyvern.tools.typedAST.core.binding.typechecking.TypeBinding;
 import wyvern.tools.typedAST.core.declarations.TypeDeclaration;
 import wyvern.tools.typedAST.core.values.Obj;
 import wyvern.tools.typedAST.interfaces.Value;
+import wyvern.tools.typedAST.transformers.Types.TypeTransformer;
 import wyvern.tools.types.*;
 import wyvern.tools.util.Reference;
 import wyvern.tools.util.TreeWriter;
@@ -183,7 +184,7 @@ public class TypeType extends AbstractTypeImpl implements OperatableType, Record
 	}
 
 	@Override
-	public Type cloneWithChildren(Map<String, Type> newChildren) {
+	public Type cloneWithChildren(Map<String, Type> newChildren, TypeTransformer transformer) {
 		ArrayList<String> denvList = new ArrayList<>(newChildren.keySet());
 		Comparator<String> c = new Comparator<String>() {
 			@Override

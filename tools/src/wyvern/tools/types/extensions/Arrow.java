@@ -1,6 +1,7 @@
 package wyvern.tools.types.extensions;
 
 import wyvern.tools.typedAST.core.expressions.Application;
+import wyvern.tools.typedAST.transformers.Types.TypeTransformer;
 import wyvern.tools.types.*;
 import wyvern.tools.util.TreeWriter;
 
@@ -92,7 +93,7 @@ public class Arrow extends AbstractTypeImpl implements ApplyableType {
 	}
 
 	@Override
-	public Type cloneWithChildren(Map<String, Type> newChildren) {
+	public Type cloneWithChildren(Map<String, Type> newChildren, TypeTransformer transformer) {
 		return new Arrow(newChildren.get("argument"), newChildren.get("result"));
 	}
 }

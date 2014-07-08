@@ -1,5 +1,6 @@
 package wyvern.tools.typedAST.extensions.interop.java.types;
 
+import wyvern.tools.typedAST.transformers.Types.TypeTransformer;
 import wyvern.tools.types.SubtypeRelation;
 import wyvern.tools.types.Type;
 import wyvern.tools.util.TreeWriter;
@@ -29,7 +30,7 @@ public class JNullType implements Type {
 	}
 
 	@Override
-	public Type cloneWithChildren(Map<String, Type> newChildren) {
+	public Type cloneWithChildren(Map<String, Type> newChildren, TypeTransformer transformer) {
 		return this;
 	}
 

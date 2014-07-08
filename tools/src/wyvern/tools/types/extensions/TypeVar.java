@@ -1,5 +1,6 @@
 package wyvern.tools.types.extensions;
 
+import wyvern.tools.typedAST.transformers.Types.TypeTransformer;
 import wyvern.tools.types.SubtypeRelation;
 import wyvern.tools.types.Type;
 import wyvern.tools.util.AbstractTreeWritable;
@@ -36,7 +37,7 @@ public class TypeVar extends AbstractTreeWritable implements Type {
 	}
 
 	@Override
-	public Type cloneWithChildren(Map<String, Type> newChildren) {
+	public Type cloneWithChildren(Map<String, Type> newChildren, TypeTransformer transformer) {
 		return this;
 	}
 

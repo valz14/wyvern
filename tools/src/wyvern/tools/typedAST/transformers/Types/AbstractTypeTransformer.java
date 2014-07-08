@@ -10,6 +10,6 @@ public abstract class AbstractTypeTransformer implements TypeTransformer {
 		for (String key : children.keySet()) {
 			children.put(key, this.transform(children.get(key)));
 		}
-		return input.cloneWithChildren(children);
+		return input.cloneWithChildren(children, this);
 	}
 }

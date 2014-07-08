@@ -1,6 +1,7 @@
 package wyvern.tools.types.extensions;
 
 import wyvern.tools.typedAST.transformers.Types.AbstractTypeTransformer;
+import wyvern.tools.typedAST.transformers.Types.TypeTransformer;
 import wyvern.tools.types.SubtypeRelation;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.TypeResolver;
@@ -9,8 +10,6 @@ import wyvern.tools.util.TreeWriter;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
 
 public class TypeApp implements Type, TypeResolver.Resolvable {
 	private final Type rec;
@@ -42,7 +41,7 @@ public class TypeApp implements Type, TypeResolver.Resolvable {
 	}
 
 	@Override
-	public Type cloneWithChildren(Map<String, Type> newChildren) {
+	public Type cloneWithChildren(Map<String, Type> newChildren, TypeTransformer transformer) {
 		return null;
 	}
 

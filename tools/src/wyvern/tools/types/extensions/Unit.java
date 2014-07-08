@@ -1,5 +1,6 @@
 package wyvern.tools.types.extensions;
 
+import wyvern.tools.typedAST.transformers.Types.TypeTransformer;
 import wyvern.tools.types.AbstractTypeImpl;
 import wyvern.tools.types.SubtypeRelation;
 import wyvern.tools.types.Type;
@@ -35,7 +36,7 @@ public class Unit extends AbstractTypeImpl {
 	}
 
 	@Override
-	public Type cloneWithChildren(Map<String, Type> newChildren) {
+	public Type cloneWithChildren(Map<String, Type> newChildren, TypeTransformer transformer) {
 		return this;
 	}
 }
