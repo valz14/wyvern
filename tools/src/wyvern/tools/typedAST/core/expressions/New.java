@@ -5,10 +5,13 @@ import wyvern.tools.errors.FileLocation;
 import wyvern.tools.errors.ToolError;
 import wyvern.tools.typedAST.abs.CachingTypedAST;
 import wyvern.tools.typedAST.abs.Declaration;
+import wyvern.tools.typedAST.core.TypeVarDecl;
+import wyvern.tools.typedAST.core.binding.AbstractBinding;
 import wyvern.tools.typedAST.core.binding.objects.ClassBinding;
 import wyvern.tools.typedAST.core.binding.evaluation.LateValueBinding;
 import wyvern.tools.typedAST.core.binding.NameBindingImpl;
 import wyvern.tools.typedAST.core.binding.evaluation.ValueBinding;
+import wyvern.tools.typedAST.core.binding.typechecking.TypeBinding;
 import wyvern.tools.typedAST.core.declarations.ClassDeclaration;
 import wyvern.tools.typedAST.core.declarations.DeclSequence;
 import wyvern.tools.typedAST.core.declarations.ValDeclaration;
@@ -20,13 +23,17 @@ import wyvern.tools.typedAST.interfaces.Value;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.extensions.ClassType;
+import wyvern.tools.types.extensions.TypeApp;
 import wyvern.tools.types.extensions.TypeDeclUtils;
+import wyvern.tools.types.extensions.TypeVar;
 import wyvern.tools.util.Reference;
 import wyvern.tools.util.TreeWriter;
 
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 public class New extends CachingTypedAST implements CoreAST {
@@ -78,21 +85,43 @@ public class New extends CachingTypedAST implements CoreAST {
 		// System.out.println("classVarTypeBinding = " + classVarTypeBinding);
 
 		if (classVarTypeBinding != null) { //In a class method
-			Environment declEnv = classVarTypeBinding.getClassDecl().getObjEnv();
+			ClassDeclaration enclosing = classVarTypeBinding.getClassDecl();
+
+			//The type var declarations here
+			Environment tvDeclEnv = Environment.getEmptyEnvironment();
+					StreamSupport.stream(seq.getDeclIterator().spliterator(), false).filter(el->el instanceof TypeVarDecl)
+					.<TypeVarDecl>map(tv->(TypeVarDecl)tv).reduce(tvDeclEnv, (ienv,tv)->tv.extendType(ienv, env), (a,b)->a);
+
+			//This code looks up the parent's type bindings to instantiate it, does so, then adds its new decls
+			//Get all type vars
+			Environment parentArgs = classVarTypeBinding.getClassDecl().getTypeArgsEnv();
+			Environment allTypeVars = parentArgs.extend(tvDeclEnv);
+
+			//Find bindings for the parent type params
+			List<TypeBinding> tbs = parentArgs.getBoundNames().stream().filter(name -> name != null).map(allTypeVars::lookupType).collect(Collectors.toList());
+			List<Type> newBindings = tbs.stream().<Type>map(AbstractBinding::getType).collect(Collectors.toList());
+
+			//Apply the type params
+			ClassType appliedType = (ClassType)TypeApp.getAppliedType(newBindings,enclosing.getType());
+
+			Collections.reverse(tbs);
+			Environment nTbEnv = tbs.stream().reduce(Environment.getEmptyEnvironment(), (a,b)->a.extend(b), (a,b)->a);
+
+			//Find unbound bindings
+			Stream<TypeBinding> typeBindingStream = allTypeVars.getBoundNames().stream().filter(name -> name != null)
+					.map(nTbEnv::lookupType).filter(tb -> tb == null);
+			if (typeBindingStream.count() > 0)
+				throw new RuntimeException("Cannot instantiate a type lambda");
+
+
+			Environment declEnv = appliedType.getEnv();
 			Environment innerEnv = seq.extendName(Environment.getEmptyEnvironment(), env).extend(declEnv);
 			seq.typecheck(env.extend(new NameBindingImpl("this", new ClassType(new Reference<>(innerEnv), new Reference<>(innerEnv), new LinkedList<>(), classVarTypeBinding.getClassDecl().getName()))), Optional.empty());
 
-
-			Environment environment = seq.extendType(declEnv, declEnv.extend(env));
-			environment = seq.extendName(environment, environment.extend(env));
-			Environment nnames = seq.extend(environment, environment);
+			Environment nnames = seq.extend(declEnv, declEnv.extend(env));
 
 			Environment objTee = TypeDeclUtils.getTypeEquivalentEnvironment(nnames.extend(declEnv));
 			Type classVarType = new ClassType(new Reference<>(nnames.extend(declEnv)), new Reference<>(objTee), new LinkedList<>(), classVarTypeBinding.getClassDecl().getName());
-			if (!(classVarType instanceof ClassType)) {
-				// System.out.println("Type checking classVarType: " + classVarType + " and clsVar = " + clsVar);
-				ToolError.reportError(ErrorMessage.MUST_BE_LITERAL_CLASS, this, classVarType.toString());
-			}
 
 			// TODO SMELL: do I really need to store this?  Can get it any time from the type
 			cls = classVarTypeBinding.getClassDecl();

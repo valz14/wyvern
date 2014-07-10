@@ -32,8 +32,7 @@ import java.util.stream.StreamSupport;
 
 public class ClassDeclaration extends Declaration implements CoreAST {
 	protected DeclSequence decls = new DeclSequence(new LinkedList<Declaration>());
-	private List<String> typeParams;
-	// protected DeclSequence classDecls;
+	private List<TypeVar> typeParams = new LinkedList<>();
 	
 	private NameBinding nameBinding;
 	private TypeBinding typeBinding;
@@ -51,10 +50,10 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 	protected Reference<Environment> declEnvRef;
 
 	private Reference<Environment> objEnv = new Reference<>(Environment.getEmptyEnvironment());
+
+
 	protected Environment getObjEnvV() { return objEnv.get(); }
 	protected void setObjEnv(Environment newEnv) { objEnv.set(newEnv); }
-
-	private Environment typeBindArgsEnv = Environment.getEmptyEnvironment();
 
 	private ClassType objType = new ClassType(objEnv, new Reference<>(), new LinkedList<>(), "");
 
@@ -71,7 +70,7 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 							Environment declEnv,
 							List<String> typeParams,
 							FileLocation location) {
-        this(name, implementsName, implementsClassName, decls, typeParams, location);
+        this(name, implementsName, implementsClassName, decls, location);
 		declEnvRef.set(declEnv);
     }
 
@@ -81,7 +80,7 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 			String implementsClassName,
 			DeclSequence decls,
 			FileLocation location) {
-		this(name, implementsName, implementsClassName, decls, new LinkedList<String>(), location);
+		this(name, implementsName, implementsClassName, decls, location);
 		
 		this.taggedInfo = taggedInfo;
 		
@@ -89,23 +88,20 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 		this.taggedInfo.setTagName(name);
 		this.taggedInfo.associateTag();
 	}
-	
-	public ClassDeclaration(String name,
-							String implementsName,
-							String implementsClassName,
-							DeclSequence decls,
-							FileLocation location) {
-		this(name, implementsName, implementsClassName, decls, new LinkedList<String>(), location);
+
+	public ClassDeclaration(String name, String implementsName, String implementsClassName,
+							DeclSequence typedASTs, Environment ienv, FileLocation location) {
+		this(name, implementsName, implementsClassName, typedASTs, location);
+		declEnvRef.set(ienv);
 
 	}
+
     public ClassDeclaration(String name,
 							String implementsName,
 							String implementsClassName,
 							DeclSequence decls,
-							List<String> typeParams,
 							FileLocation location) {
 		this.decls = decls;
-		this.typeParams = typeParams;
 		typeEquivalentEnvironmentRef = new Reference<>();
 		declEnvRef = new Reference<>();
 		nameBinding = new NameBindingImpl(name, null);
@@ -115,6 +111,14 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 		this.implementsClassName = implementsClassName;
 		this.location = location;
 
+		if (decls != null) {
+			typeParams = StreamSupport.stream(decls.getDeclIterator().spliterator(), false)
+					.filter(el -> el instanceof TypeVarDecl)
+					.<TypeVarDecl>map(el -> (TypeVarDecl) el)
+					.filter(TypeVarDecl::isAbstract)
+					.map(TypeVarDecl::getTypeVar).collect(Collectors.toList());
+		}
+
 		Type output = typeBinding.getType();
 		output = makeLambda(decls, output);
 		typeBinding = new TypeBinding(typeBinding.getName(),output);
@@ -122,14 +126,8 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 
 	private Type makeLambda(DeclSequence decls, Type input) {
 		if (decls != null) {
-			List<TypeVar> itypeParams = StreamSupport.stream(decls.getDeclIterator().spliterator(), false)
-					.filter(el -> el instanceof TypeVarDecl)
-					.<TypeVarDecl>map(el -> (TypeVarDecl) el)
-					.filter(TypeVarDecl::isAbstract)
-					.map(TypeVarDecl::getTypeVar).collect(Collectors.toList());
-
-			if (!itypeParams.isEmpty())
-				input = new TypeLambda(itypeParams, input);
+			if (!typeParams.isEmpty())
+				input = new TypeLambda(typeParams, input);
 		}
 		return input;
 	}
@@ -138,11 +136,6 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 		return objType;
 	}
 
-
-
-	protected void updateEnv() {
-		typeEquivalentEnvironmentRef.set(TypeDeclUtils.getTypeEquivalentEnvironment(getDecls(), false));
-	}
 
 	public TypeType getEquivalentType() {
 		if (equivalentType == null)
@@ -402,7 +395,7 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 	
 	@Override
 	public FileLocation getLocation() {
-		return location; // TODO: NOT IMPLEMENTED YET.
+		return location;
 	}
 
 	public Environment getDeclEnv() {
@@ -463,29 +456,20 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 			decls.add(idx, (Declaration)nc.get(key));
 		}
 		return new ClassDeclaration(nameBinding.getName(), implementsName, implementsClassName,
-				new DeclSequence(decls), declEnvRef.get(), typeParams, location);
+				new DeclSequence(decls), declEnvRef.get(), location);
 	}
 
-
-	public List<String> getTypeParams() {
-		return typeParams;
-	}
 
 	private Environment typeArgsEnv;
+	public Environment getTypeArgsEnv() {
+		return typeArgsEnv;
+	}
 
 	private boolean hasParameterized = false;
 	@Override
 	public Environment extendType(Environment env, Environment against) {
 
 		if (decls != null && !hasParameterized) {
-			List<TypeVar> typeParams = StreamSupport.stream(decls.getDeclIterator().spliterator(), false)
-					.filter(el -> el instanceof TypeVarDecl)
-					.<TypeVarDecl>map(el -> (TypeVarDecl) el)
-					.filter(TypeVarDecl::isAbstract)
-					.map(TypeVarDecl::getTypeVar).collect(Collectors.toList());
-
-			if (!typeParams.isEmpty())
-				typeBinding = new TypeBinding(typeBinding.getName(), new TypeLambda(typeParams, typeBinding.getType()));
 
 			Environment ienv = Optional.ofNullable(declEnvRef.get()).orElse(Environment.getEmptyEnvironment());
 			if (decls != null)
@@ -509,6 +493,8 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 		if (!envGuard && decls != null) {
 			if (declEnvRef.get() == null)
 				declEnvRef.set(Environment.getEmptyEnvironment());
+			if (typeArgsEnv == null)
+				typeArgsEnv = Environment.getEmptyEnvironment();
 			for (Declaration decl : decls.getDeclIterator()) {
 				if (decl.isClass())
 					declEnvRef.set(decl.extendName(declEnvRef.get(), against.extend(objBinding)));

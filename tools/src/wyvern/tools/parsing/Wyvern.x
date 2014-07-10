@@ -586,6 +586,7 @@ import java.net.URI;
 
 
     typeVar ::= typeKwd_t identifier_t:name equals_t typeVarBody:body {: RESULT = new TypeVarDecl(name, body, new FileLocation(currentState.pos)); :}
+    		|	typeKwd_t identifier_t:name equals_t type:body {: RESULT = new TypeVarDecl(name, body, new FileLocation(currentState.pos)); :}
     		|   typeKwd_t identifier_t:name {: RESULT = new TypeVarDecl(name, new FileLocation(currentState.pos)); :};
 
     non terminal DeclSequence typevd;
@@ -593,6 +594,7 @@ import java.net.URI;
     typeVarBody ::= objtype_t Indent_t typevd:body Dedent_t {: RESULT = body; :};
 
     typedec ::= typeKwd_t identifier_t:name Indent_t typevd:body Dedent_t {: RESULT = new TypeDeclaration((String)name, (DeclSequence)body, new FileLocation(currentState.pos)); :}
+    	|		typeKwd_t identifier_t:name equals_t type:body {: RESULT = new TypeVarDecl(name, body, new FileLocation(currentState.pos)); :}
     	|	    typeKwd_t identifier_t:name {: RESULT = new TypeDeclaration((String)name, null, new FileLocation(currentState.pos)); :}
     	|       taggedKwd_t typeKwd_t identifier_t:name taggedInfo:tagInfo Indent_t typevd:body Dedent_t {: RESULT = new TypeDeclaration((String)name, (DeclSequence)body, (TaggedInfo) tagInfo, new FileLocation(currentState.pos)); :}
     	|	    taggedKwd_t typeKwd_t identifier_t:name taggedInfo:tagInfo {: RESULT = new TypeDeclaration((String)name, null, (TaggedInfo) tagInfo, new FileLocation(currentState.pos)); :}

@@ -38,10 +38,19 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		this(name, getMethodType(argNames, fullType, new LinkedList<>()), argNames, new LinkedList<>(), body, isClassDef, location, false);
 	}
 
+
+
 	public DefDeclaration(String name, Type fullType, List<NameBinding> argNames, List<String> typeArgNames,
 						   TypedAST body, boolean isClassDef, FileLocation location) {
-		this(name, getMethodType(argNames, fullType, typeArgNames.stream()
-				.map(iname -> new Pair<>(iname, new TypeVar())).collect(Collectors.toList())), argNames, typeArgNames, body, isClassDef, location, false);
+		this(name, null, argNames, typeArgNames, body, isClassDef, location, false);
+		List<Pair<String, TypeVar>> typeArgs = getTypeArgs(typeArgNames);
+		this.type = getMethodType(argNames, fullType, typeArgs);
+		this.typeArgNames = typeArgs;
+	}
+
+	public static List<Pair<String, TypeVar>> getTypeArgs(List<String> typeArgNames) {
+		return typeArgNames.stream()
+				.map(iname -> new Pair<>(iname, new TypeVar())).collect(Collectors.toList());
 	}
 
 	public DefDeclaration(String name, Type fullType, List<NameBinding> argNames,
@@ -51,8 +60,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 
 	private DefDeclaration(String name, Type fullType, List<NameBinding> argNames, List<String> typeArgNames,
 						   TypedAST body, boolean isClassDef, FileLocation location, boolean placeholder) {
-		this(name, fullType, argNames, typeArgNames.stream()
-				.map(iname -> new Pair<>(iname, new TypeVar())).collect(Collectors.toList()), body, isClassDef, FileLocation.UNKNOWN, 0);
+		this(name, fullType, argNames, getTypeArgs(typeArgNames), body, isClassDef, FileLocation.UNKNOWN, 0);
 	}
 	private DefDeclaration(String name, Type fullType, List<NameBinding> argNames, List<Pair<String,TypeVar>> typeArgNames,
 						   TypedAST body, boolean isClassDef, FileLocation location, int placeholder) {
@@ -79,7 +87,8 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		Arrow ires = new Arrow(argType, returnType);
 		if (typeArgs.isEmpty())
 			return ires;
-		return new TypeLambda(typeArgs.stream().map(p->p.second).collect(Collectors.toList()), ires);
+		List<TypeVar> tvs = typeArgs.stream().map(p -> p.second).collect(Collectors.toList());
+		return new TypeLambda(tvs, ires);
 	}
 
 	private Environment getTypeVarEnv() {
@@ -138,7 +147,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 			extEnv = extEnv.extend(bind);
 		}
 		if (body != null) {
-			Type bodyType = body.typecheck(extEnv, Optional.of(getResultType(type))); // Can be null for def inside type!
+			Type bodyType = body.typecheck(extEnv.extend(getTypeVarEnv()), Optional.of(getResultType(type))); // Can be null for def inside type!
 			type = TypeResolver.resolve(type, env.extend(getTypeVarEnv()));
 			
 			Type retType = getResultType(type);

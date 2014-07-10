@@ -65,11 +65,13 @@ test typechecking9[():Unit]
 	class Some
 		type Obj
 		class def create[Obj](el:Obj):Some[Obj] = new
+			type Obj = Obj
 			val iobj = el
 		val iobj : Obj
 		def nextOrElse[Res](ifp:Obj -> Res, els : Unit -> Res):Res = ifp(this.iobj)
 	class None
 		type Obj
 		class def create[Obj]():None[Obj] = new
+			type Obj = Obj
 		def nextOrElse[Res](ifp:Obj -> Res, els : Unit -> Res):Res = els()
 	val foo : Opt[Int] = None.create[Int]()

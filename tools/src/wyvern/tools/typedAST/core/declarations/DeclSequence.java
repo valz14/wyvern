@@ -212,6 +212,7 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 	public Environment evalDecl(Environment env) {
 		return evalDecls(env);
 	}
+
 	@Override
 	public Map<String, TypedAST> getChildren() {
 		Map<String, TypedAST> childMap = new HashMap<>();

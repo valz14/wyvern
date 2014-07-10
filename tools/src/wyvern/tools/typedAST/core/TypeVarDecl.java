@@ -5,9 +5,13 @@ import wyvern.tools.typedAST.abs.Declaration;
 import wyvern.tools.typedAST.core.binding.typechecking.TypeBinding;
 import wyvern.tools.typedAST.core.declarations.DeclSequence;
 import wyvern.tools.typedAST.core.declarations.TypeDeclaration;
+import wyvern.tools.typedAST.core.values.UnitVal;
+import wyvern.tools.typedAST.interfaces.EnvironmentExtender;
 import wyvern.tools.typedAST.interfaces.TypedAST;
+import wyvern.tools.typedAST.interfaces.Value;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
+import wyvern.tools.types.TypeResolver;
 import wyvern.tools.types.extensions.TypeVar;
 import wyvern.tools.types.extensions.Unit;
 import wyvern.tools.util.TreeWriter;
@@ -15,26 +19,121 @@ import wyvern.tools.util.TreeWriter;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 public class TypeVarDecl extends Declaration {
 	private final String name;
-	private final Optional<TypeDeclaration> body;
+	private final EnvironmentExtender body;
+	private final boolean isAbstract;
 	private final FileLocation fileLocation;
 	private TypeVar typeVar = new TypeVar();
 
+	/**
+	 * Helper class to allow easy variation of bound types
+	 */
+	private static abstract class EnvironmentExtInner implements EnvironmentExtender {
+
+		private final FileLocation loc;
+
+		public EnvironmentExtInner(FileLocation loc) {
+			this.loc = loc;
+		}
+
+		@Override
+		public Environment extendName(Environment env, Environment against) {
+			return env;
+		}
+
+		@Override
+		public Environment extend(Environment env, Environment against) {
+			return env;
+		}
+
+		@Override
+		public Environment evalDecl(Environment env) {
+			return env;
+		}
+		@Override
+		public Type typecheck(Environment env, Optional<Type> expected) {
+			return getType();
+		}
+
+		@Override
+		public Value evaluate(Environment env) {
+			return UnitVal.getInstance(loc);
+		}
+
+		@Override
+		public Map<String, TypedAST> getChildren() {
+			return new HashMap<>();
+		}
+
+		@Override
+		public TypedAST cloneWithChildren(Map<String, TypedAST> newChildren) {
+			return this;
+		}
+
+		@Override
+		public FileLocation getLocation() {
+			return loc;
+		}
+
+		@Override
+		public void writeArgsToTree(TreeWriter writer) {
+
+		}
+
+	}
+
 	public TypeVarDecl(String name, DeclSequence body, FileLocation fileLocation) {
 		this.name = name;
-		this.body = Optional.of(body).map(seq->new TypeDeclaration(name, seq, fileLocation));
+		this.body = new TypeDeclaration(name, body, fileLocation);
 		this.fileLocation = fileLocation;
+		isAbstract = false;
+	}
+	public TypeVarDecl(String name, Type body, FileLocation fileLocation) {
+		this.name = name;
+		this.body = new EnvironmentExtInner(fileLocation) {
+			@Override
+			public Environment extendType(Environment env, Environment against) {
+				return env.extend(new TypeBinding(name, TypeResolver.resolve(body,against)));
+			}
+
+			@Override
+			public Type getType() {
+				return body;
+			}
+		};
+		this.fileLocation = fileLocation;
+		isAbstract = false;
 	}
 
 	public TypeVarDecl(String name, FileLocation fileLocation) {
-		this.body = Optional.empty();
 		this.name = name;
+		TypeVar type = new TypeVar();
+		this.body = new EnvironmentExtInner(fileLocation) {
+			@Override
+			public Environment extendType(Environment env, Environment against) {
+				return env.extend(new TypeBinding(name, type));
+			}
+
+			@Override
+			public Type getType() {
+				return type;
+			}
+		};
+		this.fileLocation = fileLocation;
+		isAbstract = true;
+	}
+
+	public TypeVarDecl(String name, EnvironmentExtender body, FileLocation fileLocation) {
+		this.body = body;
+		this.name = name;
+		this.isAbstract = body.getType() instanceof TypeVar;
 		this.fileLocation = fileLocation;
 	}
 
-	public boolean isAbstract() { return !body.isPresent(); }
+	public boolean isAbstract() { return isAbstract; }
 
 	public TypeVar getTypeVar() { return typeVar; }
 
@@ -45,32 +144,31 @@ public class TypeVarDecl extends Declaration {
 
 	@Override
 	protected Type doTypecheck(Environment env) {
-		return body.map(decl->decl.typecheck(env, Optional.empty())).orElseGet(()-> Unit.getInstance());
+		return body.typecheck(env, Optional.<Type>empty());
 	}
 
 	@Override
 	protected Environment doExtend(Environment old, Environment against) {
-		return body.map(decl->decl.extend(old,against)).orElse(old.extend(new TypeBinding(name, typeVar)));
+		return body.extend(old, against);
 	}
 
 	@Override
 	public Environment extendWithValue(Environment old) {
-		return body.map(decl->decl.extendWithValue(old)).orElse(old);
+		return body.evalDecl(old);
 	}
 
 	@Override
 	public void evalDecl(Environment evalEnv, Environment declEnv) {
-		body.ifPresent(decl->decl.evalDecl(evalEnv,declEnv));
 	}
 
 	@Override
 	public Environment extendType(Environment env, Environment against) {
-		return body.map(tpe->tpe.extendType(env,against)).orElse(env.extend(new TypeBinding(name, typeVar)));
+		return body.extendType(env, against);
 	}
 
 	@Override
 	public Environment extendName(Environment env, Environment against) {
-		return body.map(tpe->tpe.extendName(env, against)).orElse(env);
+		return body.extendName(env, against);
 	}
 
 	@Override
@@ -80,17 +178,19 @@ public class TypeVarDecl extends Declaration {
 
 	@Override
 	public Map<String, TypedAST> getChildren() {
-		return body.map(TypeDeclaration::getChildren).orElse(new HashMap<>());
+		HashMap<String,TypedAST> out = new HashMap<>();
+		out.put("body", body);
+		return out;
 	}
 
 	@Override
 	public TypedAST cloneWithChildren(Map<String, TypedAST> newChildren) {
-		return body.map(td->td.cloneWithChildren(newChildren)).orElse(this);
+		return new TypeVarDecl(name, (EnvironmentExtender)newChildren.get("body"), fileLocation);
 	}
 
 	@Override
 	public FileLocation getLocation() {
-		return null;
+		return fileLocation;
 	}
 
 	@Override

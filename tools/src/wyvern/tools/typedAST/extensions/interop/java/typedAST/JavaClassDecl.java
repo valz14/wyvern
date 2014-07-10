@@ -168,7 +168,6 @@ public class JavaClassDecl extends ClassDeclaration {
 	}
 
 	private boolean envDone = false;
-	@Override
 	public void updateEnv() {
 		if (envDone)
 			return;

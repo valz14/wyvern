@@ -30,7 +30,7 @@ public class ClassType extends AbstractTypeImpl implements OperatableType, Recor
 	public ClassType(ClassDeclaration td) {
 		this(td.getDeclEnvRef(),
 				td.getTypeEquivalentEnvironmentReference(),
-				td.getTypeParams(),
+				new LinkedList<>(),
 				td.getName());
 		this.decl = td;
 	}
