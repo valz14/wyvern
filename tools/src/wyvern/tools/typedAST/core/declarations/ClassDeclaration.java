@@ -472,12 +472,15 @@ public class ClassDeclaration extends Declaration implements CoreAST {
 		if (decls != null && !hasParameterized) {
 
 			Environment ienv = Optional.ofNullable(declEnvRef.get()).orElse(Environment.getEmptyEnvironment());
+			Environment taEnv = Environment.getEmptyEnvironment();
 			if (decls != null)
 				for (Declaration decl : decls.getDeclIterator()) {
 					ienv = decl.extendType(ienv, against);
+					if (decl instanceof TypeVarDecl)
+						taEnv = decl.extendType(taEnv, against);
 				}
 			declEnvRef.set(ienv);
-			typeArgsEnv = ienv;
+			typeArgsEnv = taEnv;
 
 			hasParameterized = true;
 		}

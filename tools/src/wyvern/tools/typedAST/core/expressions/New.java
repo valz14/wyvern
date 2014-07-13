@@ -99,10 +99,10 @@ public class New extends CachingTypedAST implements CoreAST {
 
 			//Find bindings for the parent type params
 			List<TypeBinding> tbs = parentArgs.getBoundNames().stream().filter(name -> name != null).map(allTypeVars::lookupType).collect(Collectors.toList());
-			List<Type> newBindings = tbs.stream().<Type>map(AbstractBinding::getType).collect(Collectors.toList());
+			List<Type> newBindings = tbs.stream().filter(el->el!=null).<Type>map(AbstractBinding::getType).collect(Collectors.toList());
 
 			//Apply the type params
-			ClassType appliedType = (ClassType)TypeApp.getAppliedType(newBindings,enclosing.getType());
+			ClassType appliedType = (newBindings.size() > 0)?(ClassType)TypeApp.getAppliedType(newBindings,enclosing.getType()):(ClassType)enclosing.getType();
 
 			Collections.reverse(tbs);
 			Environment nTbEnv = tbs.stream().reduce(Environment.getEmptyEnvironment(), (a,b)->a.extend(b), (a,b)->a);

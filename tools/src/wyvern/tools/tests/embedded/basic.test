@@ -70,3 +70,21 @@ test parseBreak[IntegerConstant(7):Int]
 	val test = 7
 
 	test
+test simpleIf4[IntegerConstant(3):Int]
+	if true then 1 else 2
+	3
+test simpleIf5[IntegerConstant(4):Int]
+	(if true
+		then
+			4
+		else
+			1)
+test simpleIf6[IntegerConstant(5):Int]
+	val x = 1
+	val y = 5
+	if true then y else x
+test simpleIf7[IntegerConstant(3):Int]
+	def foo():Int
+		if true then 1 else 2
+		3
+	foo()
