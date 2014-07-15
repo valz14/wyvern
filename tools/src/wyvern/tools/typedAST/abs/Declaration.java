@@ -27,6 +27,12 @@ public abstract class Declaration extends AbstractTypedAST implements Environmen
 		return UnitVal.getInstance(this.getLocation());
 	}
 
+	@Override
+	public Environment analyze(Type expected, Environment env) {
+		Pair<Type,Environment> synth = synthesize(env);
+		return synth.first.subtype(expected, synth.second).get();
+	}
+
 	public abstract String getName();
 
 	public final Environment extend(Environment old, Environment against) {

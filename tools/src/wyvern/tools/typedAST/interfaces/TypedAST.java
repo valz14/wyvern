@@ -15,19 +15,19 @@ import java.util.Optional;
 public interface TypedAST extends TreeWritable, HasLocation {
 	public Type getType();
 	/**
-	 * Analytic
+	 * Analytic typecheck
 	 * @param expected
 	 * @param env
 	 * @return
 	 */
-	Environment typecheck(Type expected, Environment env);
+	Environment analyze(Type expected, Environment env);
 
 	/**
-	 * Synthetic
+	 * Synthetic typecheck
 	 * @param env
 	 * @return The synthetic type and an environment delta.
 	 */
-	s typecheck(Environment env);
+	Pair<Type, Environment> synthesize(Environment env);
 	
 	/** an interpreter */
 	Value evaluate(Environment env);
