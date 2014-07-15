@@ -6,6 +6,7 @@ import wyvern.tools.typedAST.interfaces.EnvironmentExtender;
 import wyvern.tools.typedAST.interfaces.Value;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
+import wyvern.tools.util.Pair;
 
 import java.util.Optional;
 
@@ -25,29 +26,8 @@ public abstract class Declaration extends AbstractTypedAST implements Environmen
 		// throw new RuntimeException("cannot evaluate a decl to a value - use evalDecls to get an updated environment");
 		return UnitVal.getInstance(this.getLocation());
 	}
-	
-	public final Type typecheckSelf(Environment env) {
-		return doTypecheck(env);
-	}
-	
-	public final void typecheckAll(Environment env) {
-		Environment newEnv = env;
-		for (Declaration d = this; d != null; d = d.nextDecl) {
-			d.typecheck(newEnv, Optional.empty());
-			newEnv = d.doExtend(newEnv, newEnv);
-		}
-	}
-	
-	@Override
-	public final Type typecheck(Environment env, Optional<Type> expected) {
-		Environment tEnv = this.extendType(env, env);
-		Environment nEnv = extendName(tEnv, tEnv);
-		Environment newEnv = extend(nEnv, nEnv);
-		return typecheckSelf(newEnv);
-	}
 
 	public abstract String getName();
-	protected abstract Type doTypecheck(Environment env);
 
 	public final Environment extend(Environment old, Environment against) {
 		Environment newEnv = doExtend(old, against);

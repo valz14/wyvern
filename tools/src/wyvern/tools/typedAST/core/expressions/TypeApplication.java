@@ -1,20 +1,20 @@
 package wyvern.tools.typedAST.core.expressions;
 
-import wyvern.tools.errors.FileLocation;
-import wyvern.tools.typedAST.abs.AbstractTypedAST;
-import wyvern.tools.typedAST.interfaces.TypedAST;
-import wyvern.tools.typedAST.interfaces.Value;
-import wyvern.tools.types.Environment;
-import wyvern.tools.types.Type;
-import wyvern.tools.types.extensions.TypeApp;
-import wyvern.tools.types.extensions.TypeLambda;
-import wyvern.tools.util.TreeWriter;
+		import wyvern.tools.errors.FileLocation;
+		import wyvern.tools.typedAST.abs.AbstractTypedAST;
+		import wyvern.tools.typedAST.interfaces.TypedAST;
+		import wyvern.tools.typedAST.interfaces.Value;
+		import wyvern.tools.types.Environment;
+		import wyvern.tools.types.Type;
+		import wyvern.tools.types.extensions.TypeApp;
+		import wyvern.tools.types.extensions.TypeLambda;
+		import wyvern.tools.util.TreeWriter;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
+		import java.util.HashMap;
+		import java.util.List;
+		import java.util.Map;
+		import java.util.Optional;
+		import java.util.stream.Collectors;
 
 public class TypeApplication extends AbstractTypedAST {
 	private final TypedAST src;

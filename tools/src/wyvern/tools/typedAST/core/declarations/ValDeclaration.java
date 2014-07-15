@@ -59,9 +59,13 @@ public class ValDeclaration extends Declaration implements CoreAST {
 			resolved = definitionType;
 
 		binding = new NameBindingImpl(binding.getName(), resolved);
+		boolean isSubtype;
+
 		if (binding.getType() == null) {
 			this.binding = new NameBindingImpl(binding.getName(), resolved);
-		} else if (this.definitionType != null && !this.definitionType.subtype(resolved)){
+		} else if (this.definitionType != null){
+
+			this.definitionType.subtype(resolved, env);
 			ToolError.reportError(ErrorMessage.NOT_SUBTYPE, this, this.definitionType.toString(), binding.getType().toString());
 		}
 		

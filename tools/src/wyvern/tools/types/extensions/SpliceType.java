@@ -1,6 +1,7 @@
 package wyvern.tools.types.extensions;
 
 import wyvern.tools.typedAST.transformers.Types.TypeTransformer;
+import wyvern.tools.types.Environment;
 import wyvern.tools.types.SubtypeRelation;
 import wyvern.tools.types.Type;
 import wyvern.tools.util.TreeWriter;
@@ -8,6 +9,7 @@ import wyvern.tools.util.TreeWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 
 public class SpliceType implements Type {
 	private final Type inner;
@@ -17,12 +19,12 @@ public class SpliceType implements Type {
 	}
 
 	@Override
-	public boolean subtype(Type other, HashSet<SubtypeRelation> subtypes) {
+	public Optional<Environment> subtype(Type other, Environment env, HashSet<SubtypeRelation> subtypes) {
 		throw new RuntimeException();
 	}
 
 	@Override
-	public boolean subtype(Type other) {
+	public Optional<Environment> subtype(Type other, Environment env) {
 		throw new RuntimeException();
 	}
 

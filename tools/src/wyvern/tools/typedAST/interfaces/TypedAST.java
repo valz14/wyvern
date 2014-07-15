@@ -6,16 +6,28 @@ import wyvern.tools.parsing.HasParser;
 import wyvern.tools.parsing.quotelang.QuoteParser;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
+import wyvern.tools.util.Pair;
 import wyvern.tools.util.TreeWritable;
 
 import java.util.Map;
 import java.util.Optional;
 
 public interface TypedAST extends TreeWritable, HasLocation {
+	public Type getType();
+	/**
+	 * Analytic
+	 * @param expected
+	 * @param env
+	 * @return
+	 */
+	Environment typecheck(Type expected, Environment env);
 
-	/** should call typecheck() before getType() -- except maybe for declarations */
-	Type getType();
-	Type typecheck(Environment env, Optional<Type> expected);
+	/**
+	 * Synthetic
+	 * @param env
+	 * @return The synthetic type and an environment delta.
+	 */
+	s typecheck(Environment env);
 	
 	/** an interpreter */
 	Value evaluate(Environment env);
