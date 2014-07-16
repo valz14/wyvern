@@ -63,21 +63,17 @@ public class Arrow extends AbstractTypeImpl implements ApplyableType {
 	@Override
 	public int hashCode() {
 		return 37*argument.hashCode()+result.hashCode();
-	}	
+	}
 
 	@Override
-	public boolean subtype(Type other, HashSet<SubtypeRelation> subtypes) {
-		if (super.subtype(other, subtypes)) {
-			return true;
-		}
-		
+	public Optional<Environment> subtype(Type other, Environment input, HashSet<SubtypeRelation> subtypes) {
 		if (other instanceof Arrow) {
 			Arrow oa = (Arrow) other;
-			
-			return 	oa.argument.subtype(this.argument, subtypes) &&
-					this.result.subtype(oa.result, subtypes);
+			Optional<Environment> argEnv = oa.argument.subtype(this.argument, input, subtypes);
+
+			return argEnv.flatMap(ie->result.subtype(oa.argument, ie, subtypes));
 		} else {
-			return false;
+			return Optional.empty();
 		}
 	}
 	@Override

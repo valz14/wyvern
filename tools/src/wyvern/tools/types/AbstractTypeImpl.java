@@ -5,21 +5,26 @@ import wyvern.tools.typedAST.transformers.Types.TypeTransformer;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 
 public abstract class AbstractTypeImpl implements Type {
+	@Override
+	public Optional<Environment> subtype(Type other, Environment input) {
+		return this.subtype(other, input, new HashSet<>());
+	}
 
 	@Override
-	public boolean subtype(Type other, HashSet<SubtypeRelation> subtypes) {
+	public Optional<Environment> subtype(Type other, Environment input, HashSet<SubtypeRelation> subtypes) {
 		// S-Refl
 		if (this.equals(other)) {
-			return true;
+			return Optional.of(input);
 		}
 
 		// S-Assumption
 		if (subtypes.contains(new SubtypeRelation(this, other))) {
-			return true;
+			return Optional.of(input);
 		}
-		
+
 		// S-Trans
 		HashSet<Type> t2s = new HashSet<Type>();
 		for (SubtypeRelation sr : subtypes) {
@@ -29,16 +34,11 @@ public abstract class AbstractTypeImpl implements Type {
 		}
 		for (Type t : t2s) {
 			if (subtypes.contains(new SubtypeRelation(t, other))) {
-				return true;
+				return Optional.of(input);
 			}
 		}
 
-		return false;
-	}
-
-	@Override
-	public boolean subtype(Type other) {
-		return this.subtype(other, new HashSet<SubtypeRelation>());
+		return Optional.empty();
 	}
 	
 	public boolean isSimple() {
