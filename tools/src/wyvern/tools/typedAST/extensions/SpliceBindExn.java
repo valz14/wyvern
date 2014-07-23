@@ -14,6 +14,7 @@ import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.TypeResolver;
 import wyvern.tools.types.extensions.Arrow;
+import wyvern.tools.util.Pair;
 import wyvern.tools.util.TreeWriter;
 
 import javax.lang.model.element.Name;
@@ -45,24 +46,33 @@ public class SpliceBindExn extends AbstractTypedAST implements BoundCode {
 	}
 
 	@Override
-	public Type typecheck(Environment env, Optional<Type> expected) {
+	public Environment analyze(Type expected, Environment env) {
+		Environment outerEnv = getInnerEnv(env);
+
+		Type resType = ((Arrow) expected).getResult();
+
+		return exn.analyze(resType, outerEnv);
+	}
+
+	@Override
+	public Pair<Type, Environment> synthesize(Environment env) {
+		return exn.synthesize(getInnerEnv(env));
+	}
+
+	public Environment getInnerEnv(Environment env) {
 		Environment outerEnv = env.lookupBinding("oev", TSLBlock.OuterEnviromentBinding.class)
-			.map(oeb->oeb.getStore())
-			.orElse(Environment.getEmptyEnvironment());
+				.map(oeb->oeb.getStore())
+				.orElse(Environment.getEmptyEnvironment());
 
 		List<NameBinding> newBindings = new ArrayList<>();
 		for (NameBinding binding : bindings)
 			newBindings.add(new NameBindingImpl(binding.getName(), TypeResolver.resolve(binding.getType(), env)));
 		bindings = newBindings;
 
-
-		Optional<Type> resType = expected.map(type -> ((Arrow) type).getResult());
-
-		outerEnv = outerEnv.extend(bindings.stream().reduce(Environment.getEmptyEnvironment(), Environment::extend, (a,b)->b.extend(a)));
-		Type exnType = exn.typecheck(outerEnv, resType);
-		cached = Optional.of(exnType);
-		return getType();
+		outerEnv = outerEnv.extend(bindings.stream().reduce(Environment.getEmptyEnvironment(), Environment::extend, (a, b) -> b.extend(a)));
+		return outerEnv;
 	}
+
 
 	@Override
 	public Value evaluate(Environment env) {
