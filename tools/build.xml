@@ -2,6 +2,7 @@
 <project name="wyvern" default="copper-generate" basedir=".">
     <property name="build.dir" value="build/" />  
     <property name="src.dir" value="src" />
+    <property name="doc.dir" value="doc" />
 	
 	<path id="classpath.base">
 		<pathelement location="lib/junit-4.11.jar" />
@@ -82,7 +83,11 @@
         </javac>
         <echo message="Build done" />	
     </target>
-	
+
+    <target name="doc" depends="build" description="generate documentation">
+            <javadoc sourcepath="${src.dir}" destdir="${doc.dir}"/>
+    </target>
+ 
 	<target name="test" depends="build">
 		<junit printsummary="on" haltonfailure="yes">
 			<classpath>
