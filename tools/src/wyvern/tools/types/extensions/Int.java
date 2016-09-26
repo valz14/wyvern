@@ -41,26 +41,6 @@ public class Int extends AbstractTypeImpl implements OperatableType {
 	}));
 	
 	@Override
-	public Type checkOperator(Invocation opExp, Environment env) {
-		Type type2 = opExp.getArgument().typecheck(env, Optional.empty());
-		String operatorName = opExp.getOperationName();
-		
-		if (!(legalOperators.contains(operatorName)))
-			reportError(OPERATOR_DOES_NOT_APPLY, opExp, operatorName, this.toString());
-		
-		if (!((type2 instanceof Int) || ((operatorName.equals("+")) && (type2 instanceof Str))))
-			reportError(OPERATOR_DOES_NOT_APPLY2, opExp, operatorName, this.toString(), type2.toString());
-		
-		if (isRelationalOperator(operatorName))
-			return new Bool(); //relational operations
-		else if ((operatorName.equals("+")) && (type2 instanceof Str)) {
-			return new Str(); //string concatenation
-		} else {
-			return this; //arithmetic operations
-		}
-	}
-	
-	@Override
 	public String toString() {
 		return "Int";
 	}

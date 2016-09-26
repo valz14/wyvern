@@ -38,6 +38,7 @@ public class JavaMeth extends DefDeclaration {
 		return output;
 
 	}
+
 	//WHY JAVA, WHY
 	static List<String> getNames(Constructor m) {
 		Class[] args = m.getParameterTypes();
@@ -81,12 +82,6 @@ public class JavaMeth extends DefDeclaration {
 		return null;
 	}
 
-	@Override
-	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
-		JClosure closure = new JClosure(methods, evalEnv);
-		ValueBinding vb = (ValueBinding) declEnv.lookup(getName()).get();
-		vb.setValue(closure);
-	}
 	@Override
 	public String toString() {
 		return "JMeth " + getName();

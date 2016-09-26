@@ -56,28 +56,6 @@ public class Invocation extends CachingTypedAST implements CoreAST, Assignable {
         this.location = fileLocation;
     }
 
-    @Override
-    protected Type doTypecheck(Environment env, Optional<Type> expected) {
-
-        Type receiverType = receiver.typecheck(env, Optional.empty());
-
-        if (argument != null) {
-            argument.typecheck(env, Optional.empty());
-        }
-
-        if (receiverType instanceof OperatableType) {
-            return ((OperatableType)receiverType).checkOperator(this,env);
-        } else {
-            ToolError.reportError(
-                ErrorMessage.OPERATOR_DOES_NOT_APPLY,
-                this,
-                "Trying to call a function on non OperatableType!",
-                receiverType.toString()
-            );
-            return null;
-        }
-    }
-
     public TypedAST getArgument() {
         return argument;
     }
@@ -88,47 +66,6 @@ public class Invocation extends CachingTypedAST implements CoreAST, Assignable {
 
     public String getOperationName() {
         return operationName;
-    }
-
-    @Override
-    public Value evaluate(EvaluationEnvironment env) {
-
-        Value lhs = receiver.evaluate(env);
-        if (Globals.checkRuntimeTypes && !(lhs instanceof InvokableValue)) {
-            reportEvalError(CANNOT_INVOKE, lhs.toString(), this);
-        }
-        InvokableValue receiverValue = (InvokableValue) lhs;
-        Value out = receiverValue.evaluateInvocation(this, env);
-
-        //TODO: bit of a hack
-        if (out instanceof VarValue) {
-            out = ((VarValue)out).getValue();
-        }
-        return out;
-    }
-
-    @Override
-    public void checkAssignment(Assignment ass, Environment env) {
-        Type recType = receiver.typecheck(env, Optional.empty());
-        if (!(recType instanceof ClassType)) { //TODO: Hack
-            throw new RuntimeException(
-                "Cannot assign to a field on a type without fields!"
-            );
-        }
-        ((ClassType) recType)
-            .getEnv()
-            .lookupBinding(operationName, AssignableNameBinding.class)
-            .get();
-    }
-
-    @Override
-    public Value evaluateAssignment(Assignment ass, EvaluationEnvironment env) {
-        Value lhs = receiver.evaluate(env);
-        if (!(lhs instanceof Assignable)) {
-            reportEvalError(CANNOT_INVOKE, lhs.toString(), this);
-        }
-
-        return ((Assignable)lhs).evaluateAssignment(ass, env);
     }
 
     @Override

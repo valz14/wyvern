@@ -29,44 +29,6 @@ public class JavaResolver implements ImportResolver {
 			this.resolved = resolved;
 			this.classAlias = classAlias;
 		}
-
-		@Override
-		public Environment extendTypes(Environment in) {
-			return resolved.extendType(in, in);
-		}
-
-		@Override
-		public Environment extendNames(Environment in) {
-			Optional<MetadataInnerBinding> innerBinding = in.lookupBinding("metaEnv", MetadataInnerBinding.class);
-			Environment oldMetaEnv = innerBinding.map(MetadataInnerBinding::getInnerEnv).orElse(Environment.getEmptyEnvironment());
-			EvaluationEnvironment oldEvalEnv = innerBinding.map(MetadataInnerBinding::getInnerEvalEnv).orElse(EvaluationEnvironment.EMPTY);
-			return resolved.extendName(in, in).extend(new MetadataInnerBinding(
-					bindVal(extendVal(oldEvalEnv)), resolved.extend(oldMetaEnv, oldMetaEnv)));
-		}
-
-		@Override
-		public Environment extend(Environment in) {
-			Optional<MetadataInnerBinding> innerBinding = in.lookupBinding("metaEnv", MetadataInnerBinding.class);
-			Environment oldMetaEnv = innerBinding.map(MetadataInnerBinding::getInnerEnv).orElse(Environment.getEmptyEnvironment());
-			EvaluationEnvironment oldEvalEnv = innerBinding.map(MetadataInnerBinding::getInnerEvalEnv).orElse(EvaluationEnvironment.EMPTY);
-			return resolved.extend(in, in).extend(new MetadataInnerBinding(
-					bindVal(extendVal(oldEvalEnv)), resolved.extend(oldMetaEnv, oldMetaEnv)));
-		}
-
-		@Override
-		public Type typecheck(Environment env) {
-			return resolved.typecheck(env, Optional.<Type>empty());
-		}
-
-		@Override
-		public EvaluationEnvironment extendVal(EvaluationEnvironment env) {
-			return resolved.extendWithValue(env);
-		}
-
-		@Override
-		public EvaluationEnvironment bindVal(EvaluationEnvironment env) {
-			return resolved.bindDecl(env);
-		}
 	}
 
 	private HashMap<String, JavaClassDecl> binderHashMap = new HashMap<>();

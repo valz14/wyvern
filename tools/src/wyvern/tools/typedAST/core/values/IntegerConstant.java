@@ -36,46 +36,8 @@ public class IntegerConstant extends AbstractValue implements InvokableValue, Co
 		location = loc;
 	}
 
-	@Override
-	public Type getType() {
-		return new Int();
-	}
-
 	public int getValue() {
 		return value;
-	}
-
-	@Override
-	public Value evaluateInvocation(Invocation exp, EvaluationEnvironment env) {
-		IntegerConstant intArgValue = null;
-		String operator = exp.getOperationName();
-
-		Value argValue = exp.getArgument().evaluate(env);
-		if (argValue instanceof StringConstant) {		// int + "str"
-			if (operator.equals("+")) {
-				return new StringConstant(this.value + ((StringConstant) argValue).getValue());
-			} else {
-				throw new RuntimeException("forgot to typecheck!");
-			}
-		} else if (argValue instanceof IntegerConstant) {		//int op int
-			intArgValue = (IntegerConstant)argValue;
-			switch(operator) {
-				case "+": return new IntegerConstant(value + intArgValue.value);
-				case "-": return new IntegerConstant(value - intArgValue.value);
-				case "*": return new IntegerConstant(value * intArgValue.value);
-				case "/": try { return new IntegerConstant(value / intArgValue.value); } catch (ArithmeticException e) { throw new RuntimeException(exp.getLocation() + "", e); }
-				case ">": return new BooleanConstant(value > intArgValue.value);
-				case "<": return new BooleanConstant(value < intArgValue.value);
-				case ">=": return new BooleanConstant(value >= intArgValue.value);
-				case "<=": return new BooleanConstant(value <= intArgValue.value);
-				case "==": return new BooleanConstant(value == intArgValue.value);
-				case "!=": return new BooleanConstant(value != intArgValue.value);
-				default: throw new RuntimeException("forgot to typecheck!");
-			}
-		} else {
-//			shouldn't get here
-			throw new RuntimeException("forgot to typecheck!");
-		}
 	}
 
 	private FileLocation location = FileLocation.UNKNOWN;
@@ -107,4 +69,9 @@ public class IntegerConstant extends AbstractValue implements InvokableValue, Co
 	public Expression generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {
 		return new IntegerLiteral(value, location);
 	}
+
+    @Override
+    public Type getType() {
+        return new Int();
+    }
 }

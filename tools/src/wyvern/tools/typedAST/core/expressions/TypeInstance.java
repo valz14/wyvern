@@ -32,32 +32,6 @@ public class TypeInstance extends AbstractTreeWritable implements CoreAST {
 	}
 	
 	@Override
-	public Type getType() {
-		return binding.getType();
-	}
-
-	@Override
-	public Type typecheck(Environment env, Optional<Type> expected) {
-		Type type = getType();
-		if (type == null) {
-			String name = binding.getName();
-			binding = env.lookupType(name);
-			if (binding == null)
-				reportError(TYPE_NOT_DECLARED, this, name);
-			else
-				type = binding.getType();
-		}
-		return type;
-	}
-
-	@Override
-	public Value evaluate(EvaluationEnvironment env) {
-		Value value = env.lookup(binding.getName()).get().getValue(env);
-		assert value != null;
-		return value;
-	}
-
-	@Override
 	public Map<String, TypedAST> getChildren() {
 		Map<String, TypedAST> childMap = new HashMap<>();
 		return childMap;

@@ -150,7 +150,6 @@ public class JavaClassDecl extends ClassDeclaration {
 	public JavaClassDecl(Class clazz) {
 		super(clazz.getSimpleName(), "", "", null, FileLocation.UNKNOWN);
 		classMembersEnv.setSrc((oSrc) -> () -> {
-			initalize();
 
 			//Reset as part of initialization
 			return classMembersEnv.get();
@@ -175,9 +174,7 @@ public class JavaClassDecl extends ClassDeclaration {
 						}
 					}
 				});
-
 	}
-
 
 	@Override
 	public ClassType getObjType() {
@@ -185,80 +182,11 @@ public class JavaClassDecl extends ClassDeclaration {
 	}
 
 	@Override
-	public Type doTypecheck(Environment env) {
-		updateEnv();
-		return new Unit();
-	}
-
-	@Override
-	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
-		initalize();
-		super.evalDecl(evalEnv, declEnv);
-	}
-
-	@Override
 	public DeclSequence getDecls() {
-		initalize();
 		return decls;
 	}
 
-	public Obj getClassObj() {
-		initalize();
-		return new Obj(getClassEnv(EvaluationEnvironment.EMPTY), null);
-	}
-
-	boolean initalized = false;
-	public void initalize() {
-		if (initalized)
-			return;
-		initalized = true;
-		super.decls = getDecls(this.clazz);
-		Environment emptyEnvironment = Environment.getEmptyEnvironment();
-		super.classMembersEnv.set(super.decls.extend(emptyEnvironment, emptyEnvironment));
-		super.declEvalEnv = EvaluationEnvironment.EMPTY;
-		updateEnv();
-	}
-
-	private boolean envDone = false;
-	@Override
-	public void updateEnv() {
-		if (envDone)
-			return;
-		envDone = true;
-		initalize();
-		Environment declEnv = Environment.getEmptyEnvironment();
-		Environment objEnv = getObjEnvV();
-		if (declEnv == null)
-			declEnv = Environment.getEmptyEnvironment();
-		if (objEnv == null)
-			objEnv = Environment.getEmptyEnvironment();
-		for (Declaration decl : this.getDecls().getDeclIterator()) {
-			if (decl instanceof JavaMeth) {
-				if (decl.isClassMember()) {
-					declEnv = decl.extend(declEnv, declEnv);
-					continue;
-				}
-				objEnv = decl.extend(objEnv, objEnv);
-			} else if (decl instanceof JavaField) {
-				if (decl.isClassMember()) {
-					declEnv = decl.extend(declEnv, declEnv);
-					continue;
-				}
-				objEnv = decl.extend(objEnv, objEnv);
-			} else if (decl instanceof JavaClassDecl) {
-				declEnv = decl.extend(declEnv, declEnv);
-				objEnv = decl.extend(objEnv, declEnv);
-			} else {
-				throw new RuntimeException();
-			}
-		}
-		getClassMembersEnv().set(declEnv);
-		setInstanceMembersEnv(objEnv);
-		envDone = true;
-
-		//To generate class env
-		extendName(Environment.getEmptyEnvironment(), Environment.getEmptyEnvironment());
-	}
+    private boolean envDone = false;
 
 	private static Method findHighestMethod(Class c, Method m) {
 		Class[] ifaces = c.getInterfaces();
@@ -291,12 +219,6 @@ public class JavaClassDecl extends ClassDeclaration {
     public String toString() {
         return "JavaClassDecl("+this.clazz.getName()+")";
     }
-
-	@Override
-	public EvaluationEnvironment evaluateDeclarations(EvaluationEnvironment addtlEnv) {
-		initalize();
-		return super.evaluateDeclarations(addtlEnv);
-	}
 
 	@Override
 	public Map<String, TypedAST> getChildren() {

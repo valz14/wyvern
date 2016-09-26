@@ -91,17 +91,6 @@ public class ModuleDeclaration extends Declaration implements CoreAST {
 		return name;
 	}
 
-	@Override
-	protected Type doTypecheck(Environment env) {
-		inner.typecheck(env, Optional.empty());
-
-		// TODO: Implement type checking for modules (resource vs import etc).
-		// System.out.println("DEBUG: Type checking a module declaration named " + this.name);
-		// System.out.println("DEBUG: Is it a resource module? " + this.resourceFlag);
-
-		return new Unit();
-	}
-
 	private Iterable<TypedAST> getInnerIterable() {
 		if (inner instanceof Sequence) {
 			return ((Sequence) inner).getIterator();
@@ -122,68 +111,9 @@ public class ModuleDeclaration extends Declaration implements CoreAST {
 	}
 
 	boolean extGuard = false;
-	@Override
-	protected Environment doExtend(Environment old, Environment against) {
-		if (!extGuard) {
-			dclEnv.set(inner.extend(dclEnv.get(), old.extend(dclEnv.get())));
-		}
-		return old.extend(new NameBindingImpl(name, selfType)).extend(new TypeBinding(name, subTypeType));
-	}
 
 	boolean typeGuard = false;
-	@Override
-	public Environment extendType(Environment extend, Environment against) {
-		if (!typeGuard) {
-			for (TypedAST ast : getInnerIterable()) {
-				if (ast instanceof ImportDeclaration) {
-					importEnv.set(((ImportDeclaration) ast).extendType(importEnv.get(), Globals.getStandardEnv()));
-				} else if (ast instanceof EnvironmentExtender) {
-					Environment delta = ((EnvironmentExtender) ast).extendType(Environment.getEmptyEnvironment(), importEnv.get().extend(Globals.getStandardEnv()));
-					dclEnv.set(dclEnv.get().extend(delta));
-					delta.getBindings().stream()
-							.flatMap(bndg -> (bndg instanceof TypeBinding)? Stream.of((TypeBinding)bndg) : Stream.empty())
-							.forEach(bndg -> typeEnv.set(typeEnv.get().extend(bndg)));
-				}
-			}
-			typeGuard = true;
-		}
-		return extend;
-	}
-
 	boolean nameGuard = false;
-	@Override
-	public Environment extendName(Environment env, Environment against) {
-		if (!nameGuard) {
-			for (TypedAST ast : getInnerIterable()) {
-				if (ast instanceof ImportDeclaration) {
-					importEnv.set(((ImportDeclaration) ast).extendName(importEnv.get(), Globals.getStandardEnv()));
-				} else if (ast instanceof EnvironmentExtender) {
-					dclEnv.set(((EnvironmentExtender) ast).extendName(dclEnv.get(),
-							Globals.getStandardEnv().extend(importEnv.get()).extend(dclEnv.get())));
-				}
-			}
-			nameGuard = true;
-		}
-		return env.extend(new NameBindingImpl(name, selfType)).extend(new TypeBinding(name, subTypeType));
-	}
-
-	@Override
-	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
-		return old.extend(new ValueBinding(name, selfType));
-	}
-
-	@Override
-	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
-		ValueBinding selfBinding = declEnv.lookup(name).get();
-		EvaluationEnvironment objEnv = EvaluationEnvironment.EMPTY;
-		Value selfV = new Obj(inner.evalDecl(objEnv), null);
-		selfBinding.setValue(selfV);
-	}
-
-	@Override
-	public Type getType() {
-		return new Unit();
-	}
 
 	@Override
 	public Map<String, TypedAST> getChildren() {

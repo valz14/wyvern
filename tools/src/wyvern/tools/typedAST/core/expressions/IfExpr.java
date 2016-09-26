@@ -37,16 +37,6 @@ public class IfExpr extends CachingTypedAST implements CoreAST {
     }
 
     @Override
-    public Value evaluate(EvaluationEnvironment env) {
-        for (IfClause clause : clauses) {
-            if (clause.satisfied(env)) {
-                return clause.evaluate(env);
-            }
-        }
-        return UnitVal.getInstance(location);
-    }
-
-    @Override
     public Map<String, TypedAST> getChildren() {
         Map<String, TypedAST> childMap = new HashMap<>();
         int i = 0;
@@ -71,29 +61,6 @@ public class IfExpr extends CachingTypedAST implements CoreAST {
         return location;
     }
 
-    @Override
-    protected Type doTypecheck(Environment env, Optional<Type> expected) {
-        Type lastType = null;
-        for (IfClause clause : clauses) {
-            Type clauseType = clause.typecheck(env, expected);
-            if (lastType == null) {
-                lastType = clauseType;
-                continue;
-            }
-
-            // FIXME:
-            // System.out.println("clauseType = " + clauseType);
-            // System.out.println("lastType = " + lastType);
-            if (!clauseType.subtype(lastType) && !lastType.subtype(clauseType)) {
-                ToolError.reportError(ErrorMessage.UNEXPECTED_INPUT, clause);
-            }
-        }
-        if (lastType == null) {
-            ToolError.reportError(ErrorMessage.UNEXPECTED_EMPTY_BLOCK, this);
-        }
-        return lastType;
-    }
-
     public Iterable<IfClause> getClauses() {
         return clauses;
     }
@@ -108,8 +75,6 @@ public class IfExpr extends CachingTypedAST implements CoreAST {
     }
 
     public abstract static class IfClause extends CachingTypedAST {
-        public abstract boolean satisfied(EvaluationEnvironment env);
-
         public abstract TypedAST getClause();
 
         public abstract TypedAST getBody();
@@ -149,11 +114,6 @@ public class IfExpr extends CachingTypedAST implements CoreAST {
         }
 
         @Override
-        public boolean satisfied(EvaluationEnvironment env) {
-            return ((BooleanConstant)cond.evaluate(env)).getValue();
-        }
-
-        @Override
         public TypedAST getClause() {
             return cond;
         }
@@ -166,19 +126,6 @@ public class IfExpr extends CachingTypedAST implements CoreAST {
         @Override
         protected ExpressionAST createInstance(TypedAST clause, TypedAST body) {
             return new CondClause(clause, body, location);
-        }
-
-        @Override
-        protected Type doTypecheck(Environment env, Optional<Type> expected) {
-            if (!(cond.typecheck(env, Optional.of(new Bool())).equals(new Bool()))) {
-                throw new RuntimeException();
-            }
-            return body.typecheck(env, expected);
-        }
-
-        @Override
-        public Value evaluate(EvaluationEnvironment env) {
-            return body.evaluate(env);
         }
 
         @Override
@@ -207,11 +154,6 @@ public class IfExpr extends CachingTypedAST implements CoreAST {
         }
 
         @Override
-        public boolean satisfied(EvaluationEnvironment env) {
-            return true;
-        }
-
-        @Override
         public TypedAST getClause() {
             return new IntegerConstant(1337);
         }
@@ -224,16 +166,6 @@ public class IfExpr extends CachingTypedAST implements CoreAST {
         @Override
         protected ExpressionAST createInstance(TypedAST clause, TypedAST body) {
             return new UncondClause(body, location);
-        }
-
-        @Override
-        protected Type doTypecheck(Environment env, Optional<Type> expected) {
-            return body.typecheck(env, expected);
-        }
-
-        @Override
-        public Value evaluate(EvaluationEnvironment env) {
-            return body.evaluate(env);
         }
 
         @Override

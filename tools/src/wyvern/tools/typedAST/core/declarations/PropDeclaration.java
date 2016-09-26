@@ -36,41 +36,6 @@ public class PropDeclaration extends Declaration {
 	}
 
 	@Override
-	protected Type doTypecheck(Environment env) {
-		return null;
-	}
-
-	@Override
-	protected Environment doExtend(Environment old, Environment against) {
-		return null;
-	}
-
-	@Override
-	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
-		return null;
-	}
-
-	@Override
-	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
-
-	}
-
-	@Override
-	public Environment extendType(Environment env, Environment against) {
-		return null;
-	}
-
-	@Override
-	public Environment extendName(Environment env, Environment against) {
-		return null;
-	}
-
-	@Override
-	public Type getType() {
-		return null;
-	}
-
-	@Override
 	public Map<String, TypedAST> getChildren() {
 		return null;
 	}

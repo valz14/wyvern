@@ -33,7 +33,6 @@ public class JavaClassType extends ClassType implements MetaType {
 		super(new Reference<Environment>() {
 			@Override
 			public Environment get() {
-				cd.initalize();
 				return cd.getInstanceMembersEnv();
 			}
 		}, null, new LinkedList<>(), null, "");
@@ -42,18 +41,10 @@ public class JavaClassType extends ClassType implements MetaType {
 	}
 
 	public void initalize() {
-		(decl).initalize();
 	}
 
 	public Class getInnerClass() {
-		decl.initalize();
 		return decl.getClazz();
-	}
-
-	@Override
-	public Type checkOperator(Invocation opExp, Environment env) {
-		initalize();
-		return super.checkOperator(opExp,env);
 	}
 
 	@Override
@@ -72,7 +63,6 @@ public class JavaClassType extends ClassType implements MetaType {
 
 	@Override
 	public boolean subtype(Type other) {
-		decl.initalize();
 		if (other instanceof JavaClassType
 				&& ((JavaClassType)other).decl.getClazz().equals(decl.getClazz()))
 			return true;

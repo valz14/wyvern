@@ -33,21 +33,6 @@ public class KeywordInvocation extends AbstractExpressionAST {
 	}
 
 	@Override
-	public Type getType() {
-		return null;
-	}
-
-	@Override
-	public Type typecheck(Environment env, Optional<Type> expected) {
-		return null;
-	}
-
-	@Override
-	public Value evaluate(EvaluationEnvironment env) {
-		return null;
-	}
-
-	@Override
 	public Map<String, TypedAST> getChildren() {
 		HashMap<String, TypedAST> out = new HashMap<>();
 		out.put("tgt", tgt);

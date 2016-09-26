@@ -33,10 +33,10 @@ public class ExternalFunction extends AbstractValue implements ApplyableValue, C
 		this.exec = exec;
 	}
 
-	@Override
-	public Type getType() {
-		return type;
-	}
+    @Override
+    public Type getType() {
+        return this.type;
+    }
 
 	@Override
 	public Map<String, TypedAST> getChildren() {
@@ -46,12 +46,6 @@ public class ExternalFunction extends AbstractValue implements ApplyableValue, C
 	@Override
 	public TypedAST cloneWithChildren(Map<String, TypedAST> newChildren) {
 		return this;
-	}
-
-	@Override
-	public Value evaluateApplication(Application app, EvaluationEnvironment env) {
-		Value argValue = app.getArgument().evaluate(env);
-		return exec.execute(env, argValue);
 	}
 
 	public FileLocation getLocation() {

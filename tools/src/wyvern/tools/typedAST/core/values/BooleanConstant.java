@@ -30,24 +30,8 @@ public class BooleanConstant extends AbstractValue implements InvokableValue, Co
 		this.value = b;
 	}
 
-	@Override
-	public Type getType() {
-		return new Bool(this.getLocation());
-	}
-
 	public boolean getValue() {
 		return this.value;
-	}
-
-	@Override
-	public Value evaluateInvocation(Invocation exp, EvaluationEnvironment env) {
-		BooleanConstant argValue = (BooleanConstant) exp.getArgument().evaluate(env);
-		String operator = exp.getOperationName();
-		switch(operator) {
-			case "&&": return new BooleanConstant(value && argValue.value);
-			case "||": return new BooleanConstant(value || argValue.value);
-			default: throw new RuntimeException("forgot to typecheck!");
-		}
 	}
 
 	@Override
@@ -71,4 +55,9 @@ public class BooleanConstant extends AbstractValue implements InvokableValue, Co
 		// TODO Auto-generated method stub
 		return new BooleanLiteral(value);
 	}
+
+    @Override
+    public Type getType() {
+        return new Bool(this.getLocation());
+    }
 }

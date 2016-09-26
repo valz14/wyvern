@@ -34,11 +34,6 @@ public class TupleValue extends AbstractValue implements InvokableValue {
 	}
 
 	@Override
-	public Type getType() {
-		return tuple;
-	}
-
-	@Override
 	public Map<String, TypedAST> getChildren() {
 		Map<String, TypedAST> map = new HashMap<>();
 		for (int i = 0; i < values.length; i++) {
@@ -70,21 +65,13 @@ public class TupleValue extends AbstractValue implements InvokableValue {
 	}
 
 	@Override
-	public Value evaluateInvocation(Invocation exp, EvaluationEnvironment env) {
-		String name = exp.getOperationName();
-		if (name.length() < 2)
-			ToolError.reportError(ErrorMessage.CANNOT_INVOKE, exp.getLocation());
-		if (!name.startsWith("n"))
-			ToolError.reportError(ErrorMessage.CANNOT_INVOKE, exp.getLocation());
-		int num = Integer.valueOf(name.substring(1));
-		if (num >= values.length)
-			ToolError.reportError(ErrorMessage.CANNOT_INVOKE, exp.getLocation());
-		return values[num];
-	}
-
-	@Override
 	public Expression generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    @Override
+    public Type getType() {
+        return tuple;
+    }
 }

@@ -60,35 +60,12 @@ public class DSLLit extends AbstractExpressionAST implements ExpressionAST {
 
 	public TypedAST getAST() { return (dslAST); }
 
-	@Override
 	public Type getType() {
 		return dslASTType;
 	}
 
 	private Type getDefaultType() {
 		//TODO
-		return null;
-	}
-
-	@Override
-	public Type typecheck(Environment env, Optional<Type> expected) {
-		Type dslType = expected.orElseGet(this::getDefaultType);
-
-		Value vparser =
-				Util.invokeValue(dslType.getResolvedBinding().get().getMetadata().get().get(),
-						"getParser", UnitVal.getInstance(FileLocation.UNKNOWN));
-		ExtParser parser = (ExtParser) Util.toJavaObject(vparser, ExtParser.class);
-
-		try {
-			dslAST = new TSLBlock(parser.parse(new ParseBuffer(dslText.get())));
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-		return dslAST.typecheck(env,expected);
-	}
-
-	@Override
-	public Value evaluate(EvaluationEnvironment env) {
 		return null;
 	}
 

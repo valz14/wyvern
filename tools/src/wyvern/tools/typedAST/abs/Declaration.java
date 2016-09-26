@@ -22,70 +22,7 @@ import wyvern.tools.util.EvaluationEnvironment;
 public abstract class Declaration extends AbstractTreeWritable implements EnvironmentExtender {
 	protected Declaration nextDecl = null;
 
-	/** 
-	 * Most declarations simply evaluate to unit without any computation
-	 */
-	@Override
-	public final Value evaluate(EvaluationEnvironment env) {
-		// code smell - can we eliminate this function?
-		// throw new RuntimeException("cannot evaluate a decl to a value - use evalDecls to get an updated environment");
-		return UnitVal.getInstance(this.getLocation());
-	}
-	
-	public final Type typecheckSelf(Environment env) {
-		return doTypecheck(env);
-	}
-	
-	public final void typecheckAll(Environment env) {
-		Environment newEnv = env;
-		for (Declaration d = this; d != null; d = d.nextDecl) {
-			d.typecheck(newEnv, Optional.empty());
-			newEnv = d.doExtend(newEnv, newEnv);
-		}
-	}
-	
-	@Override
-	public final Type typecheck(Environment env, Optional<Type> expected) {
-		Environment tEnv = this.extendType(env, env);
-		Environment nEnv = extendName(tEnv, tEnv);
-		Environment newEnv = extend(nEnv, nEnv);
-		return typecheckSelf(newEnv);
-	}
-
 	public abstract String getName();
-	protected abstract Type doTypecheck(Environment env);
-
-	public final Environment extend(Environment old, Environment against) {
-		Environment newEnv = doExtend(old, against);
-		if (nextDecl != null)
-			newEnv = nextDecl.extend(newEnv, newEnv);
-		return newEnv;
-	}
-	
-	public final Environment extendWithSelf(Environment old) {
-		return doExtend(old, old);
-	}
-
-	protected abstract Environment doExtend(Environment old, Environment against);
-	public abstract EvaluationEnvironment extendWithValue(EvaluationEnvironment old);
-	public abstract void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv);
-	
-	public final EvaluationEnvironment bindDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
-		evalDecl(evalEnv, declEnv);
-		return evalEnv;
-	}
-	
-	public final EvaluationEnvironment bindDecl(EvaluationEnvironment evalEnv) {
-		return bindDecl(evalEnv, evalEnv);
-	}
-	
-	public final EvaluationEnvironment evalDecl(EvaluationEnvironment env) {
-		return bindDecl(doExtendWithValue(env));
-	}
-
-	public final EvaluationEnvironment doExtendWithValue(EvaluationEnvironment old) {
-		return extendWithValue(old);
-	}
 
 	public Declaration getNextDecl() {
 		return nextDecl;

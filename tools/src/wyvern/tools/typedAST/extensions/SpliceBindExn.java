@@ -55,35 +55,6 @@ public class SpliceBindExn extends AbstractExpressionAST implements BoundCode {
 	}
 
 	@Override
-	public Type typecheck(Environment env, Optional<Type> expected) {
-		Environment outerEnv = env.lookupBinding("oev", TSLBlock.OuterTypecheckBinding.class)
-			.map(oeb->oeb.getStore())
-			.orElse(Environment.getEmptyEnvironment());
-
-		List<NameBinding> newBindings = new ArrayList<>();
-		for (NameBinding binding : bindings)
-			newBindings.add(new NameBindingImpl(binding.getName(), TypeResolver.resolve(binding.getType(), env)));
-		bindings = newBindings;
-
-
-		Optional<Type> resType = expected.map(type -> ((Arrow) type).getResult());
-
-		outerEnv = outerEnv.extend(bindings.stream().reduce(Environment.getEmptyEnvironment(), Environment::extend, (a,b)->b.extend(a)));
-		Type exnType = exn.typecheck(outerEnv, resType);
-		cached = Optional.of(exnType);
-		return getType();
-	}
-
-	@Override
-	public Value evaluate(EvaluationEnvironment env) {
-		EvaluationEnvironment outerEnv = env.lookupBinding("oev", TSLBlock.OuterEnviromentBinding.class)
-				.map(oeb->oeb.getStore())
-				.orElse(EvaluationEnvironment.EMPTY);
-
-		return new Closure(this, outerEnv);
-	}
-
-	@Override
 	public Map<String, TypedAST> getChildren() {
 		Map<String, TypedAST> result = new HashMap<>(1);
 		result.put("exn", exn);

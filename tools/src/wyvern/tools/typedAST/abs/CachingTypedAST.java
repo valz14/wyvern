@@ -9,7 +9,6 @@ import wyvern.tools.types.Type;
 public abstract class CachingTypedAST extends AbstractExpressionAST implements ExpressionAST {
     private Type type;
 
-    @Override
     public final Type getType() {
         if (type == null) {
             throw new RuntimeException("called getType() before typechecking");

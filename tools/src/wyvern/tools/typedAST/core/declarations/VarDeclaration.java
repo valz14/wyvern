@@ -61,25 +61,13 @@ public class VarDeclaration extends Declaration implements CoreAST {
 		this.location = loc;
 	}
 
-	@Override
-	protected Type doTypecheck(Environment env) {
-		if (this.definition != null) {
-			Type varType = definitionType;
-			boolean defType = this.definition.typecheck(env, Optional.of(varType)).subtype(varType);
-			if (!defType)
-				ToolError.reportError(ErrorMessage.ACTUAL_FORMAL_TYPE_MISMATCH, this);
-		}
-		return binding.getType();
-	}
-
 	public NameBinding getBinding() {
 		return binding;
 	}
 
-	@Override
-	public Type getType() {
-		return binding.getType();
-	}
+    public Type getType() {
+        return this.definitionType;
+    }
 
 	@Override
 	public String getName() {
@@ -88,28 +76,6 @@ public class VarDeclaration extends Declaration implements CoreAST {
 	
 	public TypedAST getDefinition() {
 		return definition;
-	}
-
-	@Override
-	protected Environment doExtend(Environment old, Environment against) {
-		return old.extend(binding);
-	}
-
-	@Override
-	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
-		return old.extend(new VarValueBinding(binding.getName(), binding.getType(), null));
-		//Environment newEnv = old.extend(new ValueBinding(binding.getName(), defValue));
-	}
-
-	@Override
-	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
-		VarValueBinding vb = declEnv.lookupValueBinding(binding.getName(), VarValueBinding.class).get();
-		if (definition == null) {
-            vb.assign(null);
-			return;
-		}
-		Value defValue = definition.evaluate(evalEnv);
-		vb.assign(defValue);
 	}
 
 	@Override
@@ -122,19 +88,6 @@ public class VarDeclaration extends Declaration implements CoreAST {
 	@Override
 	public TypedAST cloneWithChildren(Map<String, TypedAST> nc) {
 		return new VarDeclaration(getName(), getType(), nc.get("definition"), location);
-	}
-
-    @Override
-	public Environment extendType(Environment env, Environment against) {
-		return env;
-	}
-
-	@Override
-	public Environment extendName(Environment env, Environment against) {
-		definitionType = TypeResolver.resolve(binding.getType(), against);
-		binding = new AssignableNameBinding(binding.getName(), definitionType);
-
-		return env.extend(binding);
 	}
 
 	private FileLocation location = FileLocation.UNKNOWN;

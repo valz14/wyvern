@@ -14,7 +14,6 @@ public class Compiler {
 	public static TypedAST compileSources(String filename, List<String> sources) {
 		try {
 			TypedAST ast = (TypedAST) new Wyvern().parse(new StringReader(sources.get(0)), "test input");
-			ast.typecheck(Globals.getStandardEnv(), Optional.<Type>empty());
 			return ast;
 		} catch (IOException | CopperParserException e) {
 			throw new RuntimeException(e);

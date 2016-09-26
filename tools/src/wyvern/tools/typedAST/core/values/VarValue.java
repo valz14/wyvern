@@ -31,11 +31,6 @@ public class VarValue extends AbstractValue {
 	}
 
 	@Override
-	public Type getType() {
-		return innerValue.getType();
-	}
-
-	@Override
 	public Map<String, TypedAST> getChildren() {
 		Map<String, TypedAST> childMap = new HashMap<>();
 		childMap.put("inner", innerValue);
@@ -61,4 +56,9 @@ public class VarValue extends AbstractValue {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    @Override
+    public Type getType() {
+        return innerValue.getType();
+    }
 }

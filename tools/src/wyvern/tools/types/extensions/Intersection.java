@@ -87,33 +87,6 @@ public class Intersection implements Type, OperatableType, ApplyableType {
 	}
 
 	@Override
-	public Type checkApplication(Application application, Environment env) {
-		for (Type type : types)
-			if (type instanceof ApplyableType)
-				try {
-					return ((ApplyableType) type).checkApplication(application, env);
-				} catch (ToolError e) {
-					continue;
-				}
-		reportError(ACTUAL_FORMAL_TYPE_MISMATCH, application, application.getArgument().typecheck(env, Optional.empty()).toString(),
-                toString());
-		return null; //Unreachable
-	}
-
-	@Override
-	public Type checkOperator(Invocation opExp, Environment env) {
-		for (Type type : types)
-			if (type instanceof OperatableType)
-				try {
-					return ((OperatableType) type).checkOperator(opExp, env);
-				} catch (ToolError e) {
-					continue;
-				}
-		reportError(ACTUAL_FORMAL_TYPE_MISMATCH, opExp, opExp.getArgument().typecheck(env, Optional.empty()).toString(),
-                toString());
-		return null; //Unreachable
-	}
-	@Override
 	public Map<String, Type> getChildren() {
 		HashMap<String, Type> map = new HashMap<>();
 		for (int i = 0; i < types.size(); i++) {

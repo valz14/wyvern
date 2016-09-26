@@ -5,7 +5,7 @@ import wyvern.tools.typedAST.interfaces.TypedAST;
 
 public interface ExtParser {
 	public TypedAST parse(ParseBuffer input) throws Exception;
-	public static HasParser meta$get() {
-		return CopperTSL::new;
-	}
+	//public static HasParser meta$get() {
+	//	return CopperTSL::new;
+	//}
 }

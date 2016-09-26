@@ -136,28 +136,6 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
         return dd;
 	}
 
-    @Override
-	protected Type doTypecheck(Environment env) {
-		Environment extEnv = env;
-		for (NameBinding bind : argNames) {
-			extEnv = extEnv.extend(bind);
-		}
-		if (body != null) {
-			Type bodyType = body.typecheck(extEnv, Optional.of(((Arrow)type).getResult())); // Can be null for def inside type!
-			type = TypeResolver.resolve(type, env);
-			Type retType = ((Arrow)type).getResult();
-			if (bodyType != null &&
-					!bodyType.subtype(retType))
-				ToolError.reportError(ErrorMessage.NOT_SUBTYPE, this, bodyType.toString(), ((Arrow)type).getResult().toString());
-		}
-		return type;
-	}
-
-	@Override
-	protected Environment doExtend(Environment old, Environment against) {
-		return extendName(old, against);
-	}
-
 	@Override
 	public List<NameBinding> getArgBindings() {
 		return argNames;
@@ -168,19 +146,6 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		return body;
 	}
 
-	@Override
-	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
-		EvaluationEnvironment newEnv = old.extend(new ValueBinding(name, type));
-		return newEnv;
-	}
-
-	@Override
-	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
-		Closure closure = new Closure(this, evalEnv);
-		ValueBinding vb = (ValueBinding) declEnv.lookup(name).get();
-		vb.setValue(closure);
-	}
-
 	private FileLocation location = FileLocation.UNKNOWN;
 	
 	@Override
@@ -188,23 +153,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		return location; 
 	}
 
-	@Override
-	public Environment extendType(Environment env, Environment against) {
-		return env;
-	}
-
 	Type resolvedType = null;
-	@Override
-	public Environment extendName(Environment env, Environment against) {
-		for (int i = 0; i < argNames.size(); i++) {
-			NameBinding oldBinding = argNames.get(i);
-			argNames.set(i, new NameBindingImpl(oldBinding.getName(), TypeResolver.resolve(oldBinding.getType(), against)));
-		}
-		if (resolvedType == null)
-			resolvedType = TypeResolver.resolve(type, against);
-		return env.extend(new NameBindingImpl(name, resolvedType));
-	}
-
 
 	@Override
 	public DeclType genILType(GenContext ctx) {

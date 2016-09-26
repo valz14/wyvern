@@ -62,50 +62,9 @@ public class Instantiation extends Declaration implements CoreAST {
     }
 
     @Override
-    public Type getType() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
     public TypedAST cloneWithChildren(Map<String, TypedAST> newChildren) {
         // TODO Auto-generated method stub
         return null;
-    }
-
-    @Override
-    public Environment extendType(Environment env, Environment against) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public Environment extendName(Environment env, Environment against) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    protected Type doTypecheck(Environment env) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    protected Environment doExtend(Environment old, Environment against) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
-        // TODO Auto-generated method stub
     }
 
     @Override

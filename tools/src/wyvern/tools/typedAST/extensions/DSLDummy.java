@@ -37,21 +37,6 @@ public class DSLDummy extends AbstractExpressionAST implements ExpressionAST {
         dslDef = ast;
     }
 
-    @Override
-    public Type getType() {
-        return dslDef.getType();
-    }
-
-    @Override
-    public Type typecheck(Environment env, Optional<Type> expected) {
-        return dslDef.typecheck(env, Optional.empty());
-    }
-
-    @Override
-    public Value evaluate(EvaluationEnvironment env) {
-        return dslDef.evaluate(env);
-    }
-
 	@Override
 	public Map<String, TypedAST> getChildren() {
 		Hashtable<String, TypedAST> children = new Hashtable<>();

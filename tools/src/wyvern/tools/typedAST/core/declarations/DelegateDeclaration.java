@@ -38,11 +38,6 @@ public class DelegateDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
-	public Type getType() {
-		return type;
-	}
-
-	@Override
 	public Map<String, TypedAST> getChildren() {
 		Hashtable<String, TypedAST> children = new Hashtable<>();
 		children.put("target", target);
@@ -51,7 +46,7 @@ public class DelegateDeclaration extends Declaration implements CoreAST {
 
 	@Override
 	public TypedAST cloneWithChildren(Map<String, TypedAST> nc) {
-		return new DelegateDeclaration(getType(), nc.get("target"), this.location);
+		return new DelegateDeclaration(type, nc.get("target"), this.location);
 	}
 
 	@Override
@@ -60,55 +55,8 @@ public class DelegateDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
-	public Environment extendType(Environment env, Environment against) {
-		// TODO: fixme?
-		return env;
-	}
-
-	@Override
-	public Environment extendName(Environment env, Environment against) {
-		type = TypeResolver.resolve(type, against);
-		if (!(type instanceof RecordType)) {
-			ToolError.reportError(ErrorMessage.EXPECTED_RECORD_TYPE, this);
-		}
-		TypeType tt = ((RecordType) type).getEquivType();
-		
-		for (Map.Entry<String, Type> e : tt.getMembers().entrySet()) {
-			env = env.extend(new NameBindingImpl(e.getKey(), e.getValue()));
-		}
-		
-		return env;
-	}
-
-	@Override
 	public String getName() {
 		return "aDelegation";
-	}
-
-	@Override
-	protected Type doTypecheck(Environment env) {
-		boolean targetType = this.target.typecheck(env, Optional.of(type)).subtype(type);
-		if (!targetType)
-			ToolError.reportError(ErrorMessage.ACTUAL_FORMAL_TYPE_MISMATCH, this);
-		return type;
-	}
-
-	@Override
-	protected Environment doExtend(Environment old, Environment against) {
-		return extendName(old, against);
-	}
-
-	@Override
-	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
-		// TODO Auto-generated method stub
-		return old;
-	}
-
-	@Override
-	public void evalDecl(EvaluationEnvironment evalEnv,
-			EvaluationEnvironment declEnv) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -130,4 +78,7 @@ public class DelegateDeclaration extends Declaration implements CoreAST {
 		return null;
 	}
 
+    public Type getType() {
+        return type;
+    }
 }

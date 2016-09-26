@@ -91,24 +91,6 @@ public class ClassType extends AbstractTypeImpl implements OperatableType, Recor
 		}
 	}
 
-	@Override
-	public Type checkOperator(Invocation opExp, Environment env) {
-		// should not be any arguments - that is in a separate application at present
-		if (opExp.getArgument() != null)
-			throw new RuntimeException(opExp.getLocation().toString());
-		assert opExp.getArgument() == null;
-
-		// the operation should exist
-		String opName = opExp.getOperationName();
-		NameBinding m = declEnv.get().lookup(opName);
-
-		if (m == null)
-			reportError(OPERATOR_DOES_NOT_APPLY, opExp, opName, this.toString());
-
-		// TODO Auto-generated method stub
-		return m.getType();
-	}
-
 	public ClassDeclaration getDecl() {
 		return decl;
 	}

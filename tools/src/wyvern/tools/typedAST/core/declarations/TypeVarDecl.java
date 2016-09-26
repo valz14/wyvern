@@ -69,30 +69,6 @@ public class TypeVarDecl extends Declaration {
 		}
 
 		@Override
-		public Environment extendName(Environment env, Environment against) {
-			return env;
-		}
-
-		@Override
-		public Environment extend(Environment env, Environment against) {
-			return env;
-		}
-
-		@Override
-		public EvaluationEnvironment evalDecl(EvaluationEnvironment env) {
-			return env;
-		}
-		@Override
-		public Type typecheck(Environment env, Optional<Type> expected) {
-			return getType();
-		}
-
-		@Override
-		public Value evaluate(EvaluationEnvironment env) {
-			return UnitVal.getInstance(loc);
-		}
-
-		@Override
 		public Map<String, TypedAST> getChildren() {
 			return new HashMap<>();
 		}
@@ -145,23 +121,7 @@ public class TypeVarDecl extends Declaration {
 
 	public TypeVarDecl(String name, Type body, TypedAST metadata, FileLocation fileLocation) {
 		this.name = name;
-		this.body = new EnvironmentExtInner(fileLocation) {
-			@Override
-			public Environment extendType(Environment env, Environment against) {
-				Type type = TypeResolver.resolve(body, against);
-				return env.extend(new TypeBinding(name, type, metadataObj))
-						.extend(new LateNameBinding(name, () -> metadataObj.get().getType()));
-			}
-
-
-
-			@Override
-			public Type getType() {
-				return body;
-			}
-
-
-		};
+		this.body = new EnvironmentExtInner(fileLocation) {};
 
 		this.fileLocation = fileLocation;
 		this.metadata = new Reference<>(Optional.ofNullable(metadata));
@@ -179,53 +139,6 @@ public class TypeVarDecl extends Declaration {
 	@Override
 	public String getName() {
 		return name;
-	}
-
-	@Override
-	protected Type doTypecheck(Environment env) {
-		evalMeta(env);
-		return body.typecheck(env, Optional.<Type>empty());
-	}
-
-	@Override
-	protected Environment doExtend(Environment old, Environment against) {
-		return body.extend(old, against);
-	}
-
-	@Override
-	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
-		return body.evalDecl(old);
-	}
-
-	@Override
-	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
-		body.evalDecl(declEnv);
-	}
-
-	@Override
-	public Environment extendType(Environment env, Environment against) {
-		return body.extendType(env, against);
-	}
-
-	@Override
-	public Environment extendName(Environment env, Environment against) {
-		return body.extendName(env, against);
-	}
-
-	private void evalMeta(Environment evalEnv) {
-		MetadataInnerBinding extMetaEnv = evalEnv
-				.lookupBinding("metaEnv", MetadataInnerBinding.class).orElseGet(() -> MetadataInnerBinding.EMPTY);
-
-		Environment metaTcEnv = Globals.getStandardEnv().extend(extMetaEnv.getInnerEnv());
-		EvaluationEnvironment metaEnv = Globals.getStandardEvalEnv().extend(TypeDeclaration.attrEvalEnv).extend(extMetaEnv.getInnerEvalEnv());
-		metadata.get().map(obj->obj.typecheck(metaTcEnv, Optional.<Type>empty()));
-
-		metadataObj.set(metadata.get().map(obj -> obj.evaluate(metaEnv)).orElse(new Obj(EvaluationEnvironment.EMPTY, null)));
-	}
-
-	@Override
-	public Type getType() {
-		return null;
 	}
 
 	@Override

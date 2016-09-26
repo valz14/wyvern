@@ -28,11 +28,6 @@ public class UnitVal extends AbstractValue implements Value, CoreAST {
 	}
 	
 	@Override
-	public Type getType() {
-		return new Unit();
-	}
-	
-	@Override
 	public String toString() {
 		return "()";
 	}
@@ -56,4 +51,9 @@ public class UnitVal extends AbstractValue implements Value, CoreAST {
 	public Expression generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {
 		return Util.unitValue();
 	}
+
+    @Override
+    public Type getType() {
+        return new Unit();
+    }
 }

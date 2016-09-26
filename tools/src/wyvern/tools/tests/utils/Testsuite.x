@@ -123,10 +123,8 @@ import wyvern.tools.util.Pair;
 	start with file;
 	file ::= case:test {: LinkedList<TestCase> res = new LinkedList<>(); res.add((TestCase)test); RESULT = res; :}
 		   | case:test file:rest {: ((LinkedList<TestCase>)rest).addFirst((TestCase)test); RESULT = rest; :};
-	case ::= test_t identifier_t:name result:res dslBlock:code
-			{: RESULT = new SingleTestCase((String)name, (String)code, ((Pair<String,String>)res).first, ((Pair<String,String>)res).second); :}
-		|	 module_t test_t identifier_t:name result:res Indent_t moduleTests:tests Dedent_t
-				{: RESULT = new ModuleTestCase((String)name, (Pair<String,String>)res, (LinkedList<Pair<String,String>>)tests); :};
+	case ::= test_t identifier_t:name result:res dslBlock:code	
+		|	 module_t test_t identifier_t:name result:res Indent_t moduleTests:tests Dedent_t;
 
 	moduleTests ::= moduleTests:res moduleTest:test {: ((LinkedList<Pair<String, String>>)res).addLast((Pair<String,String>)test); RESULT = res; :}
 				|   moduleTest:test {: LinkedList<Pair<String,String>> res = new LinkedList<>(); res.add((Pair<String,String>)test); RESULT = res; :};

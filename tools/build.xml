@@ -82,6 +82,7 @@
     <target name="build" depends="copper-generate">
         <mkdir dir="${build.dir}"/>
         <javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false">
+            <compilerarg line="-Xmaxerrs 950" />
             <classpath refid="classpath.base"/>
         </javac>
         <echo message="Build done" />	
@@ -123,7 +124,8 @@
                 wyvern/tools/typedAST/core/expressions/Invocation.java
                 wyvern/tools/util/TreeWritable.java
                 wyvern/tools/tests/suites/AntRegressionTestSuite.java
-                wyvern/tools/typedAST/abs/CachingTypedAST.java"
+                wyvern/tools/typedAST/abs/CachingTypedAST.java
+                wyvern/tools/typedAST/core/evaluation/Closure.java"
             />
         </checkstyle>
     </target>

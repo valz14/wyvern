@@ -28,15 +28,11 @@ import wyvern.tools.util.TreeWriter;
 public class Closure extends AbstractValue implements ApplyableValue {
 	private BoundCode function;
 	private EvaluationEnvironment env;
+	private FileLocation location = FileLocation.UNKNOWN;
 
 	public Closure(BoundCode function, EvaluationEnvironment env) {
 		this.function = function;
 		this.env = env;
-	}
-
-	@Override
-	public Type getType() {
-		return function.getType();
 	}
 
 	@Override
@@ -53,34 +49,6 @@ public class Closure extends AbstractValue implements ApplyableValue {
 		return function.getBody();
 	}
 
-	@Override
-	public Value evaluateApplication(Application app, EvaluationEnvironment argEnv) {
-		Value argValue = app.getArgument().evaluate(argEnv);
-		EvaluationEnvironment bodyEnv = env;
-		List<NameBinding> bindings = function.getArgBindings();
-		if (bindings.size() == 1)
-			bodyEnv = bodyEnv.extend(new ValueBinding(bindings.get(0).getName(), argValue));
-		else if (bindings.size() > 1 && argValue instanceof TupleValue)
-			for (int i = 0; i < bindings.size(); i++)
-				bodyEnv = bodyEnv.extend(new ValueBinding(bindings.get(i).getName(), ((TupleValue)argValue).getValue(i)));
-		else if (bindings.size() != 0)
-			throw new RuntimeException("Something bad happened!");
-		
-		/*
-		if (app.getFunction() instanceof Variable) {
-			Variable v = (Variable) app.getFunction();
-			if (v.getName().equals("screenCap")) {
-				System.out.println("Processing closure with " + v);
-				System.out.println("function = " + function);
-				System.out.println("argValue = " + argValue);
-			}
-		}
-		*/
-		
-		return function.getBody().evaluate(bodyEnv);
-	}
-
-	private FileLocation location = FileLocation.UNKNOWN;
 	public FileLocation getLocation() {
 		return this.location;
 	}
@@ -90,4 +58,8 @@ public class Closure extends AbstractValue implements ApplyableValue {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    public Type getType() {
+        return this.function.getType();
+    }
 }

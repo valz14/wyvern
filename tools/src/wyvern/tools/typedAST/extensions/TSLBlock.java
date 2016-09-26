@@ -77,21 +77,6 @@ public class TSLBlock extends AbstractExpressionAST implements ExpressionAST {
 	}
 
 	@Override
-	public Type getType() {
-		return inner.getType();
-	}
-
-	@Override
-	public Type typecheck(Environment env, Optional<Type> expected) {
-		return inner.typecheck(Globals.getStandardEnv().extend(new OuterTypecheckBinding(env)), expected);
-	}
-
-	@Override
-	public Value evaluate(EvaluationEnvironment env) {
-		return inner.evaluate(EvaluationEnvironment.EMPTY.extend(new OuterEnviromentBinding(env)));
-	}
-
-	@Override
 	public Map<String, TypedAST> getChildren() {
 		Map<String, TypedAST> result = new HashMap<>(1);
 		result.put("inner", inner);

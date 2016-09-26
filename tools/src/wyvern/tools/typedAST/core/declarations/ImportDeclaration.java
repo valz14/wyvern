@@ -44,7 +44,6 @@ import wyvern.tools.errors.FileLocation;
 import wyvern.tools.errors.ToolError;
 import wyvern.tools.imports.ImportBinder;
 import wyvern.tools.interop.FObject;
-import wyvern.tools.tests.tagTests.TestUtil;
 import wyvern.tools.typedAST.abs.Declaration;
 import wyvern.tools.typedAST.core.binding.NameBinding;
 import wyvern.tools.typedAST.core.binding.compiler.ImportResolverBinding;
@@ -80,39 +79,6 @@ public class ImportDeclaration extends Declaration implements CoreAST {
   public URI getUri() {
     return uri;
   }
-  @Override
-  public Environment extendType(Environment env, Environment against) {
-    if (binder == null)
-      binder = against.lookupBinding(uri.getScheme(), ImportResolverBinding.class).get().getBound().resolveImport(uri);
-    return binder.extendTypes(env);
-  }
-
-  @Override
-  public Environment extendName(Environment env, Environment against) {
-    return binder.extendNames(env);
-  }
-
-  @Override
-  protected Type doTypecheck(Environment env) {
-    if(uri.getScheme().equals("wyv")) {
-      String schemeSpecificPart = uri.getSchemeSpecificPart();
-      NameBinding envModule = env.lookup(schemeSpecificPart);
-      if (envModule == null)
-        return binder.typecheck(env);
-      ClassType moduleType = (ClassType) envModule.getType();
-      if(!moduleType.isModule()) {
-        reportError(MODULE_TYPE_ERROR, this, schemeSpecificPart);
-      } else if (!isRequire() && moduleType.isResource()) {
-        reportError(MODULE_TYPE_ERROR, this, schemeSpecificPart);
-      }
-    }
-    return binder.typecheck(env);
-  }
-
-  @Override
-  public Type getType() {
-    return new Unit();
-  }
 
   @Override
   public FileLocation getLocation() {
@@ -133,21 +99,6 @@ public class ImportDeclaration extends Declaration implements CoreAST {
   @Override
   public String getName() {
     return "";
-  }
-
-  @Override
-  protected Environment doExtend(Environment old, Environment against) {
-    return binder.extend(old);
-  }
-
-  @Override
-  public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
-    return binder.extendVal(old);
-  }
-
-  @Override
-  public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
-    binder.bindVal(evalEnv);
   }
 
   @Override

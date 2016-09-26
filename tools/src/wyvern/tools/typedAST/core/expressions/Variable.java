@@ -45,65 +45,6 @@ public class Variable extends AbstractExpressionAST implements CoreAST, Assignab
     }
 
     @Override
-    public Type getType() {
-        return binding.getType();
-    }
-
-    @Override
-    public Type typecheck(Environment env, Optional<Type> expected) {
-        // System.out.println("In variable: " + binding.getName() + ":" + getType());
-
-        Type type = getType();
-
-        if (type instanceof TypeType) {
-            TypeType tt = (TypeType) type;
-            // System.out.println("tt = " + tt.getName());
-        }
-
-        if (type == null) {
-            String name = binding.getName();
-            binding = env.lookup(name);
-            if (binding == null) {
-                reportError(VARIABLE_NOT_DECLARED, this, name);
-            } else {
-                type = binding.getType();
-            }
-        }
-        return TypeResolver.resolve(type,env);
-    }
-
-    @Override
-    public Value evaluate(EvaluationEnvironment env) {
-        //Value value = binding.getValue(env);
-        Value value = env.lookup(binding.getName())
-            .orElseThrow(() -> new RuntimeException("Invalid variable name "))
-            .getValue(env);
-
-        if (value instanceof VarValue) {
-            return ((VarValue)value).getValue();
-        }
-        return value;
-    }
-
-    @Override
-    public void checkAssignment(Assignment ass, Environment env) {
-        AssignableNameBinding vb =
-                env.lookupBinding(binding.getName(), AssignableNameBinding.class)
-                    .orElseThrow(() -> new RuntimeException(
-                                "Cannot set a non-existent or immutable var"));
-    }
-
-    @Override
-    public Value evaluateAssignment(Assignment ass, EvaluationEnvironment env) {
-        Value value = ass.getValue().evaluate(env);
-        env.lookupValueBinding(binding.getName(), AssignableValueBinding.class)
-                .orElseThrow(() -> new RuntimeException("Invalid assignment"))
-                .assign(value);
-
-        return value;
-    }
-
-    @Override
     public Map<String, TypedAST> getChildren() {
         return new Hashtable<>();
     }

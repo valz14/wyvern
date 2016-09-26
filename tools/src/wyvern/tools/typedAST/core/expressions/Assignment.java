@@ -51,24 +51,6 @@ public class Assignment extends CachingTypedAST implements CoreAST {
         this.location = fileLocation;
     }
 
-    @Override
-    protected Type doTypecheck(Environment env, Optional<Type> expected) {
-        if (nextExpr == null) {
-            if (!(target instanceof Assignable)) {
-                throw new RuntimeException("Invalid target");
-            }
-            ((Assignable)target).checkAssignment(this, env);
-            Type tT = target.typecheck(env, Optional.empty());
-            Type vT = value.typecheck(env, Optional.of(tT));
-            if (!vT.subtype(tT)) {
-                ToolError.reportError(ErrorMessage.ACTUAL_FORMAL_TYPE_MISMATCH, this);
-            }
-        } else {
-            nextExpr.typecheck(env, Optional.empty());
-        }
-        return new Unit();
-    }
-
     public TypedAST getTarget() {
         return target;
     }
@@ -79,19 +61,6 @@ public class Assignment extends CachingTypedAST implements CoreAST {
 
     public TypedAST getNext() {
         return nextExpr;
-    }
-
-    @Override
-    public Value evaluate(EvaluationEnvironment env) {
-        if (!(target instanceof Assignable)) {
-            reportEvalError(VALUE_CANNOT_BE_APPLIED, target.toString(), this);
-        }
-        Value evaluated = ((Assignable) target).evaluateAssignment(this, env);
-        if (nextExpr == null) {
-            return evaluated;
-        } else {
-            return nextExpr.evaluate(env);
-        }
     }
 
     @Override

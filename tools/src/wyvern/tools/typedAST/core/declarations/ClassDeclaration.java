@@ -144,91 +144,8 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 		return objType;
 	}
 
-
-
-	protected void updateEnv() {
-		typeEquivalentEnvironmentRef.set(TypeDeclUtils.getTypeEquivalentEnvironment(getDecls(), false));
-	}
-
-	public TypeType getEquivalentType() {
-		if (equivalentType == null)
-			equivalentType = new TypeType(TypeDeclUtils.getTypeEquivalentEnvironment(getDecls(), false));
-		return equivalentType;
-	}
-
 	protected Type getClassType() {
 		return new ClassType(this);
-	}
-
-	@Override
-	public Type getType() {
-		return this.typeBinding.getType();
-	}
-
-	@Override
-	public Type doTypecheck(Environment env) {
-		// FIXME: Currently allow this and class in both class and object methods. :(
-
-		Environment genv = env.extend(new ClassBinding("class", this));
-		Environment oenv = genv.extend(new NameBindingImpl("this", getObjectType()));
-
-		if (decls != null) {
-			if (this.typeEquivalentEnvironmentRef.get() == null)
-				typeEquivalentEnvironmentRef.set(TypeDeclUtils.getTypeEquivalentEnvironment(decls,true));
-			for (Declaration decl : decls.getDeclIterator()) {
-				TypeBinding binding = new TypeBinding(nameBinding.getName(), getObjectType());
-				if (decl.isClassMember()) {
-					decl.typecheckSelf(genv.extend(binding));
-				} else {
-					decl.typecheckSelf(oenv.extend(binding));
-				}
-			}
-		}
-
-		// check the implements and class implements
-		// FIXME: Should support multiple implements statements!
-		if (!this.implementsName.equals("")) {
-			this.nameImplements = env.lookupType(this.implementsName);
-			if (nameImplements == null) {
-				ToolError.reportError(ErrorMessage.TYPE_NOT_DECLARED, this, this.implementsName);
-			}
-
-			// since there is a valid implements, check that all methods are indeed present
-			ClassType currentCT = (ClassType) this.nameBinding.getType();
-            TypeType implementsTT = (TypeType)nameImplements.getType();
-
-			if (!getEquivalentType().subtype(implementsTT)) {
-				ToolError.reportError(ErrorMessage.NOT_SUBTYPE,
-						this,
-                        this.nameBinding.getName(),
-                        nameImplements.getName());
-			}
-		}
-
-		if (!this.implementsClassName.equals("")) {
-			NameBinding nameImplementsClass = env.lookup(this.implementsClassName);
-			if (nameImplementsClass == null) {
-				ToolError.reportError(ErrorMessage.TYPE_NOT_DECLARED, this, this.implementsClassName);
-			}
-
-			// since there is a valid class implements, check that all methods are indeed present
-			ClassType currentCT = (ClassType) this.nameBinding.getType();
-            TypeType implementsCT = (TypeType) (
-					((ClassType)nameImplementsClass.getType())
-							.getEnv()
-							.lookupBinding("type", TypeDeclBinding.class)).get().getType();
-
-			if (!getEquivalentClassType().subtype(implementsCT)) {
-				ToolError.reportError(ErrorMessage.NOT_SUBTYPE,
-						this,
-                        this.nameBinding.getName(),
-                        nameImplementsClass.getName());
-			}
-		}
-
-		if (isTagged()) typecheckTags(env);
-
-		return new Unit();
 	}
 
 	private Type getObjectType() {
@@ -245,99 +162,6 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 				throw new RuntimeException();
 			}
 		}, new LinkedList<>(), getTaggedInfo(), this.getName());
-	}
-
-	@Override
-	protected Environment doExtend(Environment old, Environment against) {
-		Environment newEnv = old.extend(nameBinding).extend(typeBinding);
-
-		return newEnv;
-	}
-
-	@Override
-	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
-		EvaluationEnvironment newEnv = old
-				.extend(new ValueBinding(nameBinding.getName(), nameBinding.getType()))
-				.extend(new HackForArtifactTaggedInfoBinding(nameBinding.getName()));
-
-		//newEnv = newEnv.extend(taggedBinding);
-
-		return newEnv;
-	}
-
-	@Override
-	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
-
-		// System.out.println("Inside evalDecl for something called: " + this.getName());
-		TaggedInfo goodTI = this.getTaggedInfo();
-		if (goodTI != null) {
-			// FIXME: This is a right place to resolve the TaggedInfo case of for this tag for this class if it happens to use variables.
-			if (goodTI.hasCaseOf()) {
-				Type co = goodTI.getCaseOfTag();
-				if (co instanceof TypeInv) {
-					TypeInv ti = (TypeInv) co;
-					Type ttti = ti.getInnerType();
-					String mbr = ti.getInvName();
-					if (ttti instanceof UnresolvedType) {
-						Value objVal = evalEnv.lookup(((UnresolvedType) ttti).getName()).get().getValue(evalEnv);
-						TaggedInfo caseTag = ((Obj) objVal).getIntEnv().lookupBinding(mbr, HackForArtifactTaggedInfoBinding.class)
-								.map(b->b.getTaggedInfo()).orElseThrow(() -> new RuntimeException("Invalid tag invocation"));
-
-						// FIX THIS TAG:
-						goodTI = new TaggedInfo(caseTag, new ArrayList<TaggedInfo>());
-					}
-				}
-			}
-		}
-
-		if (declEvalEnv == null)
-			declEvalEnv = declEnv.extend(evalEnv);
-		if (goodTI != null) {
-			HackForArtifactTaggedInfoBinding hfatib = new HackForArtifactTaggedInfoBinding("this");
-			hfatib.setTaggedInfo(goodTI);
-			evalEnv = evalEnv.extend(hfatib);
-		}
-		Obj classObj = new Obj(getClassEnv(evalEnv), null); // FIXME: can be tagged too you know, not goodTI!! :)
-
-		final TaggedInfo finalTi = goodTI;
-		declEnv.lookupBinding(nameBinding.getName(), HackForArtifactTaggedInfoBinding.class).ifPresent(b->b.setTaggedInfo(finalTi));
-
-		ValueBinding vb = declEnv.lookup(nameBinding.getName())
-				.orElseThrow(() -> new RuntimeException("Internal error - Class NameBinding not initalized"));
-		vb.setValue(classObj);
-	}
-
-	public EvaluationEnvironment evaluateDeclarations(EvaluationEnvironment addtlEnv) {
-		EvaluationEnvironment thisEnv = decls.extendWithDecls(EvaluationEnvironment.EMPTY);
-		decls.bindDecls(declEvalEnv.extend(addtlEnv), thisEnv);
-
-		return thisEnv;
-	}
-
-	public EvaluationEnvironment getClassEnv(EvaluationEnvironment extEvalEnv) {
-
-		EvaluationEnvironment classEnv = EvaluationEnvironment.EMPTY;
-
-		if (decls == null)
-			return classEnv;
-
-		for (Declaration decl : decls.getDeclIterator()) {
-			if (decl.isClassMember()){
-				classEnv = decl.doExtendWithValue(classEnv);
-			}
-		}
-
-		ClassBinding thisBinding = new ClassBinding("class", this);
-		EvaluationEnvironment evalEnv = classEnv.extend(thisBinding);
-
-		for (Declaration decl : decls.getDeclIterator())
-			if (decl.isClassMember()){
-				decl.bindDecl(extEvalEnv.extend(evalEnv),classEnv);
-			}
-
-		classEnv = classEnv.extend(new ClassBinding("claasdasdass", this));
-
-		return classEnv;
 	}
 
 	public Environment getInstanceMembersEnv() {
@@ -371,27 +195,6 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 	public Reference<Environment> getClassMembersEnv() {
 		return classMembersEnv;
 	}
-
-	public Type getEquivalentClassType() {
-		if (equivalentClassType == null) {
-            List<Declaration> declsi = new LinkedList<>();
-            for (Declaration d : decls.getDeclIterator()) {
-                if (d.isClassMember())
-                    declsi.add(d);
-                if (d.isClassMember())
-                    declsi.add(d);
-            }
-			equivalentClassType = new TypeType(TypeDeclUtils.getTypeEquivalentEnvironment(new DeclSequence(declsi), true));
-        }
-		return equivalentClassType;
-	}
-
-	public EvaluationEnvironment getFilledBody(AtomicReference<Value> objRef) {
-		return evaluateDeclarations(
-				EvaluationEnvironment.EMPTY
-						.extend(new LateValueBinding("this", objRef, getType())));
-	}
-
 
 	@Override
 	public Map<String, TypedAST> getChildren() {
@@ -427,30 +230,6 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 	}
 
 	@Override
-	public Environment extendType(Environment env, Environment against) {
-		return env.extend(typeBinding);
-	}
-
-	boolean envGuard = false;
-	@Override
-	public Environment extendName(Environment env, Environment against) {
-
-		TypeBinding objBinding = new LateTypeBinding(nameBinding.getName(), this::getObjectType);
-
-		if (!envGuard && decls != null) {
-			classMembersEnv.set(Environment.getEmptyEnvironment());
-			for (Declaration decl : decls.getDeclIterator()) {
-				instanceMembersEnv.set(decl.extendType(instanceMembersEnv.get(), against.extend(objBinding)));
-				if (decl.isClassMember())
-					classMembersEnv.set(decl.extendName(classMembersEnv.get(), against.extend(objBinding)));
-				else
-					instanceMembersEnv.set(decl.extendName(instanceMembersEnv.get(), against.extend(objBinding)));
-			}
-			envGuard = true;
-		}
-		return env.extend(nameBinding);
-	}
-	@Override
 	public DeclType genILType(GenContext ctx) {
 		// TODO Auto-generated method stub
 		return null;
@@ -465,4 +244,16 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+    public Type getType() {
+        return this.typeBinding.getType();
+    }
+
+    /* TODO delete in a future date, after decoupling it with Java interop
+    public EvaluationEnvironment getFilledBody(AtomicReference<Value> objRef) {
+        return evaluateDeclarations(
+            EvaluationEnvironment.EMPTY
+                .extend(new LateValueBinding("this", objRef, getType())));
+    }
+    */
 }

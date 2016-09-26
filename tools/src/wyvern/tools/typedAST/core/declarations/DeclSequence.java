@@ -116,7 +116,6 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 			}
 
 		});
-		
 	}
 
 	public DeclSequence(final Sequence declAST) {
@@ -152,25 +151,6 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 		super(decl);
 	}
 
-	@Override
-	public Type typecheck(Environment env, Optional<Type> expected) {
-		Environment ienv = env;
-		Environment wtypes = extendType(env, env);
-		env = extendName(wtypes, wtypes);
-		for (Declaration d : this.getDeclIterator()) {
-			Environment againstEnv = env;
-			if ((d instanceof ValDeclaration) || (d instanceof VarDeclaration))
-				againstEnv = ienv;
-			env = d.extend(env, againstEnv);
-		}
-
-		for (TypedAST d : this) {
-			d.typecheck(env, Optional.empty());
-		}
-		
-		return new Unit();
-	}
-	
 	public static DeclSequence getDeclSeq(TypedAST ast) {
 		if (ast instanceof Declaration)
 			return new DeclSequence((Declaration)ast);
@@ -180,65 +160,6 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 		return null;
 	}
 
-	public final EvaluationEnvironment extendWithDecls(EvaluationEnvironment env) {
-		EvaluationEnvironment newEnv = env;
-		for (Declaration d : this.getDeclIterator()) {
-			newEnv = d.extendWithValue(newEnv);
-		}
-		return newEnv;
-	}
-	
-	public final EvaluationEnvironment evalDecls(EvaluationEnvironment env) {
-		return bindDecls(extendWithDecls(env));
-	}
-	
-	public final EvaluationEnvironment bindDecls(EvaluationEnvironment env) {
-		EvaluationEnvironment newEnv = env;
-		for (Declaration d : this.getDeclIterator()) {
-			d.evalDecl(newEnv, newEnv);
-		}
-		return newEnv;
-	}
-	
-	public final EvaluationEnvironment bindDecls(EvaluationEnvironment bodyEnv, EvaluationEnvironment declEnv) {
-		EvaluationEnvironment newEnv = declEnv;
-		for (Declaration d : this.getDeclIterator()) {
-			d.evalDecl(bodyEnv, declEnv);
-		}
-		return newEnv;
-	}
-
-	@Override
-	public Environment extendType(Environment env, Environment against) {
-		Environment nenv = env;
-		for (Iterator<Declaration> iter = this.getDeclIterator().iterator(); iter.hasNext(); ) {
-			Declaration d = iter.next();
-			nenv = d.extendType(nenv, against);
-		}
-		return nenv;
-	}
-
-	@Override
-	public Environment extendName(Environment env, Environment against) {
-		Environment nenv = env;
-		for (Declaration d : this.getDeclIterator()) {
-			nenv = d.extendName(nenv, against);
-		}
-		return nenv;
-	}
-
-	public final Environment extend(Environment old, Environment against) {
-		Environment wtypes = extendType(old, against);
-		Environment newEnv = extendName(wtypes, against);
-		for (EnvironmentExtender d : this.getEnvExts())
-			newEnv = d.extend(newEnv, against);
-		return newEnv;
-	}
-
-	@Override
-	public EvaluationEnvironment evalDecl(EvaluationEnvironment env) {
-		return evalDecls(env);
-	}
 	@Override
 	public Map<String, TypedAST> getChildren() {
 		Map<String, TypedAST> childMap = new HashMap<>();

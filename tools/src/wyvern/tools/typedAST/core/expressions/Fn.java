@@ -63,43 +63,6 @@ public class Fn extends CachingTypedAST implements CoreAST, BoundCode {
     }
 
     @Override
-    protected Type doTypecheck(Environment env, Optional<Type> expected) {
-        Type argType = null;
-        for (int i = 0; i < bindings.size(); i++) {
-            NameBinding bdgs = bindings.get(i);
-            bindings.set(
-                    i,
-                    new NameBindingImpl(
-                        bdgs.getName(),
-                        TypeResolver.resolve(bdgs.getType(), env)
-                    )
-            );
-        }
-
-        if (bindings.size() == 0) {
-            argType = new Unit();
-        } else if (bindings.size() == 1) {
-            argType = bindings.get(0).getType();
-        } else {
-            // TODO: implement multiple args
-            throw new RuntimeException("tuple args not implemented");
-        }
-
-        Environment extEnv = env;
-        for (NameBinding bind : bindings) {
-            extEnv = extEnv.extend(bind);
-        }
-
-        Type resultType = body.typecheck(extEnv, expected.map(exp -> ((Arrow)exp).getResult()));
-        return new Arrow(argType, resultType);
-    }
-
-    @Override
-    public Value evaluate(EvaluationEnvironment env) {
-        return new Closure(this, env);
-    }
-
-    @Override
     public List<NameBinding> getArgBindings() {
         return bindings;
     }

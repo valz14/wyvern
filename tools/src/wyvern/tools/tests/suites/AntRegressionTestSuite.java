@@ -36,9 +36,9 @@ import wyvern.tools.tests.StdlibTests;
         RossettaCodeTests.class,// a few of these are out of date, but some use new everything
         FFITests.class,
         OIRTests.class,
-        Illustrations.class,        // tests the new IL
+        Illustrations.class,    // tests the new IL
         StdlibTests.class,      // tests the standard library with the new IL
-        ModuleSystemTests.class,        // tests the new IL
+        ModuleSystemTests.class,// tests the new IL
     }
 )
 public class AntRegressionTestSuite {

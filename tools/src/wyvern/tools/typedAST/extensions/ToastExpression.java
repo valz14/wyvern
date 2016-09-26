@@ -30,24 +30,6 @@ public class ToastExpression extends AbstractExpressionAST implements Expression
 	}
 
 	@Override
-	public Type getType() {
-		return Util.javaToWyvType(TypedAST.class);
-	}
-
-	@Override
-	public Type typecheck(Environment env, Optional<Type> expected) {
-		exn.typecheck(env, expected);
-		return Util.javaToWyvType(TypedAST.class);
-	}
-
-	@Override
-	public Value evaluate(EvaluationEnvironment env) {
-		Value res = exn.evaluate(env);
-
-		return Util.toWyvObj(res);
-	}
-
-	@Override
 	public Map<String, TypedAST> getChildren() {
 		Map<String, TypedAST> result = new HashMap<>(1);
 		result.put("exn", exn);

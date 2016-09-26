@@ -158,18 +158,6 @@ public class Tuple extends AbstractTypeImpl implements OperatableType, TypeResol
 	}
 
 	@Override
-	public Type checkOperator(Invocation opExp, Environment env) {
-		String name = opExp.getOperationName();
-		if (name.length() < 2)
-			ToolError.reportError(ErrorMessage.CANNOT_INVOKE, opExp.getLocation());
-		if (!name.startsWith("n"))
-			ToolError.reportError(ErrorMessage.CANNOT_INVOKE, opExp.getLocation());
-		int num = Integer.valueOf(name.substring(1));
-		if (num >= types.length)
-			ToolError.reportError(ErrorMessage.CANNOT_INVOKE, opExp.getLocation());
-		return types[num];
-	}
-	@Override
 	public Map<String, Type> getChildren() {
 		HashMap<String, Type> map = new HashMap<>();
 		for (int i = 0; i < types.length; i++) {

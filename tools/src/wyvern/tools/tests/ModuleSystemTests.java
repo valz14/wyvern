@@ -29,7 +29,7 @@ import wyvern.tools.imports.extensions.WyvernResolver;
 import wyvern.tools.parsing.coreparser.ParseException;
 import wyvern.tools.tests.suites.CurrentlyBroken;
 import wyvern.tools.tests.suites.RegressionTests;
-import wyvern.tools.tests.tagTests.TestUtil;
+import wyvern.tools.tests.TestUtil;
 import wyvern.tools.typedAST.abs.Declaration;
 import wyvern.tools.typedAST.interfaces.ExpressionAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
@@ -48,91 +48,44 @@ public class ModuleSystemTests {
 	@Test
 	public void testResource() throws ParseException {
 		String program = TestUtil.readFile(PATH + "testModule.wyv");
-		TypedAST ast = TestUtil.getNewAST(program, "test input");
-		WyvernResolver.getInstance().setNewParser(true);
-		ast.typecheck(Globals.getStandardEnv(), Optional.empty());
-		ast.evaluate(Globals.getStandardEvalEnv());
+        TestUtil.interpret(program);
 	}
 
 	@Test
 	public void testImport() throws ParseException {
 		String program = TestUtil.readFile(PATH + "import.wyv");
-		TypedAST ast = TestUtil.getNewAST(program, "test input");
-		WyvernResolver.getInstance().setNewParser(true);
-		typeCheckfailWith(ast, ErrorMessage.MODULE_TYPE_ERROR);
+        TestUtil.doTestTypeFail(program);
 	}
 
 	@Test
 	public void testRequire() throws ParseException {
 		String program = TestUtil.readFile(PATH + "require.wyv");
-		TypedAST ast = TestUtil.getNewAST(program, "test input");
-		WyvernResolver.getInstance().setNewParser(true);
-		ast.typecheck(Globals.getStandardEnv(), Optional.empty());
-		ast.evaluate(Globals.getStandardEvalEnv());
+        TestUtil.interpret(program);
 	}
 
 	@Test
 	public void testRsType() throws ParseException {
 		String program = TestUtil.readFile(PATH + "rsType.wyv");
-		TypedAST ast = TestUtil.getNewAST(program, "test input");
-		WyvernResolver.getInstance().setNewParser(true);
-		ast.typecheck(Globals.getStandardEnv(), Optional.empty());
-		ast.evaluate(Globals.getStandardEvalEnv());
+        TestUtil.interpret(program);
 	}
 
 	@Test
 	public void testWyt() throws ParseException {
 		String program = TestUtil.readFile(PATH + "Log.wyt");
-		TypedAST ast = TestUtil.getNewAST(program, "test input");
-		WyvernResolver.getInstance().setNewParser(true);
-		ast.typecheck(Globals.getStandardEnv(), Optional.empty());
-		ast.evaluate(Globals.getStandardEvalEnv());
+        TestUtil.interpret(program);
 	}
 
 	@Test
 	public void testInst() throws ParseException {
 		String program = TestUtil.readFile(PATH + "inst.wyv");
-		TypedAST ast = TestUtil.getNewAST(program, "test input");
-	}
-
-	@Test
-	@Category(CurrentlyBroken.class)
-	public void testDaryaModuleExample() throws ParseException {
-		String program = TestUtil.readFile(PATH + "paper-module-example/Main.wyv");
-		TypedAST ast = TestUtil.getNewAST(program, "test input");
-		WyvernResolver.getInstance().setNewParser(true);
-		ast.typecheck(Globals.getStandardEnv(), Optional.empty());
-		ast.evaluate(Globals.getStandardEvalEnv());
-	}
-
-	/**
-	 * Attempts to typecheck the given AST and catch the given ErrorMessage.
-	 * This error being thrown indicates the test passed.
-	 *
-	 * If the error isn't thrown, the test fails.
-	 *
-	 * @param ast
-	 * @param errorMessage
-	 */
-	private static void typeCheckfailWith(TypedAST ast, ErrorMessage errorMessage) {
-		try {
-			ast.typecheck(Globals.getStandardEnv(), Optional.empty());
-		} catch (ToolError toolError) {
-			// toolError.printStackTrace(); // FIXME:
-			System.out.println(errorMessage);
-			Assert.assertEquals(errorMessage, toolError.getTypecheckingErrorMessage());
-
-			return;
-		}
-
-		Assert.fail("Should have failed with error: " + errorMessage);
+        TestUtil.interpret(program);
 	}
 
 	@Test
 	public void testADT() throws ParseException {
-		ILTests.doTestScriptModularly("modules.ListClient",
-				Util.intType(),
-				new IntegerLiteral(5));
+		TestUtil.doTestScriptModularly("modules.ListClient",
+            Util.intType(),
+            new IntegerLiteral(5));
 	}
 	
 	@Test
@@ -272,7 +225,7 @@ public class ModuleSystemTests {
 	
 	@Test
 	public void testSimpleADT() throws ParseException {
-		ILTests.doTestScriptModularly("modules.simpleADTdriver", Util.intType(), new IntegerLiteral(5));
+		TestUtil.doTestScriptModularly("modules.simpleADTdriver", Util.intType(), new IntegerLiteral(5));
 	}
 	
 }

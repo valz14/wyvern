@@ -29,21 +29,6 @@ public class JavaType extends AbstractTreeWritable implements EnvironmentExtende
 	}
 
 	@Override
-	public Type getType() {
-		return equivType;
-	}
-
-	@Override
-	public Type typecheck(Environment env, Optional<Type> expected) {
-		return equivType;
-	}
-
-	@Override
-	public Value evaluate(EvaluationEnvironment env) {
-		return null;
-	}
-
-	@Override
 	public Map<String, TypedAST> getChildren() {
 		return new HashMap<String, TypedAST>();
 	}
@@ -56,27 +41,5 @@ public class JavaType extends AbstractTreeWritable implements EnvironmentExtende
     @Override
 	public FileLocation getLocation() {
 		return FileLocation.UNKNOWN;
-	}
-
-	@Override
-	public Environment extend(Environment env, Environment against) {
-		return env
-				.extend(new TypeBinding(name, equivType))
-				.extend(new NameBindingImpl(name, equivType));
-	}
-
-	@Override
-	public Environment extendType(Environment env, Environment against) {
-		return env;
-	}
-
-	@Override
-	public Environment extendName(Environment env, Environment against) {
-		return env;
-	}
-
-	@Override
-	public EvaluationEnvironment evalDecl(EvaluationEnvironment env) {
-		return env;
 	}
 }

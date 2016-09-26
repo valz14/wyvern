@@ -44,12 +44,6 @@ public class TypeAbbrevDeclaration extends Declaration implements CoreAST {
 	}
 	
 	@Override
-	public Type getType() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Map<String, TypedAST> getChildren() {
 		// TODO Auto-generated method stub
 		return null;
@@ -68,33 +62,9 @@ public class TypeAbbrevDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
-	public Environment extendType(Environment env, Environment against) {
-		// TODO Auto-generated method stub
-		return env;
-	}
-
-	@Override
-	public Environment extendName(Environment env, Environment against) {
-		// TODO Auto-generated method stub
-		return env;
-	}
-
-	@Override
 	public String getName() {
 		// TODO Auto-generated method stub
 		return alias;
-	}
-
-	@Override
-	protected Type doTypecheck(Environment env) {
-		if (resolveReferenceType(env) != null) {
-			return new Unit();
-		}
-		else {
-			ToolError.reportError(ErrorMessage.TYPE_NOT_DEFINED, this);
-			return null;
-		}
-		
 	}
 
 	private Type resolveReferenceType(Environment env) {
@@ -102,24 +72,6 @@ public class TypeAbbrevDeclaration extends Declaration implements CoreAST {
 		return resolved_type;
 	}
 	
-	@Override
-	protected Environment doExtend(Environment old, Environment against) {
-		return old.extend(new TypeBinding(alias, resolveReferenceType(old)));
-	}
-
-	@Override
-	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
-		// TODO Auto-generated method stub
-		return old;
-	}
-
-	@Override
-	public void evalDecl(EvaluationEnvironment evalEnv,
-			EvaluationEnvironment declEnv) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	@Override
 	public DeclType genILType(GenContext ctx) {
         if (this.reference == null) {

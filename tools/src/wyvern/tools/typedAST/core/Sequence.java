@@ -127,39 +127,11 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 		this.exps.add(check(exp));
 	}
 	
-	@Override
 	public Type getType() {
-		if (retType == null)
+		if (retType == null) {
 			ToolError.reportError(ErrorMessage.TYPE_NOT_DEFINED, this);
+        }
 		return retType;
-	}
-
-	@Override
-	public Type typecheck(Environment env, Optional<Type> expected) {
-		Type lastType = new Unit();
-		for (TypedAST t : exps) {
-			if (t == null) continue;
-			lastType = t.typecheck(env, (exps.getLast() == t)?expected:Optional.empty());
-			if (t instanceof EnvironmentExtender)
-				env = ((EnvironmentExtender) t).extend(env, env);
-		}
-		retType = lastType;
-		return lastType;
-	}
-
-	@Override
-	public Value evaluate(EvaluationEnvironment env) {
-		EvaluationEnvironment iEnv = env;
-		Value lastVal = UnitVal.getInstance(this.getLocation());
-		for (TypedAST exp : this) {
-			if (exp == null) continue;
-			if (exp instanceof EnvironmentExtender) {
-				iEnv = ((EnvironmentExtender)exp).evalDecl(iEnv);
-			} else {
-				lastVal = exp.evaluate(iEnv);
-			}
-		}
-		return lastVal;
 	}
 
 	@Override

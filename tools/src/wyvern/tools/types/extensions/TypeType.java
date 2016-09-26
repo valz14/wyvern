@@ -63,32 +63,6 @@ public class TypeType extends AbstractTypeImpl implements OperatableType, Record
 		return res;
 	}
 
-	@Override
-	public Type checkOperator(Invocation opExp, Environment env) {
-		// should not be any arguments - that is in a separate application at present
-		if (opExp.getArgument() != null)
-			throw new RuntimeException(opExp.getLocation().toString());
-		assert opExp.getArgument() == null;
-		
-		// the operation should exist
-		String opName = opExp.getOperationName();
-
-		NameBinding m = typeDeclEnv.get().lookup(opName);
-		TypeBinding t = typeDeclEnv.get().lookupType(opName);
-		
-		// Accessing type members should be OK!!! // FIXME:
-		if (m == null && t == null)
-			throw new RuntimeException("Invalid operation "+opName+" on type " + this);
-		
-		// TODO Auto-generated method stub
-		
-		if (m != null) {
-			return m.getType();
-		} else {
-			return t.getType();
-		}
-	}
-	
 	public Map<String, Type> getMembers() {
 		HashMap<String, Type> thisMembers = new HashMap<>();
 		for (Binding b : typeDeclEnv.get().getBindings()) {

@@ -24,20 +24,6 @@ import wyvern.tools.util.EvaluationEnvironment;
 import wyvern.tools.util.TreeWriter;
 
 public class JNull extends AbstractExpressionAST {
-	@Override
-	public Type getType() {
-		return new JNullType();
-	}
-
-	@Override
-	public Type typecheck(Environment env, Optional<Type> expected) {
-		return new JNullType();
-	}
-
-	@Override
-	public Value evaluate(EvaluationEnvironment env) {
-		return UnitVal.getInstance(FileLocation.UNKNOWN);
-	}
 
 	@Override
 	public Map<String, TypedAST> getChildren() {

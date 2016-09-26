@@ -10,11 +10,20 @@ import org.junit.Test;
 import org.junit.experimental.categories.Category;
 
 import wyvern.stdlib.Globals;
+import wyvern.target.corewyvernIL.expression.IExpr;
+import wyvern.target.corewyvernIL.expression.IntegerLiteral;
+import wyvern.target.corewyvernIL.expression.Variable;
+import wyvern.target.corewyvernIL.support.EvalContext;
+import wyvern.target.corewyvernIL.support.GenContext;
+import wyvern.target.corewyvernIL.support.TypeContext;
+import wyvern.target.corewyvernIL.support.Util;
 import wyvern.tools.parsing.coreparser.ParseException;
 import wyvern.tools.parsing.coreparser.ParseUtils;
 import wyvern.tools.parsing.coreparser.WyvernParser;
+import wyvern.tools.tests.TestUtil;
+import wyvern.tools.tests.suites.CurrentlyBroken;
 import wyvern.tools.tests.suites.RegressionTests;
-import wyvern.tools.tests.tagTests.TestUtil;
+import wyvern.tools.typedAST.core.Sequence;
 import wyvern.tools.typedAST.core.values.IntegerConstant;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.interfaces.Value;
@@ -44,11 +53,8 @@ public class CoreParserTests {
 		//WyvernParser wp = new WyvernParser(tm);
 		WyvernParser<TypedAST,Type> wp = ParseUtils.makeParser("test input", r);
 		TypedAST testAST = wp.Expression(null);
-		Type resultType = testAST.typecheck(Globals.getStandardEnv(), Optional.<Type>empty());
-		Assert.assertEquals(resultType, new Int());
-		Value out = testAST.evaluate(Globals.getStandardEvalEnv());
-		int finalRes = ((IntegerConstant)out).getValue();
-		Assert.assertEquals(3, finalRes);
+       
+        TestUtil.doTest(input, Util.intType(), new IntegerLiteral(3));
 	}
 	
 	@Test
@@ -61,7 +67,10 @@ public class CoreParserTests {
 				     + "stdout.print(y)\n"
 				     + "stdout.print(z)\n";
 		TypedAST ast = TestUtil.getNewAST(input, "test input");
-		TestUtil.evaluateNew(ast);
+        GenContext genCtx = GenContext.empty().extend("system", new Variable("system"), null);
+        IExpr program = ((Sequence) ast).generateIL(genCtx, null, null);
+        TypeContext ctx = TypeContext.empty();
+        program.interpret(EvalContext.empty());
 	}
 	
 	@Test
@@ -71,10 +80,7 @@ public class CoreParserTests {
 				     + "        5\n"
 				     + "obj.getValue()\n"
 				     ;
-		TypedAST ast = TestUtil.getNewAST(input, "test input");
-		Value out = TestUtil.evaluateNew(ast);
-		int finalRes = ((IntegerConstant)out).getValue();
-		Assert.assertEquals(5, finalRes);
+        TestUtil.doTest(input, Util.intType(), new IntegerLiteral(5));
 	}
 	
 	@Test
@@ -83,11 +89,9 @@ public class CoreParserTests {
 				     + "    val v:Int = 5\n"
 				     + "obj.v\n"
 				     ;
-		TypedAST ast = TestUtil.getNewAST(input, "test input");
-		Value out = TestUtil.evaluateNew(ast);
-		int finalRes = ((IntegerConstant)out).getValue();
-		Assert.assertEquals(5, finalRes);
+        TestUtil.doTest(input, Util.intType(), new IntegerLiteral(5));
 	}
+
 	@Test
 	public void testVarField() throws ParseException {
 		String input = "val obj = new\n"
@@ -95,10 +99,7 @@ public class CoreParserTests {
 				     + "obj.v = 3\n"
 				     + "obj.v\n"
 				     ;
-		TypedAST ast = TestUtil.getNewAST(input, "test input");
-		Value out = TestUtil.evaluateNew(ast);
-		int finalRes = ((IntegerConstant)out).getValue();
-		Assert.assertEquals(3, finalRes);
+        TestUtil.doTest(input, Util.intType(), new IntegerLiteral(3));
 	}
 	
 	@Test
@@ -111,10 +112,6 @@ public class CoreParserTests {
 				     + "        5\n"
 				     + "obj.getValue()\n"
 				     ;
-		TypedAST ast = TestUtil.getNewAST(input, "test input");
-		Value out = TestUtil.evaluateNew(ast);
-		int finalRes = ((IntegerConstant)out).getValue();
-		Assert.assertEquals(5, finalRes);
-	}	
-	
+        TestUtil.doTest(input, Util.intType(), new IntegerLiteral(5));
+	}
 }

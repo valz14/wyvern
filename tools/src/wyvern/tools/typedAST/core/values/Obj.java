@@ -50,10 +50,10 @@ public class Obj extends AbstractValue implements InvokableValue, Assignable {
         typeEquivEnv = TypeDeclUtils.getTypeEquivalentEnvironment(intEnv.get().toTypeEnv());
     }
 
-	@Override
 	public Type getType() {
-		if (typeEquivEnv == null)
+		if (typeEquivEnv == null) {
         	updateTee();
+        }
 		return new ClassType(intEnv.map(EvaluationEnvironment::toTypeEnv), new Reference<>(typeEquivEnv), new LinkedList<String>(), taggedInfo, null);
 	}
 
@@ -67,41 +67,9 @@ public class Obj extends AbstractValue implements InvokableValue, Assignable {
 		return this;
 	}
 
-	@Override
-	public Value evaluateInvocation(Invocation exp, EvaluationEnvironment env) {
-		String operation = exp.getOperationName();
-		return getIntEnv().lookup(operation).orElseThrow(() -> new RuntimeException("Cannot find class member"))
-				.getValue(env.extend(new ValueBinding("this", this)));
-	}
-	
+    @Deprecated
 	public EvaluationEnvironment getIntEnv() {
 		return intEnv.get();
-	}
-
-	@Override
-	public void checkAssignment(Assignment ass, Environment env) {
-		if (!(ass.getTarget() instanceof Invocation))
-			throw new RuntimeException("Something really, really weird happened.");
-		String operation = ((Invocation) ass.getTarget()).getOperationName();
-		intEnv.get().lookupValueBinding(operation, AssignableValueBinding.class)
-				.orElseThrow(() -> new RuntimeException("Cannot set a non-existent or immutable var"));
-
-		return;
-	}
-
-	@Override
-	public Value evaluateAssignment(Assignment ass, EvaluationEnvironment env) {
-		if (!(ass.getTarget() instanceof Invocation))
-			throw new RuntimeException("Something really, really weird happened.");
-		String operation = ((Invocation) ass.getTarget()).getOperationName();
-
-		Value newValue = ass.getValue().evaluate(env);
-
-		intEnv.get().lookupValueBinding(operation, AssignableValueBinding.class)
-				.orElseThrow(() -> new RuntimeException("Trying to assign a non-var"))
-				.assign(newValue);
-
-		return newValue;
 	}
 
 	private FileLocation location = FileLocation.UNKNOWN;

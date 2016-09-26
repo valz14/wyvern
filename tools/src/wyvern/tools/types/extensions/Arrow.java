@@ -43,18 +43,6 @@ public class Arrow extends AbstractTypeImpl implements ApplyableType {
 	}
 	
 	@Override
-	public Type checkApplication(Application application, Environment env) {
-		Type actualType = application.getArgument().typecheck(env, Optional.of(argument));
-		argument = TypeResolver.resolve(argument, env);
-		
-		// System.out.println(argument); //FIXME:
-		
-		if (!actualType.subtype(argument))
-			reportError(ACTUAL_FORMAL_TYPE_MISMATCH, application,actualType.toString(),argument.toString());
-		return result;
-	}
-	
-	@Override
 	public String toString() {
 		String argString = (argument == null)?null:argument.toString();
 		if (!argument.isSimple())

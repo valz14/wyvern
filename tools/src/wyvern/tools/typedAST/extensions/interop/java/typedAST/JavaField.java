@@ -53,12 +53,6 @@ public class JavaField extends Declaration {
         return src.getName();
     }
 
-    @Override
-    protected Type doTypecheck(Environment env) {
-        return Util.javaToWyvType(src.getType());
-    }
-
-    @Override
     protected Environment doExtend(Environment old, Environment against) {
         Environment newEnv = old;
         return newEnv;
@@ -87,23 +81,7 @@ public class JavaField extends Declaration {
 		}
 	}
 
-    @Override
-    public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
-		EvaluationEnvironment newEnv = old.extend(new JavaFieldValueBinding(nameBinding.getName(), nameBinding.getType()));
-        return newEnv;
-    }
-
-
 	private boolean binding = false;
-    @Override
-    public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
-		//Not actually needed.
-    }
-
-    @Override
-    public Type getType() {
-        return Util.javaToWyvType(src.getType());
-    }
 
 	@Override
 	public Map<String, TypedAST> getChildren() {
@@ -119,16 +97,6 @@ public class JavaField extends Declaration {
     public FileLocation getLocation() {
         return FileLocation.UNKNOWN;
     }
-
-	@Override
-	public Environment extendType(Environment env, Environment against) {
-		return env;
-	}
-
-	@Override
-	public Environment extendName(Environment env, Environment against) {
-		return env.extend(nameBinding);
-	}
 
 	@Override
 	public boolean isClassMember() {

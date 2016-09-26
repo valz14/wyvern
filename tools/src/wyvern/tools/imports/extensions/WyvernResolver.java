@@ -58,8 +58,8 @@ public class WyvernResolver implements ImportResolver {
 	
 	private class WyvernBinder implements ImportBinder {
 
-
 		private TypedAST res;
+
 
 		public WyvernBinder(String filename, Reader source) {
 			res = null;
@@ -71,96 +71,19 @@ public class WyvernResolver implements ImportResolver {
 			} catch (IOException | CopperParserException | ParseException e) {
 				throw new RuntimeException(e);
 			}
-			res.typecheck(Globals.getStandardEnv(), Optional.<Type>empty());
 			res = new DSLTransformer().transform(res);
 		}
 
 		private Environment tcMiBEnv = Environment.getEmptyEnvironment();
 		private Environment getTcMiBEnv() { return tcMiBEnv; }
-
-
-		private EvaluationEnvironment MiBEnv = EvaluationEnvironment.EMPTY;
-		private EvaluationEnvironment getMiBEnv() { return MiBEnv; }
+        private EvaluationEnvironment MiBEnv = EvaluationEnvironment.EMPTY;
+        private EvaluationEnvironment getMiBEnv() { return MiBEnv; }
 
 		private MetadataInnerBinding mib = new MetadataInnerBinding(new Reference<>(this::getMiBEnv), new Reference<>(this::getTcMiBEnv));
 
 		boolean etping = false;
-		@Override
-		public Environment extendTypes(Environment in) {
-			if (etping) {
-				throw new RuntimeException("Cyclic dependency");
-			}
-			etping = true;
-			if (res instanceof EnvironmentExtender) {
-				in = ((EnvironmentExtender) res).extendType(in, Globals.getStandardEnv());
-				tcMiBEnv = ((EnvironmentExtender) res).extendType(tcMiBEnv, Globals.getStandardEnv());
-			}
-			etping = false;
-			return in;
-		}
-
 		boolean enaming = false;
-		@Override
-		public Environment extendNames(Environment in) {
-			if (enaming) {
-				throw new RuntimeException("Cyclic dependency");
-			}
-			enaming = true;
-			if (res instanceof EnvironmentExtender) {
-				in = ((EnvironmentExtender) res).extendName(in, Globals.getStandardEnv());
-				tcMiBEnv = ((EnvironmentExtender) res).extendName(tcMiBEnv, Globals.getStandardEnv());
-			}
-			enaming = false;
-			return in.extend(mib);
-		}
-
 		boolean extending = false;
-		@Override
-		public Environment extend(Environment in) {
-			if (extending) {
-				throw new RuntimeException("Cyclic dependency");
-			}
-			extending = true;
-			if (res instanceof EnvironmentExtender)
-				in = ((EnvironmentExtender) res).extend(in, in);
-			extending = false;
-			return in.extend(mib.from(in));
-		}
-
-		boolean typechecking = false;
-		@Override
-		public Type typecheck(Environment env) {
-			if (typechecking) {
-				throw new RuntimeException("Cyclic dependency");
-			}
-			typechecking = true;
-			Type resu = res.typecheck(env, Optional.<Type>empty());
-
-			if (res instanceof EnvironmentExtender) {
-				MiBEnv = ((EnvironmentExtender) res).evalDecl(MiBEnv);
-			}
-			typechecking = false;
-			return resu;
-		}
-
-		boolean evaling = false;
-		@Override
-		public EvaluationEnvironment extendVal(EvaluationEnvironment env) {
-			if (extending) {
-				throw new RuntimeException("Cyclic dependency");
-			}
-			extending = true;
-			if (res instanceof EnvironmentExtender)
-				env = ((EnvironmentExtender) res).evalDecl(env);
-			extending = false;
-			return env;
-		}
-
-		@Override
-		public EvaluationEnvironment bindVal(EvaluationEnvironment env) {
-			//Bound as part of eval
-			return env;
-		}
 	}
 
 	private HashMap<String, WyvernBinder> savedBinders = new HashMap<>();

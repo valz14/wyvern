@@ -75,7 +75,7 @@ import wyvern.target.oir.expressions.OIRNew;
 import wyvern.target.oir.expressions.OIRRational;
 import wyvern.target.oir.expressions.OIRString;
 import wyvern.target.oir.expressions.OIRVariable;
-import wyvern.tools.tests.tagTests.TestUtil;
+import wyvern.tools.tests.TestUtil;
 
 public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
   private int classCount = 0;

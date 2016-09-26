@@ -325,18 +325,6 @@ public class TaggedInfo {
 
 	}
 
-	public static void dumpall(Environment env) {
-		System.out.println("DUMP OF TAGS:");
-		for (TaggedInfo ti : TaggedInfo.globalTagStoreList) {
-			System.out.println("Tag: " + ti);
-			System.out.println("Tag.td = " + ti.td);
-			if (ti.td!=null) {
-				System.out.println(ti.td.getType());
-			}
-		}
-		System.out.println("END OF DUMP.");
-	}
-
 	@Override
 	public String toString() {
 		return "TaggedInfo [tagName=" + tagName + ", tagType=" + tagType + ", caseOf=" + caseOf

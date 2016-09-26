@@ -9,13 +9,7 @@ import wyvern.tools.util.EvaluationEnvironment;
 
 public abstract class AbstractValue extends AbstractExpressionAST implements Value {
 
-	@Override
 	public Type typecheck(Environment env, Optional<Type> expected) {
 		return getType();
-	}
-
-	@Override
-	public Value evaluate(EvaluationEnvironment env) {
-		return this;
 	}
 }

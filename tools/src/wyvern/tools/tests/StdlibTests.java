@@ -22,12 +22,12 @@ public class StdlibTests {
 				 + "val threeString = r.findPrefixOf(\"3 men in a tub\")\n"
 				 + "Int.from(threeString.getOrElse(() => 5))"
 				 ;
-		ILTests.doTestInt(input, 3);
+		TestUtil.doTestInt(input, 3);
 	}
 
 	@Test
 	public void testRegexLexer() throws ParseException {
-		ILTests.doTestScriptModularly("tsls.lexer", Util.stringType(), new StringLiteral("*"));
+		TestUtil.doTestScriptModularly("tsls.lexer", Util.stringType(), new StringLiteral("*"));
 	}
 
 }
