@@ -13,7 +13,6 @@ import wyvern.tools.typedAST.extensions.SpliceExn;
 import wyvern.tools.typedAST.extensions.interop.java.Util;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.types.Type;
-import wyvern.tools.types.extensions.SpliceType;
 
 public class LangUtil {
 
@@ -34,8 +33,9 @@ public class LangUtil {
 
 
 	public static int strCharInt(String src) {
-		if (src.length() != 1)
+		if (src.length() != 1) {
 			throw new RuntimeException();
+		}
 		return src.charAt(0);
 	}
 

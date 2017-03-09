@@ -27,8 +27,9 @@ public class JObject implements FObject {
 		for (int i = 0; i < methods.length; ++i) {
 			Method m = methods[i];
 			if (m.getName().equals(methodName) && isApplicable(m, parameterTypes)) {
-				if (bestMethod == null || isMorePrecise(m, bestMethod))
+				if (bestMethod == null || isMorePrecise(m, bestMethod)) {
 					bestMethod = m;
+				}
 				candidates.add(m);
 			}
 		}
@@ -54,8 +55,9 @@ public class JObject implements FObject {
 
 	private boolean isApplicable(Method m, Class<?>[] parameterTypes) {
 		Class<?>[] formalTypes = m.getParameterTypes();
-		if (formalTypes.length != parameterTypes.length)
+		if (formalTypes.length != parameterTypes.length) {
 			return false;
+		}
 		for (int i = 0; i < formalTypes.length; ++i) {
 			if (!mapPrimitives(formalTypes[i]).isAssignableFrom(parameterTypes[i])) {
 				return false;
@@ -67,24 +69,25 @@ public class JObject implements FObject {
 	private Class<?> mapPrimitives(Class<?> class1) {
 		if (class1.isPrimitive()) {
 			// boolean, byte, char, short, int, long, float, and double. 
-			if (class1 == boolean.class)
+			if (class1 == boolean.class) {
 				return Boolean.class;
-			else if (class1 == byte.class)
+			} else if (class1 == byte.class) {
 				return Byte.class;
-			else if (class1 == char.class)
+			} else if (class1 == char.class) {
 				return Character.class;
-			else if (class1 == short.class)
+			} else if (class1 == short.class) {
 				return Short.class;
-			else if (class1 == int.class)
+			} else if (class1 == int.class) {
 				return Integer.class;
-			else if (class1 == long.class)
+			} else if (class1 == long.class) {
 				return Long.class;
-			else if (class1 == float.class)
+			} else if (class1 == float.class) {
 				return Float.class;
-			else if (class1 == double.class)
+			} else if (class1 == double.class) {
 				return Double.class;
-			else
+			} else {
 				throw new RuntimeException("mapping not defined for " + class1);
+			}
 		} else {
 			return class1;
 		}

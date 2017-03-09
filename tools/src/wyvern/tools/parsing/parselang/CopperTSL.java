@@ -134,8 +134,9 @@ public class CopperTSL implements ExtParser {
 		CompilerLogger logger = new CompilerLogger(new PrintCompilerLogHandler(System.out) {
 			@Override
 			public void handleMessage(CompilerLogMessage message) {
-				if (message instanceof GrammarSyntaxError)
+				if (message instanceof GrammarSyntaxError) {
 					throw new CopperGrammarException((GrammarSyntaxError)message);
+				}
 				super.handleMessage(message);
 			}
 		});
@@ -163,7 +164,7 @@ public class CopperTSL implements ExtParser {
 
 		Environment ntEnv = res.getGrammars().stream().map(res::getGrammar)
 				.flatMap(grm -> grm.getElementsOfType(CopperElementType.NON_TERMINAL).stream().map(grm::getGrammarElement))
-				.map(this::parseType).map(pair->(Pair<String, Type>)pair)
+				.map(this::parseType).map(pair->pair)
 				.collect(() -> new Reference<Environment>(Environment.getEmptyEnvironment()),
 						(env, elem) -> env.set(env.get().extend(new NameBindingImpl(elem.first(), elem.second()))),
 						(a, b) -> a.set(a.get().extend(b.get()))).get();
@@ -171,7 +172,7 @@ public class CopperTSL implements ExtParser {
 		final Environment savedNtEnv = ntEnv;
 		ntEnv = res.getGrammars().stream().map(res::getGrammar)
 				.flatMap(grm -> grm.getElementsOfType(CopperElementType.TERMINAL).stream().map(grm::getGrammarElement))
-				.map(this::parseType).map(pair -> (Pair<String, Type>) pair)
+				.map(this::parseType).map(pair -> pair)
 				.collect(() -> new Reference<Environment>(savedNtEnv),
 						(env, elem) -> env.set(env.get().extend(new NameBindingImpl(elem.first(), elem.second()))),
 						(a, b) -> a.set(a.get().extend(b.get()))).get();
@@ -208,10 +209,11 @@ public class CopperTSL implements ExtParser {
 
 		String pic = res.getParserInitCode();
 		TypedAST parserInitAST;
-		if (pic == null)
+		if (pic == null) {
 			parserInitAST = new Sequence();
-		else
+		} else {
 			parserInitAST = LangUtil.splice(new IParseBuffer(pic), "parser init");
+		}
 		String defNamePIA = "initGEN" + methNum.get();
 		toGenDefs.put(defNamePIA, parserInitAST);
 		methNum.set(methNum.get()+1);
@@ -219,10 +221,11 @@ public class CopperTSL implements ExtParser {
 
 		String ppc = res.getPostParseCode();
 		TypedAST postParseAST;
-		if (ppc == null)
+		if (ppc == null) {
 			postParseAST = new Sequence();
-		else
+		} else {
 			postParseAST = LangUtil.splice(new IParseBuffer(ppc), "post parse");
+		}
 		String defNameP = "postGEN" + methNum.get();
 		toGenDefs.put(defNameP, postParseAST);
 		methNum.set(methNum.get() + 1);
@@ -285,7 +288,7 @@ public class CopperTSL implements ExtParser {
 
 		JavaCompiler jc = javax.tools.ToolProvider.getSystemJavaCompiler();
 
-		List<StringFileObject> compilationUnits = Arrays.asList(new StringFileObject(javaClassName, target.toString()));
+		Arrays.asList(new StringFileObject(javaClassName, target.toString()));
 		StoringClassLoader loader = new StoringClassLoader(this.getClass().getClassLoader());
 		StoringFileManager sfm = new StoringFileManager(jc.getStandardFileManager(null, null, null),
 				loader);
@@ -294,8 +297,9 @@ public class CopperTSL implements ExtParser {
 		sfm.putFileForInput(StandardLocation.SOURCE_PATH, "", javaClassName, sfo);
 		JavaCompiler.CompilationTask ct = jc.getTask(null, sfm, null, null, null, Arrays.asList(sfo));
 
-		if (!ct.call())
+		if (!ct.call()) {
 			throw new RuntimeException();
+		}
 
 		loader.applyTransformer(name->name.equals(javaClassName), cw -> new ClassVisitor(Opcodes.ASM5, new CheckClassAdapter(cw)) {
 
@@ -303,8 +307,9 @@ public class CopperTSL implements ExtParser {
 			@Override
             @Deprecated
 			public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
-				if (!name.equals("<init>"))
+				if (!name.equals("<init>")) {
 					return super.visitMethod(access, name, desc, signature, exceptions);
+				}
 
 
 				String ndesc = org.objectweb.asm.Type.getMethodDescriptor(org.objectweb.asm.Type.VOID_TYPE,
@@ -374,7 +379,7 @@ public class CopperTSL implements ExtParser {
 		Type parseBufferType = Util.javaToWyvType(ParseBuffer.class);
 
 
-		Type javaClassType = Util.javaToWyvType(javaClass);
+		Util.javaToWyvType(javaClass);
 		ExpressionAST bufGet = new Application(
 				new Invocation(new Variable(new NameBindingImpl("buf", null), unkLoc), "getSrcString", null, unkLoc),
 				UnitVal.getInstance(unkLoc),
@@ -425,10 +430,12 @@ public class CopperTSL implements ExtParser {
 	}
 
 	private Pair<String, Type> parseType(GrammarElement elem) {
-		if (elem instanceof Terminal)
-			return this.parseType((Terminal)elem);
-		if (elem instanceof NonTerminal)
-			return this.parseType((NonTerminal)elem);
+		if (elem instanceof Terminal) {
+			return this.parseType(elem);
+		}
+		if (elem instanceof NonTerminal) {
+			return this.parseType(elem);
+		}
 		throw new RuntimeException();
 	}
 

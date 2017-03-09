@@ -50,8 +50,9 @@ public class JavaClassDecl extends ClassDeclaration {
 				cstrs.add(new JClosure.JavaInvokableMethod(parameterTypes, clazz,
 						lookup.unreflectConstructor(c), JavaMeth.getNames(c), true, clazz));
 			}
-			if (cstrs.size() > 0)
+			if (cstrs.size() > 0) {
 				decls.add(new JavaMeth("create", cstrs));
+			}
 
 			//Instance method map
 			HashMap<String, List<Pair<MethodHandle, Method>>> map = new HashMap<>();
@@ -68,17 +69,19 @@ public class JavaClassDecl extends ClassDeclaration {
 				}
 				ArrayList<Pair<MethodHandle, Method>> list = new ArrayList<>();
 				list.add(new Pair<>(lookup.unreflect(findHighestMethod(clazz, m)), m));
-				if (!Modifier.isStatic(m.getModifiers()))
+				if (!Modifier.isStatic(m.getModifiers())) {
 					map.put(m.getName(), list);
-				else
+				} else {
 					sMap.put(m.getName(), list);
+				}
 			}
 
 			//Fields
 			for (Field f : clazz.getFields()) {
 				Optional<MethodHandle> setter = Optional.empty();
-				if (!Modifier.isFinal(f.getModifiers()))
+				if (!Modifier.isFinal(f.getModifiers())) {
 					setter = Optional.of(lookup.unreflectSetter(f));
+				}
 				decls.add(new JavaField(f, lookup.unreflectGetter(f), setter));
 			}
 
@@ -88,8 +91,9 @@ public class JavaClassDecl extends ClassDeclaration {
 				if (!Modifier.isStatic(modifiers) ||
 						Modifier.isPrivate(modifiers) ||
 						Modifier.isProtected(modifiers) ||
-						Modifier.isAbstract(modifiers))
+						Modifier.isAbstract(modifiers)) {
 					continue;
+				}
 				decls.add(new JavaClassDecl(c));
 			}
 
@@ -107,16 +111,15 @@ public class JavaClassDecl extends ClassDeclaration {
 				Class elementType = clazz.getComponentType();
 				MethodHandle gethandle = MethodHandles.arrayElementGetter(clazz);
 
-				String postfix = "";
 				switch (elementType.getName()) {
-					case "int": postfix = "Int"; break;
-					case "boolean": postfix = "Boolean"; break;
-					case "byte": postfix = "Byte"; break;
-					case "char": postfix = "Char"; break;
-					case "double": postfix = "Double"; break;
-					case "float": postfix = "Float"; break;
-					case "long": postfix = "Long"; break;
-					case "short": postfix = "Short"; break;
+					case "int": break;
+					case "boolean": break;
+					case "byte": break;
+					case "char": break;
+					case "double": break;
+					case "float": break;
+					case "long": break;
+					case "short": break;
 				}
 
 				MethodHandle sethandle = MethodHandles.arrayElementSetter(clazz);
@@ -164,18 +167,19 @@ public class JavaClassDecl extends ClassDeclaration {
 				.findFirst();
 
 
-		if (creator.isPresent())
-				typeBinding = new TypeBinding(typeBinding.getName(), typeBinding.getType(), new Reference<Value>() {
-					@Override
-                    @Deprecated
-					public Value get() {
-						try {
-							return Util.toWyvObj(creator.get().invoke(null));
-						} catch (Exception e) {
-							throw new RuntimeException(e);
-						}
+		if (creator.isPresent()) {
+			typeBinding = new TypeBinding(typeBinding.getName(), typeBinding.getType(), new Reference<Value>() {
+				@Override
+			    @Deprecated
+				public Value get() {
+					try {
+						return Util.toWyvObj(creator.get().invoke(null));
+					} catch (Exception e) {
+						throw new RuntimeException(e);
 					}
-				});
+				}
+			});
+		}
 
 	}
 
@@ -211,8 +215,9 @@ public class JavaClassDecl extends ClassDeclaration {
 
 	boolean initalized = false;
 	public void initalize() {
-		if (initalized)
+		if (initalized) {
 			return;
+		}
 		initalized = true;
 		super.decls = getDecls(this.clazz);
 		Environment emptyEnvironment = Environment.getEmptyEnvironment();
@@ -224,16 +229,19 @@ public class JavaClassDecl extends ClassDeclaration {
 	private boolean envDone = false;
 	@Override
 	public void updateEnv() {
-		if (envDone)
+		if (envDone) {
 			return;
+		}
 		envDone = true;
 		initalize();
 		Environment declEnv = Environment.getEmptyEnvironment();
 		Environment objEnv = getObjEnvV();
-		if (declEnv == null)
+		if (declEnv == null) {
 			declEnv = Environment.getEmptyEnvironment();
-		if (objEnv == null)
+		}
+		if (objEnv == null) {
 			objEnv = Environment.getEmptyEnvironment();
+		}
 		for (Declaration decl : this.getDecls().getDeclIterator()) {
 			if (decl instanceof JavaMeth) {
 				if (decl.isClassMember()) {

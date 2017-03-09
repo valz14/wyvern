@@ -29,7 +29,6 @@ import wyvern.tools.types.RecordType;
 import wyvern.tools.types.SubtypeRelation;
 import wyvern.tools.types.Type;
 import wyvern.tools.util.Reference;
-import wyvern.tools.util.TreeWriter;
 
 public class TypeType extends AbstractTypeImpl implements OperatableType, RecordType {
 	private TypeDeclaration decl;
@@ -55,8 +54,9 @@ public class TypeType extends AbstractTypeImpl implements OperatableType, Record
 	private boolean toStringing = false;
 	@Override
 	public String toString() {
-		if (toStringing)
+		if (toStringing) {
 			return "TYPE(Repeated)";
+		}
 		toStringing = true;
 		String res = "TYPE(" + typeDeclEnv.get().toString() + ")";
 		toStringing = false;
@@ -66,8 +66,9 @@ public class TypeType extends AbstractTypeImpl implements OperatableType, Record
 	@Override
 	public Type checkOperator(Invocation opExp, Environment env) {
 		// should not be any arguments - that is in a separate application at present
-		if (opExp.getArgument() != null)
+		if (opExp.getArgument() != null) {
 			throw new RuntimeException(opExp.getLocation().toString());
+		}
 		assert opExp.getArgument() == null;
 		
 		// the operation should exist
@@ -77,8 +78,9 @@ public class TypeType extends AbstractTypeImpl implements OperatableType, Record
 		TypeBinding t = typeDeclEnv.get().lookupType(opName);
 		
 		// Accessing type members should be OK!!! // FIXME:
-		if (m == null && t == null)
+		if (m == null && t == null) {
 			throw new RuntimeException("Invalid operation "+opName+" on type " + this);
+		}
 		
 		// TODO Auto-generated method stub
 		
@@ -92,8 +94,9 @@ public class TypeType extends AbstractTypeImpl implements OperatableType, Record
 	public Map<String, Type> getMembers() {
 		HashMap<String, Type> thisMembers = new HashMap<>();
 		for (Binding b : typeDeclEnv.get().getBindings()) {
-			if (!(b instanceof NameBinding))
+			if (!(b instanceof NameBinding)) {
 				continue;
+			}
 			String name = b.getName();
 			Type type = b.getType();
 			thisMembers.put(name, type);
@@ -223,7 +226,7 @@ public class TypeType extends AbstractTypeImpl implements OperatableType, Record
     @Deprecated
     public wyvern.target.corewyvernIL.type.ValueType generateILType() {
         LinkedList<DeclType> declTypes = typeDeclEnv.get().getBindings().stream()
-                .map(b -> new ValDeclType(b.getName(), (ValueType) b.getType().generateILType()))
+                .map(b -> new ValDeclType(b.getName(), b.getType().generateILType()))
                 .collect(Collectors.toCollection(LinkedList::new));
         return new StructuralType(getName(), declTypes);
     }

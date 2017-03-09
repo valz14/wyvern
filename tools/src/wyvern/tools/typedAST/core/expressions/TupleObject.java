@@ -19,14 +19,11 @@ import wyvern.tools.typedAST.interfaces.CoreAST;
 import wyvern.tools.typedAST.interfaces.ExpressionAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.interfaces.Value;
-import wyvern.tools.typedAST.transformers.GenerationEnvironment;
-import wyvern.tools.typedAST.transformers.ILWriter;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.extensions.Intersection;
 import wyvern.tools.types.extensions.Tuple;
 import wyvern.tools.util.EvaluationEnvironment;
-import wyvern.tools.util.TreeWriter;
 
 public class TupleObject extends CachingTypedAST implements CoreAST {
 	private ExpressionAST[] objects;
@@ -56,7 +53,7 @@ public class TupleObject extends CachingTypedAST implements CoreAST {
 	}
 
 	public ExpressionAST getObject(int index) {
-		return (ExpressionAST) objects[index];
+		return objects[index];
 	}
 
 	@Override
@@ -75,9 +72,12 @@ public class TupleObject extends CachingTypedAST implements CoreAST {
 		for (int i = 0; i < objects.length; i++) {
 			final int sti = i;
 			newTypes[i] = objects[i].typecheck(env, expected.map(exp -> {
-				if (exp instanceof Tuple) return ((Tuple)exp).getTypeArray()[sti];
-				if (exp instanceof Intersection)
+				if (exp instanceof Tuple) {
+					return ((Tuple)exp).getTypeArray()[sti];
+				}
+				if (exp instanceof Intersection) {
 					return ((Intersection)exp).getTypes().stream().filter(tpe -> tpe instanceof Tuple).filter(tpe -> ((Tuple)tpe).getTypeArray().length == objects.length).findFirst().get();
+				}
 				ToolError.reportError(ErrorMessage.ACTUAL_FORMAL_TYPE_MISMATCH, this, getType().toString(), exp.toString());
 				throw new RuntimeException();
 			}));

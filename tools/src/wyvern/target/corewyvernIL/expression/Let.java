@@ -5,13 +5,11 @@ import static wyvern.tools.errors.ToolError.reportError;
 import java.io.IOException;
 import java.util.Set;
 
-import wyvern.target.corewyvernIL.Environment;
 import wyvern.target.corewyvernIL.VarBinding;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.type.ValueType;
-import wyvern.target.oir.OIREnvironment;
 import wyvern.tools.errors.ErrorMessage;
 
 public class Let extends Expression {
@@ -25,7 +23,9 @@ public class Let extends Expression {
 	public Let(VarBinding binding, IExpr inExpr) {
 		super();
 		this.binding = binding;
-		if (inExpr == null) throw new RuntimeException();
+		if (inExpr == null) {
+			throw new RuntimeException();
+		}
 		this.inExpr = inExpr;
 	}
 

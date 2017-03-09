@@ -44,8 +44,9 @@ public class StoringFileManager extends ForwardingJavaFileManager<JavaFileManage
 	public FileObject getFileForInput(Location location, String packageName,
 									  String relativeName) throws IOException {
 		FileObject o = fileObjects.get(packageName + relativeName);
-		if (o != null)
+		if (o != null) {
 			return o;
+		}
 		return super.getFileForInput(location, packageName, relativeName);
 	}
 
@@ -80,10 +81,11 @@ public class StoringFileManager extends ForwardingJavaFileManager<JavaFileManage
 		String result;
 		// For our JavaFileImpl instances, return the file's name, else
 		// simply run the default implementation
-		if (file instanceof CachingJavaFileObject)
+		if (file instanceof CachingJavaFileObject) {
 			result = file.getName();
-		else
+		} else {
 			result = super.inferBinaryName(loc, file);
+		}
 		return result;
 	}
 
@@ -96,15 +98,17 @@ public class StoringFileManager extends ForwardingJavaFileManager<JavaFileManage
 		if (location == StandardLocation.CLASS_PATH
 				&& kinds.contains(JavaFileObject.Kind.CLASS)) {
 			for (JavaFileObject file : fileObjects.values()) {
-				if (file.getKind() == JavaFileObject.Kind.CLASS && file.getName().startsWith(packageName))
+				if (file.getKind() == JavaFileObject.Kind.CLASS && file.getName().startsWith(packageName)) {
 					files.add(file);
+				}
 			}
 			files.addAll(classLoader.files());
 		} else if (location == StandardLocation.SOURCE_PATH
 				&& kinds.contains(JavaFileObject.Kind.SOURCE)) {
 			for (JavaFileObject file : fileObjects.values()) {
-				if (file.getKind() == JavaFileObject.Kind.SOURCE && file.getName().startsWith(packageName))
+				if (file.getKind() == JavaFileObject.Kind.SOURCE && file.getName().startsWith(packageName)) {
 					files.add(file);
+				}
 			}
 		}
 		for (JavaFileObject file : result) {

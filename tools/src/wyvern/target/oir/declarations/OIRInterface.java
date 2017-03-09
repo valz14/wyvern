@@ -66,8 +66,9 @@ public class OIRInterface extends OIRType {
 	public OIRType getTypeForMember(String methodName) {
 		for (OIRMethodDeclaration methDecl : methods)
 		{
-			if (methDecl.getName() == methodName)
+			if (methDecl.getName() == methodName) {
 				return methDecl.getReturnType();
+			}
 		}
 		return null;
 	}

@@ -1,10 +1,6 @@
 package wyvern.target.corewyvernIL.support;
 
-import wyvern.target.corewyvernIL.expression.Path;
-import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.ValueType;
-import wyvern.tools.errors.ErrorMessage;
-import wyvern.tools.errors.ToolError;
 
 public abstract class TypeContext {
 	public TypeContext extend(String var, ValueType type) {
@@ -17,10 +13,11 @@ public abstract class TypeContext {
 	public abstract ValueType lookupTypeOf(String varName);
 		
 	public boolean isPresent(String varName, boolean isValue) {
-		if (getNext() == null)
+		if (getNext() == null) {
 			return false;
-		else
+		} else {
 			return getNext().isPresent(varName, isValue);
+		}
 	}
 	
 	public static TypeContext empty() {

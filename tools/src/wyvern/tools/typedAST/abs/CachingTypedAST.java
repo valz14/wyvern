@@ -20,8 +20,9 @@ public abstract class CachingTypedAST extends AbstractExpressionAST implements E
 	
 	@Override
 	public final Type getType() {
-		if (type == null)
+		if (type == null) {
 			throw new RuntimeException("called getType() before typechecking");
+		}
 		return type;
 	}
 
@@ -30,8 +31,9 @@ public abstract class CachingTypedAST extends AbstractExpressionAST implements E
 	@Override
 	public ExpressionAST cloneWithChildren(Map<String, TypedAST> nc) {
 		ExpressionAST res = doClone(nc);
-		if (res instanceof CachingTypedAST)
+		if (res instanceof CachingTypedAST) {
 			((CachingTypedAST) res).type = type;
+		}
 		return res;
 	}
 }

@@ -73,11 +73,13 @@ public class LexingTests {
 	public void checkKinds(int[] kinds, List<Token> tokens) {
 		int index = 0;
 		for (Token t: tokens) {
-			if (index >= kinds.length)
+			if (index >= kinds.length) {
 				Assert.fail("more tokens than expected");
+			}
 			int k = kinds[index++];
-			if (k != t.kind)
+			if (k != t.kind) {
 				Assert.fail("expected " + kindToName(k) + " but was " + kindToName(t.kind) + " at " + (index-1));
+			}
 		}
 		Assert.assertEquals("Not enough tokens: " + (kinds.length-tokens.size()) + " missing", kinds.length, tokens.size());
 	}
@@ -181,7 +183,7 @@ public class LexingTests {
 				IDENTIFIER, WHITESPACE, MULTI_LINE_COMMENT,
 				WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE,
 			};
-		List<Token> tokens = checkLex(input, expected);
+		checkLex(input, expected);
 	}
 	@Test
 	public void testIndentComment() throws IOException, CopperParserException {
@@ -196,7 +198,7 @@ public class LexingTests {
 				WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE,
 				WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE, DEDENT,
 			};
-		List<Token> tokens = checkLex(input, expected);
+		checkLex(input, expected);
 	}
 	@Test
 	public void testIndentParen() throws IOException, CopperParserException {
@@ -211,7 +213,7 @@ public class LexingTests {
 				WHITESPACE, IDENTIFIER, RPAREN, WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE,
 				WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE, DEDENT,
 			};
-		List<Token> tokens = checkLex(input, expected);
+		checkLex(input, expected);
 	}
 	@Test
 	public void testContinuationAndEOFDedent() throws IOException, CopperParserException {

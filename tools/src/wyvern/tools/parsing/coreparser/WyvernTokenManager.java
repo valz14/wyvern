@@ -30,7 +30,7 @@ public class WyvernTokenManager implements TokenManager {
 
 	@Override
 	public Token getNextToken() {
-		if (tokens == null)
+		if (tokens == null) {
 			try {
 				readTokenList();
 			} catch (CopperParserException e) {
@@ -39,6 +39,7 @@ public class WyvernTokenManager implements TokenManager {
 			} catch (IOException e) {
 				throw new RuntimeException(e);
 			}
+		}
 
 		while (tokens.hasNext()) {
 			Token t = tokens.next();

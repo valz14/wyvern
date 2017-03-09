@@ -14,7 +14,6 @@ import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.FileLocation;
-import wyvern.tools.errors.WyvernException;
 import wyvern.tools.typedAST.abs.AbstractValue;
 import wyvern.tools.typedAST.core.expressions.Application;
 import wyvern.tools.typedAST.core.values.TupleValue;
@@ -23,13 +22,10 @@ import wyvern.tools.typedAST.extensions.interop.java.Util;
 import wyvern.tools.typedAST.interfaces.ApplyableValue;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.interfaces.Value;
-import wyvern.tools.typedAST.transformers.GenerationEnvironment;
-import wyvern.tools.typedAST.transformers.ILWriter;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.extensions.Tuple;
 import wyvern.tools.types.extensions.Unit;
 import wyvern.tools.util.EvaluationEnvironment;
-import wyvern.tools.util.TreeWriter;
 
 public class JClosure extends AbstractValue implements ApplyableValue {
 	private static AtomicInteger uidGen = new AtomicInteger();
@@ -91,10 +87,11 @@ public class JClosure extends AbstractValue implements ApplyableValue {
 		Collections.sort(this.methods, new Comparator<JavaInvokableMethod>() {
 			@Override
 			public int compare(JavaInvokableMethod o1, JavaInvokableMethod o2) {
-				if (o1.getParameterTypes().length > o2.getParameterTypes().length)
+				if (o1.getParameterTypes().length > o2.getParameterTypes().length) {
 					return 1;
-				else if (o1.getParameterTypes().length < o2.getParameterTypes().length)
+				} else if (o1.getParameterTypes().length < o2.getParameterTypes().length) {
 					return -1;
+				}
 
 				Class[] args1 = o1.getParameterTypes();
 				Class[] args2 = o2.getParameterTypes();
@@ -131,16 +128,19 @@ public class JClosure extends AbstractValue implements ApplyableValue {
 		EvaluationEnvironment iEnv = evalEnv.extend(env);
 		Value[] values = vFromV(app.getArgument().evaluate(env));;
 		Type[] wyvTypes = new Type[values.length];
-		for (int ii = 0; ii < wyvTypes.length; ii++)
-				wyvTypes[ii] = values[ii].getType();
-		if (wyvTypes.length == 1 && wyvTypes[0] instanceof Unit)
+		for (int ii = 0; ii < wyvTypes.length; ii++) {
+			wyvTypes[ii] = values[ii].getType();
+		}
+		if (wyvTypes.length == 1 && wyvTypes[0] instanceof Unit) {
 			wyvTypes = new Type[0];
+		}
 		//Implementation of section 15.12.2.2. of the Java Language Specification
 		for (JavaInvokableMethod m : methods) {
 			boolean suitable = true;
 			Class<?>[] parameterTypes = m.getParameterTypes();
-			if (wyvTypes.length != parameterTypes.length)
+			if (wyvTypes.length != parameterTypes.length) {
 				continue;
+			}
 			for (int i = 0; i < parameterTypes.length; i++) {
 				Type wyv = wyvTypes[i];
 				if (!Util.checkTypeCast(wyv, parameterTypes[i])) {
@@ -148,8 +148,9 @@ public class JClosure extends AbstractValue implements ApplyableValue {
 					break;
 				}
 			}
-			if (!suitable)
+			if (!suitable) {
 				continue;
+			}
 			//This is the first method => most specific
 			Value evaluate = app.getArgument().evaluate(iEnv);
 			Value[] args = values;
@@ -157,8 +158,9 @@ public class JClosure extends AbstractValue implements ApplyableValue {
 			if (sig.length == 1 && sig[0] instanceof Unit) {
 				sig = new Type[] {};
 			}
-			if (sig.length != wyvTypes.length)
+			if (sig.length != wyvTypes.length) {
 				continue;
+			}
 
 			for (int i = 0; i < wyvTypes.length; i++) {
 				if (!(sig[i].subtype(wyvTypes[i]))) {
@@ -166,25 +168,29 @@ public class JClosure extends AbstractValue implements ApplyableValue {
 					break;
 				}
 			}
-			if (!suitable)
+			if (!suitable) {
 				continue;
+			}
 
 			Object[] jArgs;
 			if (m.classMeth) {
 				jArgs = new Object[parameterTypes.length];
-				for (int i = 0; i < parameterTypes.length; i++)
+				for (int i = 0; i < parameterTypes.length; i++) {
 					jArgs[i] = Util.toJavaObject(args[i], parameterTypes[i]);
+				}
 			} else {
 				jArgs = new Object[parameterTypes.length + 1];
 				jArgs[0] = Util.toJavaObject(evalEnv.lookup("this").get().getValue(evalEnv), m.getSrcClass());
-				for (int i = 0; i < parameterTypes.length; i++)
+				for (int i = 0; i < parameterTypes.length; i++) {
 					jArgs[i+1] = Util.toJavaObject(args[i], parameterTypes[i]);
+				}
 			}
 
 			try {
 				Object result = m.getHandle().invokeWithArguments(jArgs);
-				if (result == null)
+				if (result == null) {
 					return UnitVal.getInstance(FileLocation.UNKNOWN);
+				}
 				return Util.toWyvObj(result);
 			} catch (Throwable throwable) {
 				throw new RuntimeException(throwable);

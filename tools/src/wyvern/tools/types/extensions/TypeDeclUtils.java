@@ -51,8 +51,9 @@ public class TypeDeclUtils {
 				continue;
 			}
 
-			if (!(b instanceof NameBinding))
+			if (!(b instanceof NameBinding)) {
 				continue;
+			}
 
 			if (b.getType() instanceof Arrow) {
 				tev = tev.extend(b);
@@ -83,23 +84,25 @@ public class TypeDeclUtils {
 	}
 
 	public static Environment getTypeEquivalentEnvironment(DeclSequence decls, boolean useClassMembers) {
-		LinkedList<Declaration> seq = new LinkedList<>();
+		new LinkedList<>();
 
 		Environment newEnv = Environment.getEmptyEnvironment();
 		// Generate an appropriate type member for every class member.
 		for (Declaration d : decls.getDeclIterator()) {
 			if (d instanceof DefDeclaration) {
-				if (((DefDeclaration) d).isClassMember() != useClassMembers)
+				if (((DefDeclaration) d).isClassMember() != useClassMembers) {
 					continue;
+				}
 				newEnv = d.extend(newEnv, newEnv);
 			} else if (d instanceof VarDeclaration) {
-				if (((VarDeclaration) d).isClassMember() != useClassMembers)
+				if (((VarDeclaration) d).isClassMember() != useClassMembers) {
 					continue;
+				}
 
 				VarDeclaration vd = (VarDeclaration) d;
 				String propName = vd.getName();
 				Type type = vd.getType();
-				FileLocation line = vd.getLocation();
+				vd.getLocation();
 
 
 				newEnv = newEnv.extend(new NameBindingImpl(propName, type));
@@ -108,8 +111,9 @@ public class TypeDeclUtils {
 								"set" + propName.substring(0,1).toUpperCase() + propName.substring(1),
 								new Arrow(type, new Unit())));
 			} else if (d instanceof ValDeclaration) {
-				if (((ValDeclaration) d).isClassMember() != useClassMembers)
+				if (((ValDeclaration) d).isClassMember() != useClassMembers) {
 					continue;
+				}
 
 				ValDeclaration vd = (ValDeclaration) d;
 				String propName = vd.getName();

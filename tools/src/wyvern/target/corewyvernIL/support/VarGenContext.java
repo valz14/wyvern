@@ -11,8 +11,9 @@ public class VarGenContext extends GenContext {
 	
 	public VarGenContext(String var, Expression expr, ValueType type, GenContext genContext) {
 		super(genContext);
-		if (var == null)
+		if (var == null) {
 			throw new NullPointerException();
+		}
 		this.var = var;
 		this.expr = expr;
 		this.type = type;
@@ -20,10 +21,11 @@ public class VarGenContext extends GenContext {
 	
 	@Override
 	public boolean isPresent(String varName, boolean isValue) {
-		if (isValue && this.var.equals(varName))
+		if (isValue && this.var.equals(varName)) {
 			return true;
-		else
+		} else {
 			return super.isPresent(varName, isValue);
+		}
 	}
 
 @Override
@@ -38,10 +40,11 @@ public class VarGenContext extends GenContext {
 	
 	@Override
 	public ValueType lookupTypeOf(String varName) {
-		if (varName.equals(var))
+		if (varName.equals(var)) {
 			return type;
-		else
+		} else {
 			return getNext().lookupTypeOf(varName);
+		}
 	}
 	
 	@Override
@@ -51,9 +54,9 @@ public class VarGenContext extends GenContext {
 
 	@Override
 	public CallableExprGenerator getCallableExprRec(String varName, GenContext origCtx) {
-		if (varName.equals(var))
+		if (varName.equals(var)) {
 			return new DefaultExprGenerator(expr);
-		else {
+		} else {
 			return getNext().getCallableExprRec(varName, origCtx);
 		}
 	}	

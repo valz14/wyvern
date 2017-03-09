@@ -143,9 +143,7 @@ public class TestUtil {
     
     @Deprecated
     public static void evaluatePerf(TypedAST ast) {
-        wyvern.tools.typedAST.interfaces.Value v = ast.evaluate(Globals.getStandardEvalEnv());
-        //String expecting = "IntegerConstant(" + value + ")"; 
-        //Assert.assertEquals(expecting, v.toString());
+        ast.evaluate(Globals.getStandardEvalEnv());
     }
     
     /**
@@ -243,19 +241,21 @@ public class TestUtil {
         // resolveModule already typechecked, but we'll do it again to verify the type
         TypeContext ctx = Globals.getStandardTypeContext();
         ValueType t = program.typeCheck(ctx);
-        if (expectedType != null)
-            Assert.assertEquals(expectedType, t);
+        if (expectedType != null) {
+			Assert.assertEquals(expectedType, t);
+		}
         
         // check the result
         Value v = program.interpret(Globals.getStandardEvalContext());
-        if (expectedValue != null)
-            Assert.assertEquals(expectedValue, v);
+        if (expectedValue != null) {
+			Assert.assertEquals(expectedValue, v);
+		}
     }
 
     public static void doTestModule(String input, String fieldName, ValueType expectedType, Value expectedValue) throws ParseException {
         TypedAST ast = TestUtil.getNewAST(input, "test input");
         GenContext genCtx = Globals.getGenContext(new InterpreterState(InterpreterState.PLATFORM_JAVA, null, null));
-        TypeContext ctx = Globals.getStandardTypeContext();
+        Globals.getStandardTypeContext();
         wyvern.target.corewyvernIL.decl.Declaration decl = ((Declaration) ast).topLevelGen(genCtx, new LinkedList<TypedModuleSpec>());
         IExpr mainProgram = ((DefDeclaration)decl).getBody();
         IExpr program = new FieldGet(mainProgram, fieldName, null); // slightly hacky       

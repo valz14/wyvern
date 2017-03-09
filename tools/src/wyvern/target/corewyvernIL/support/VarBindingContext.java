@@ -15,10 +15,11 @@ public class VarBindingContext extends TypeContext {
 
 	@Override
 	public boolean isPresent(String varName, boolean isValue) {
-		if (isValue && this.varName.equals(varName))
+		if (isValue && this.varName.equals(varName)) {
 			return true;
-		else
+		} else {
 			return super.isPresent(varName, isValue);
+		}
 	}
 	
 	@Override

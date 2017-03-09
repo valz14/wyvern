@@ -6,17 +6,11 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import wyvern.stdlib.Globals;
-import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
-import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.modules.Module;
-import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.InterpreterState;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.tools.errors.ToolError;
-import wyvern.tools.parsing.coreparser.ParseException;
-import wyvern.tools.tests.TestUtil;
-import wyvern.tools.typedAST.interfaces.ExpressionAST;
 
 public class Interpreter {
 	/**
@@ -63,9 +57,7 @@ public class Interpreter {
 			Expression program = ast.generateIL(genCtx, null);*/
 			TypeContext ctx = Globals.getStandardTypeContext();
 			program.typeCheck(ctx);
-			Value v = program.interpret(Globals.getStandardEvalContext());
-		/*} catch (ParseException e) {
-			System.err.println("Parse error: " + e.getMessage());*/
+			program.interpret(Globals.getStandardEvalContext());
 		} catch (ToolError e) {
 			System.err.println(e.getMessage());
 		}

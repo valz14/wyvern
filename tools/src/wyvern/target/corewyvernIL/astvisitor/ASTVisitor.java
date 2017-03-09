@@ -1,7 +1,6 @@
 package wyvern.target.corewyvernIL.astvisitor;
 
 import wyvern.target.corewyvernIL.Case;
-import wyvern.target.corewyvernIL.Environment;
 import wyvern.target.corewyvernIL.FormalArg;
 import wyvern.target.corewyvernIL.decl.DefDeclaration;
 import wyvern.target.corewyvernIL.decl.DelegateDeclaration;

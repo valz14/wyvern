@@ -51,10 +51,11 @@ public class WyvernASTBuilder implements ASTBuilder<TypedAST, Type> {
      */
 	@Override
     public TypedAST sequence(TypedAST t1, TypedAST t2, boolean inModule) {
-    	if (inModule)
-    		return DeclSequence.simplify(new DeclSequence(t1,t2));
-    	else
-    		return new Sequence(t1, t2);
+    	if (inModule) {
+			return DeclSequence.simplify(new DeclSequence(t1,t2));
+		} else {
+			return new Sequence(t1, t2);
+		}
     }
     
 	@Override

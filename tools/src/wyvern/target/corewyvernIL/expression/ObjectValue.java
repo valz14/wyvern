@@ -21,8 +21,9 @@ public class ObjectValue extends New implements Invokable {
 	public ObjectValue(List<Declaration> decls, String selfName, ValueType exprType, DelegateDeclaration delegateDecl,FileLocation loc,EvalContext ctx) {
 		super(decls, selfName, exprType, loc);
 		
-		if (selfName == null || selfName.length() == 0)
+		if (selfName == null || selfName.length() == 0) {
 			throw new RuntimeException("selfName invariant violated");
+		}
 		evalCtx = ctx.extend(selfName, this);
 		hasDelegate = delegateDecl != null ? true : false; 
 		if (hasDelegate) {
@@ -83,17 +84,21 @@ public class ObjectValue extends New implements Invokable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		ObjectValue other = (ObjectValue) obj;
 		
 		// Other ObjectValue needs the same declarations, in the same order.
-		if (this.getDecls().size() != other.getDecls().size())
+		if (this.getDecls().size() != other.getDecls().size()) {
 			return false;
+		}
 		return this.getDecls().equals(other.getDecls());
 		
 	}

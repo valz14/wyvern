@@ -10,8 +10,9 @@ public abstract class OIRExpression extends OIRAST {
 	public abstract OIRType typeCheck (OIREnvironment oirEnv);
 
 	public OIRType getExprType() {
-		if (exprType == null)
+		if (exprType == null) {
 			exprType = typeCheck (OIREnvironment.getRootEnvironment());
+		}
 		return exprType;
 	}
 

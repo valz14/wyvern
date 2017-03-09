@@ -17,8 +17,9 @@ public class ViewExtension extends View {
 	@Override
 	public Path adapt(Variable v) {
 		if (v.equals(from)) {
-			if (to == null)
+			if (to == null) {
 				throw new RuntimeException("view adaptation failed");
+			}
 			return to;
 		} else {
 			return previous.adapt(v);

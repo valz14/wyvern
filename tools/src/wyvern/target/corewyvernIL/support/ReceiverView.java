@@ -32,11 +32,13 @@ public class ReceiverView extends View {
 	
 	@Override
 	public Path adapt(Variable v) {
-		if (from == null)
+		if (from == null) {
 			return v;
+		}
 		if (v.equals(from)) {
-			if (to == null)
+			if (to == null) {
 				throw new RuntimeException("view adaptation failed");
+			}
 			return to;
 		} else {
 			return v;

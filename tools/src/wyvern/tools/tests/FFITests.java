@@ -70,8 +70,9 @@ public class FFITests {
       new EmitPythonVisitor().emitPython(oirast,
                                          OIREnvironment.getRootEnvironment());
 
-    if (debug)
-      System.out.println("OIR Program:\n" + pprint);
+    if (debug) {
+		System.out.println("OIR Program:\n" + pprint);
+	}
 
     // Call the system python interpreter to execute the code
     try {
@@ -87,8 +88,9 @@ public class FFITests {
       BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
       BufferedReader stdErr = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
-      if (debug)
-        System.out.println("Python output:");
+      if (debug) {
+		System.out.println("Python output:");
+	}
 
       if (!p.waitFor(10, TimeUnit.SECONDS)) {
         System.out.println("Python code timed out!");
@@ -99,10 +101,12 @@ public class FFITests {
       String result = "";
       String s = null;
       while ((s = stdInput.readLine()) != null) {
-        if (debug)
-          System.out.println(s);
-        if (result != "")
-          result += "\n";
+        if (debug) {
+			System.out.println(s);
+		}
+        if (result != "") {
+			result += "\n";
+		}
         result += s;
       }
 

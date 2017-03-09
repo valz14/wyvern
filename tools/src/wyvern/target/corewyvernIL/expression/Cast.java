@@ -7,7 +7,6 @@ import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.type.ValueType;
-import wyvern.target.oir.OIREnvironment;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.ToolError;
 
@@ -41,8 +40,9 @@ public class Cast extends Expression{
 		Value value = getToCastExpr().interpret(ctx);
 		ValueType actualType = value.typeCheck(ctx);
 		ValueType goalType = getExprType();
-		if (!actualType.isSubtypeOf(goalType, ctx))
+		if (!actualType.isSubtypeOf(goalType, ctx)) {
 			ToolError.reportError(ErrorMessage.NOT_SUBTYPE, getLocation(), actualType.toString(), goalType.toString());
+		}
 		return value;
 	}
 

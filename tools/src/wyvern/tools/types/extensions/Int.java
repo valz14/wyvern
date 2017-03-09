@@ -21,7 +21,6 @@ import wyvern.tools.types.Environment;
 import wyvern.tools.types.OperatableType;
 import wyvern.tools.types.SubtypeRelation;
 import wyvern.tools.types.Type;
-import wyvern.tools.util.TreeWriter;
 
 
 public class Int extends AbstractTypeImpl implements OperatableType {
@@ -45,15 +44,17 @@ public class Int extends AbstractTypeImpl implements OperatableType {
 		Type type2 = opExp.getArgument().typecheck(env, Optional.empty());
 		String operatorName = opExp.getOperationName();
 		
-		if (!(legalOperators.contains(operatorName)))
+		if (!(legalOperators.contains(operatorName))) {
 			reportError(OPERATOR_DOES_NOT_APPLY, opExp, operatorName, this.toString());
+		}
 		
-		if (!((type2 instanceof Int) || ((operatorName.equals("+")) && (type2 instanceof Str))))
+		if (!((type2 instanceof Int) || ((operatorName.equals("+")) && (type2 instanceof Str)))) {
 			reportError(OPERATOR_DOES_NOT_APPLY2, opExp, operatorName, this.toString(), type2.toString());
+		}
 		
-		if (isRelationalOperator(operatorName))
+		if (isRelationalOperator(operatorName)) {
 			return new Bool(); //relational operations
-		else if ((operatorName.equals("+")) && (type2 instanceof Str)) {
+		} else if ((operatorName.equals("+")) && (type2 instanceof Str)) {
 			return new Str(); //string concatenation
 		} else {
 			return this; //arithmetic operations
@@ -74,8 +75,9 @@ public class Int extends AbstractTypeImpl implements OperatableType {
 	@Override
 	public boolean subtype(Type other, HashSet<SubtypeRelation> subtypes) {
 		if (other instanceof JavaClassType) {
-			if (Util.javaToWyvType(Integer.class).subtype(other, subtypes))
+			if (Util.javaToWyvType(Integer.class).subtype(other, subtypes)) {
 				return true;
+			}
 			return ((JavaClassType) other).getInnerClass().equals(Object.class);
 		}
 		return other instanceof Int;

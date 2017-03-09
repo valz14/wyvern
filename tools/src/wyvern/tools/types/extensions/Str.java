@@ -23,7 +23,6 @@ import wyvern.tools.types.Environment;
 import wyvern.tools.types.OperatableType;
 import wyvern.tools.types.SubtypeRelation;
 import wyvern.tools.types.Type;
-import wyvern.tools.util.TreeWriter;
 
 public class Str extends AbstractTypeImpl implements OperatableType {
 	public Str() {}
@@ -45,14 +44,18 @@ public class Str extends AbstractTypeImpl implements OperatableType {
 		}
 		Type type2 = opExp.getArgument().typecheck(env, Optional.empty());
 
-		if (operatorName.equals("+"))
-			if (!((type2 instanceof Str) || (type2 instanceof Int)))
+		if (operatorName.equals("+")) {
+			if (!((type2 instanceof Str) || (type2 instanceof Int))) {
 				reportError(OPERATOR_DOES_NOT_APPLY2, opExp, operatorName, this.toString(), type2.toString());
+			}
+		}
 		if (operatorName.equals("==")) {
-			if (type2 instanceof JavaClassType && String.class.isAssignableFrom(((JavaClassType)type2).getInnerClass()))
+			if (type2 instanceof JavaClassType && String.class.isAssignableFrom(((JavaClassType)type2).getInnerClass())) {
 				return new Bool();
-			if (!(type2.subtype(new Str())))
+			}
+			if (!(type2.subtype(new Str()))) {
 				reportError(OPERATOR_DOES_NOT_APPLY2, opExp, operatorName, this.toString(), type2.toString());
+			}
 			return new Bool();
 		}
 		
@@ -66,8 +69,9 @@ public class Str extends AbstractTypeImpl implements OperatableType {
 
 	@Override
 	public boolean subtype(Type other, HashSet<SubtypeRelation> subtypes) {
-		if (other instanceof JavaClassType)
+		if (other instanceof JavaClassType) {
 			return (((JavaClassType) other).getInnerClass().isAssignableFrom(String.class));
+		}
 
 		return other instanceof Str;
 	}

@@ -3,7 +3,6 @@ package wyvern.target.corewyvernIL.type;
 import java.io.IOException;
 import java.util.Arrays;
 
-import wyvern.target.corewyvernIL.Environment;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decltype.AbstractTypeMember;
 import wyvern.target.corewyvernIL.decltype.ConcreteTypeMember;
@@ -13,7 +12,6 @@ import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
-import wyvern.target.oir.OIREnvironment;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.HasLocation;
 import wyvern.tools.errors.ToolError;
@@ -95,15 +93,17 @@ public class NominalType extends ValueType {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof NominalType))
+		if (!(obj instanceof NominalType)) {
 			return false;
+		}
 		NominalType other = (NominalType)obj;
 		return path.equals(other.path) && typeMember.equals(other.typeMember);
 	}
 	
 	public boolean isSubtypeOf(ValueType t, TypeContext ctx) {
-		if (super.isSubtypeOf(t, ctx))
+		if (super.isSubtypeOf(t, ctx)) {
 			return true;
+		}
 		DeclType dt = getSourceDeclType(ctx);
 		if (dt instanceof ConcreteTypeMember) {
 			ValueType vt = ((ConcreteTypeMember)dt).getResultType(View.from(path, ctx));
@@ -140,8 +140,9 @@ public class NominalType extends ValueType {
 
 	@Override
 	public ValueType doAvoid(String varName, TypeContext ctx, int count) {
-		if (count > MAX_RECURSION_DEPTH)
+		if (count > MAX_RECURSION_DEPTH) {
 			ToolError.reportError(ErrorMessage.CANNOT_AVOID_VARIABLE, (HasLocation)null, varName);
+		}
 		if (path.getFreeVariables().contains(varName)) {
 			DeclType dt = this.getSourceDeclType(ctx);
 			if (dt instanceof ConcreteTypeMember) {

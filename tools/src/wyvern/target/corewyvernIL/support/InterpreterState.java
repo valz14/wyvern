@@ -29,8 +29,9 @@ public class InterpreterState {
 		return genCtx;
 	}
 	public void setGenContext(GenContext ctx) {
-		if (genCtx != null)
+		if (genCtx != null) {
 			throw new RuntimeException();
+		}
 		genCtx = ctx;
 	}
 	

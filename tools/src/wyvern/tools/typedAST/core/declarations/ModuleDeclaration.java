@@ -8,31 +8,24 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import javafx.beans.binding.Bindings;
 import wyvern.stdlib.Globals;
-import wyvern.target.corewyvernIL.ContextBinding;
 import wyvern.target.corewyvernIL.FormalArg;
 import wyvern.target.corewyvernIL.VarBinding;
 import wyvern.target.corewyvernIL.decltype.DeclType;
-import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
-import wyvern.target.corewyvernIL.expression.JavaValue;
 import wyvern.target.corewyvernIL.expression.Let;
 import wyvern.target.corewyvernIL.expression.MethodCall;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.LoadedType;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.GenContext;
-import wyvern.target.corewyvernIL.support.GenUtil;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.TypeGenContext;
 import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.FileLocation;
-import wyvern.tools.errors.HasLocation;
 import wyvern.tools.errors.ToolError;
-import wyvern.tools.interop.FObject;
 import wyvern.tools.typedAST.abs.Declaration;
 import wyvern.tools.typedAST.core.Sequence;
 import wyvern.tools.typedAST.core.binding.NameBindingImpl;
@@ -47,8 +40,6 @@ import wyvern.tools.typedAST.interfaces.EnvironmentExtender;
 import wyvern.tools.typedAST.interfaces.ExpressionAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.interfaces.Value;
-import wyvern.tools.typedAST.transformers.GenerationEnvironment;
-import wyvern.tools.typedAST.transformers.ILWriter;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.extensions.ClassType;
@@ -56,7 +47,6 @@ import wyvern.tools.types.extensions.Unit;
 import wyvern.tools.util.EvaluationEnvironment;
 import wyvern.tools.util.Pair;
 import wyvern.tools.util.Reference;
-import wyvern.tools.util.TreeWriter;
 
 public class ModuleDeclaration extends Declaration implements CoreAST {
 	private final String name;
@@ -189,8 +179,9 @@ public class ModuleDeclaration extends Declaration implements CoreAST {
 	@Override
 	public Map<String, TypedAST> getChildren() {
 		Map<String, TypedAST> childMap = new HashMap<>();
-		if (inner != null)
+		if (inner != null) {
 			childMap.put("body", inner);
+		}
 		return childMap;
 	}
 
@@ -367,22 +358,25 @@ public class ModuleDeclaration extends Declaration implements CoreAST {
 			normalSeq = ((DeclSequence) inner).filterNormal();
 		} else {
 			/* single declaration in module */
-			if(inner instanceof Instantiation) impInstSeq = Sequence.append(impInstSeq, inner);
-			else normalSeq = Sequence.append(normalSeq, inner);
+			if(inner instanceof Instantiation) {
+				impInstSeq = Sequence.append(impInstSeq, inner);
+			} else {
+				normalSeq = Sequence.append(normalSeq, inner);
+			}
 		}
 
 		List<FormalArg> formalArgs;
 		List<LoadedType> loadedTypes = new LinkedList<LoadedType>();
 		formalArgs = getTypes(reqSeq, ctx, loadedTypes); // translate requiring modules to method parameters
 		for (LoadedType lt : loadedTypes) {
-			// include the declaration itself
-			final String qualifiedName = lt.getModule().getSpec().getQualifiedName();
+			lt.getModule().getSpec().getQualifiedName();
 			final String internalName = lt.getModule().getSpec().getInternalName();
 			methodContext = methodContext.extend(internalName, new Variable(internalName), lt.getModule().getSpec().getType());
 			// include the type abbreviation
 			methodContext = new TypeGenContext(lt.getTypeName(), internalName, methodContext);
-			if (dependencies != null)
+			if (dependencies != null) {
 				dependencies.add(lt.getModule().getSpec());
+			}
 		}
 
 		/* adding parameters to environments */
@@ -395,8 +389,9 @@ public class ModuleDeclaration extends Declaration implements CoreAST {
 		wyvern.target.corewyvernIL.type.ValueType returnType = body.typeCheck(tempContext);
 
 		if (isResource() == false) {
-			if (returnType.isResource(tempContext))
+			if (returnType.isResource(tempContext)) {
 				ToolError.reportError(ErrorMessage.MUST_BE_A_RESOURCE_MODULE, this, this.getName());
+			}
 		}
 		if(isResource() == false && formalArgs.isEmpty()) {
 			/* non resource module translated into value */

@@ -1,6 +1,5 @@
 package wyvern.tools.typedAST.interfaces;
 
-import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.CallableExprGenerator;
@@ -28,6 +27,5 @@ public interface ExpressionAST extends TypedAST {
 		final IExpr exp = generateIL(topLevelContext.getContext(), null, topLevelContext.getDependencies());
 		ValueType type = exp.typeCheck(topLevelContext.getContext());
 		topLevelContext.addExpression(exp, type);
-		Expression e;
 	}
 }

@@ -31,9 +31,10 @@ public class OIRFieldGet extends OIRExpression {
 	public OIRType typeCheck(OIREnvironment oirEnv) {
 		OIRType type = objectExpr.getExprType();
 		
-		if (!(type instanceof OIRClassDeclaration))
+		if (!(type instanceof OIRClassDeclaration)) {
 			/* TODO: Create a new exception here */
 			return null;
+		}
 		
 		setExprType (((OIRClassDeclaration)type).getTypeForMember(fieldName));
 		return getExprType ();

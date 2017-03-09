@@ -20,7 +20,6 @@ import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.TypeGenContext;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.target.corewyvernIL.type.NominalType;
-import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.imports.extensions.WyvernResolver;
 import wyvern.tools.parsing.coreparser.ParseException;
 import wyvern.tools.tests.suites.RegressionTests;
@@ -72,7 +71,7 @@ public class Illustrations {
 		Expression program = new FieldGet(mainProgram, "x", null); 
 		
     	TypeContext ctx = TypeContext.empty();
-		ValueType t = program.typeCheck(ctx);
+		program.typeCheck(ctx);
 		Value v = program.interpret(EvalContext.empty());
     	IntegerLiteral five = new IntegerLiteral(5);
 		Assert.assertEquals(five, v);
@@ -103,7 +102,7 @@ public class Illustrations {
 		Expression program = new FieldGet(mainProgram, "x", null); 
 		
     	TypeContext ctx = TypeContext.empty();
-		ValueType t = program.typeCheck(ctx);
+		program.typeCheck(ctx);
 		Value v = program.interpret(EvalContext.empty());
     	IntegerLiteral five = new IntegerLiteral(5);
 		Assert.assertEquals(five, v);
@@ -140,7 +139,7 @@ public class Illustrations {
 		Expression program = new FieldGet(mainProgram, "x", null); 
 		
     	TypeContext ctx = TypeContext.empty();
-		ValueType t = program.typeCheck(ctx);
+		program.typeCheck(ctx);
 		Value v = program.interpret(EvalContext.empty());
     	IntegerLiteral five = new IntegerLiteral(5);
 		Assert.assertEquals(five, v);

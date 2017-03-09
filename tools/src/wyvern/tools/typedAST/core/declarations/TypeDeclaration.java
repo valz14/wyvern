@@ -10,7 +10,6 @@ import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.tools.errors.FileLocation;
-import wyvern.tools.errors.WyvernException;
 import wyvern.tools.typedAST.abs.Declaration;
 import wyvern.tools.typedAST.core.binding.NameBinding;
 import wyvern.tools.typedAST.core.binding.NameBindingImpl;
@@ -23,14 +22,11 @@ import wyvern.tools.typedAST.core.expressions.TaggedInfo;
 import wyvern.tools.typedAST.interfaces.CoreAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.interfaces.Value;
-import wyvern.tools.typedAST.transformers.GenerationEnvironment;
-import wyvern.tools.typedAST.transformers.ILWriter;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.extensions.TypeType;
 import wyvern.tools.util.EvaluationEnvironment;
 import wyvern.tools.util.Reference;
-import wyvern.tools.util.TreeWriter;
 
 
 public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST {
@@ -123,7 +119,9 @@ public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST 
 			decl.typecheckSelf(eenv);
 		}
 
-		if (isTagged()) typecheckTags(env);
+		if (isTagged()) {
+			typecheckTags(env);
+		}
 		
 		return this.typeBinding.getType();
 	}	
@@ -146,9 +144,10 @@ public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST 
     @Deprecated
 	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
 		declEvalEnv = declEnv;
-		if (metaValue.get() == null)
+		if (metaValue.get() == null) {
 			metaValue.set(metadata.get().orElseGet(() -> new New(new DeclSequence(), FileLocation.UNKNOWN)).evaluate(evalEnv));
-		ValueBinding vb = (ValueBinding) declEnv.lookup(nameBinding.getName()).orElseThrow(() -> new RuntimeException("Internal Error - TypeDeclaration NameBinding broken"));
+		}
+		ValueBinding vb = declEnv.lookup(nameBinding.getName()).orElseThrow(() -> new RuntimeException("Internal Error - TypeDeclaration NameBinding broken"));
 		vb.setValue(metaValue.get());
 	}
 

@@ -53,16 +53,18 @@ public abstract class ValueType extends CaseType implements IASTNode {
 	/** Find the declaration type with the specified name, or return null if it is not present */
 	public DeclType findDecl(String declName, TypeContext ctx) {
 		StructuralType st = getStructuralType(ctx);
-		if (st == null)
+		if (st == null) {
 			return null;
+		}
 		return st.findDecl(declName, ctx);
 	}
 
 	/** Find the declaration type with the specified name, or return null if it is not present */
 	public List<DeclType> findDecls(String declName, TypeContext ctx) {
 		StructuralType st = getStructuralType(ctx);
-		if (st == null)
-			return (List<DeclType>) Collections.EMPTY_LIST;
+		if (st == null) {
+			return Collections.EMPTY_LIST;
+		}
 		return st.findDecls(declName, ctx);
 	}
 

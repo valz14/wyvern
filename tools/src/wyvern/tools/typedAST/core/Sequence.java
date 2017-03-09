@@ -9,10 +9,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
 
-import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
-import wyvern.target.corewyvernIL.expression.Let;
-import wyvern.target.corewyvernIL.expression.New;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.GenUtil;
@@ -27,7 +24,6 @@ import wyvern.tools.typedAST.core.declarations.DeclSequence;
 import wyvern.tools.typedAST.core.declarations.TypeVarDecl;
 import wyvern.tools.typedAST.core.declarations.DefDeclaration;
 import wyvern.tools.typedAST.core.declarations.TypeAbbrevDeclaration;
-import wyvern.tools.typedAST.core.declarations.ValDeclaration;
 import wyvern.tools.typedAST.core.declarations.VarDeclaration;
 import wyvern.tools.typedAST.core.expressions.Fn;
 import wyvern.tools.typedAST.core.values.UnitVal;
@@ -35,15 +31,10 @@ import wyvern.tools.typedAST.interfaces.CoreAST;
 import wyvern.tools.typedAST.interfaces.EnvironmentExtender;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.interfaces.Value;
-import wyvern.tools.typedAST.transformers.DeclarationWriter;
-import wyvern.tools.typedAST.transformers.ExpressionWriter;
-import wyvern.tools.typedAST.transformers.GenerationEnvironment;
-import wyvern.tools.typedAST.transformers.ILWriter;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.extensions.Unit;
 import wyvern.tools.util.EvaluationEnvironment;
-import wyvern.tools.util.TreeWriter;
 
 public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable<TypedAST> {
 	private LinkedList<TypedAST> exps = new LinkedList<TypedAST>();
@@ -59,8 +50,9 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 		public void map(TypedAST elem);
 	}
 	public static void tryMap(TypedAST potential, MapCallback callback) {
-		if (!(potential instanceof Sequence))
+		if (!(potential instanceof Sequence)) {
 			return;
+		}
 		Sequence seq = (Sequence)potential;
 		for (TypedAST elem : seq) {
 			if (elem instanceof Sequence) {
@@ -80,15 +72,17 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 			private boolean fetched = false;
 			@Override
 			public boolean hasNext() {
-				if (innerIter.hasNext())
+				if (innerIter.hasNext()) {
 					return true;
+				}
 				return !fetched;
 			}
 
 			@Override
 			public TypedAST next() {
-				if (innerIter.hasNext())
+				if (innerIter.hasNext()) {
 					return innerIter.next();
+				}
 				if (!fetched) {
 					fetched = true;
 					return e;
@@ -103,8 +97,9 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 	}
 	public Sequence(Iterable<TypedAST> first) {
 		exps = new LinkedList<TypedAST>();
-		for (TypedAST elem : first)
+		for (TypedAST elem : first) {
 			exps.add(check(elem));
+		}
 	}
 
 	public Sequence(TypedAST first, TypedAST second) {
@@ -129,8 +124,9 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 	
 	@Override
 	public Type getType() {
-		if (retType == null)
+		if (retType == null) {
 			ToolError.reportError(ErrorMessage.TYPE_NOT_DEFINED, this);
+		}
 		return retType;
 	}
 
@@ -138,10 +134,13 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 	public Type typecheck(Environment env, Optional<Type> expected) {
 		Type lastType = new Unit();
 		for (TypedAST t : exps) {
-			if (t == null) continue;
+			if (t == null) {
+				continue;
+			}
 			lastType = t.typecheck(env, (exps.getLast() == t)?expected:Optional.empty());
-			if (t instanceof EnvironmentExtender)
+			if (t instanceof EnvironmentExtender) {
 				env = ((EnvironmentExtender) t).extend(env, env);
+			}
 		}
 		retType = lastType;
 		return lastType;
@@ -153,7 +152,9 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 		EvaluationEnvironment iEnv = env;
 		Value lastVal = UnitVal.getInstance(this.getLocation());
 		for (TypedAST exp : this) {
-			if (exp == null) continue;
+			if (exp == null) {
+				continue;
+			}
 			if (exp instanceof EnvironmentExtender) {
 				iEnv = ((EnvironmentExtender)exp).evalDecl(iEnv);
 			} else {
@@ -322,8 +323,9 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 	    Sequence seqWithBlocks = combine();		
 		TopLevelContext tlc = new TopLevelContext(ctx);
 		seqWithBlocks.genTopLevel(tlc, expectedType);
-		if (tlc.getDependencies().size()>0)
+		if (tlc.getDependencies().size()>0) {
 			dependencies.addAll(tlc.getDependencies());
+		}
 		return tlc.getExpression();
 	}
 	
@@ -428,8 +430,9 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
     public StringBuilder prettyPrint() {
         StringBuilder sb = new StringBuilder();
         String rtStr = "null";
-        if (retType != null)
-            rtStr = retType.toString();
+        if (retType != null) {
+			rtStr = retType.toString();
+		}
         sb.append("Sequence(" + rtStr + ", [");
         String sep = "";
         for (TypedAST ast : exps) {

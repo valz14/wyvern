@@ -22,8 +22,9 @@ public class JavaMeth extends DefDeclaration {
 	static List<String> getNames(Method m) {
 		Class[] args = m.getParameterTypes();
 		ArrayList<String> output = new ArrayList<String>();
-		for (int i = 0; i < args.length; i++)
+		for (int i = 0; i < args.length; i++) {
 			output.add("arg"+i);
+		}
 		return output;
 	}
 
@@ -42,8 +43,9 @@ public class JavaMeth extends DefDeclaration {
 	static List<String> getNames(Constructor m) {
 		Class[] args = m.getParameterTypes();
 		ArrayList<String> output = new ArrayList<String>();
-		for (int i = 0; i < args.length; i++)
+		for (int i = 0; i < args.length; i++) {
 			output.add("arg"+i);
+		}
 		return output;
 	}
 
@@ -74,17 +76,18 @@ public class JavaMeth extends DefDeclaration {
 							.getMethodType(getNameBindings(meth.getParamNames(), meth.getParameterTypes()),
 									meth.getReturnType()));
 		}
-		if (methTypes.size() == 1)
+		if (methTypes.size() == 1) {
 			return methTypes.get(0);
-		else if (methTypes.size() > 1)
+		} else if (methTypes.size() > 1) {
 			return new Intersection(methTypes);
+		}
 		return null;
 	}
 
 	@Override
 	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
 		JClosure closure = new JClosure(methods, evalEnv);
-		ValueBinding vb = (ValueBinding) declEnv.lookup(getName()).get();
+		ValueBinding vb = declEnv.lookup(getName()).get();
 		vb.setValue(closure);
 	}
 	@Override

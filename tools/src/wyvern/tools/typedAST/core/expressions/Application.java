@@ -126,8 +126,8 @@ public class Application extends CachingTypedAST implements CoreAST {
     @Override
     public ExpressionAST doClone(Map<String, TypedAST> nc) {
         return new Application(
-            (ExpressionAST) nc.get("function"),
-            (ExpressionAST) nc.get("argument"),
+            nc.get("function"),
+            nc.get("argument"),
             location
         );
     }

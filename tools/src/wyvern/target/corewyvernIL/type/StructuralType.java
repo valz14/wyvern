@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Predicate;
 
-import wyvern.target.corewyvernIL.Environment;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.VarDeclType;
@@ -16,7 +15,6 @@ import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.ReceiverView;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
-import wyvern.target.oir.OIREnvironment;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.HasLocation;
 import wyvern.tools.errors.ToolError;
@@ -65,8 +63,9 @@ public class StructuralType extends ValueType {
 	@Override
 	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
 		String newIndent = indent + "    ";
-		if (isResource(GenContext.empty()))
+		if (isResource(GenContext.empty())) {
 			dest.append("resource ");
+		}
 		dest.append("type { ").append(selfName).append(" =>\n");
 		for (DeclType dt : getDeclTypes()) {
 			dt.doPrettyPrint(dest, newIndent);
@@ -100,18 +99,21 @@ public class StructuralType extends ValueType {
 	@Override
 	public boolean isSubtypeOf(ValueType t, TypeContext ctx) {
 		t = t.getCanonicalType(ctx);
-		if (t instanceof DynamicType)
+		if (t instanceof DynamicType) {
 			return true;
+		}
 		if (t instanceof NominalType) {
 			StructuralType st = ((NominalType) t).getStructuralType(ctx, null);
-			if (st == null)
+			if (st == null) {
 				return false; // abstract type; I am always a subtype of this
-			else
+			} else {
 				return isSubtypeOf(st, ctx);
+			}
 		}
 
-		if (!(t instanceof StructuralType))
+		if (!(t instanceof StructuralType)) {
 			return false;
+		}
 
 		StructuralType st = (StructuralType) t;
 		st = (StructuralType) st.adapt(new ReceiverView(new Variable(st.selfName), new Variable(selfName)));
@@ -126,8 +128,9 @@ public class StructuralType extends ValueType {
 		}
 
 		// a resource type is not a subtype of a non-resource type
-		if (isResource(GenContext.empty()) && !st.isResource(GenContext.empty()))
+		if (isResource(GenContext.empty()) && !st.isResource(GenContext.empty())) {
 			return false;
+		}
 
 		return true;
 	}
@@ -136,10 +139,11 @@ public class StructuralType extends ValueType {
 	DeclType findMatchingDecl(String name, Predicate<? super DeclType> filter, TypeContext ctx) {
 		List<DeclType> ds = findDecls(name, ctx);
 		ds.removeIf(filter);
-		if (ds.size() != 1)
+		if (ds.size() != 1) {
 			return null;
-		else
+		} else {
 			return ds.get(0);
+		}
 	}
 	
 	@Override
@@ -147,8 +151,9 @@ public class StructuralType extends ValueType {
 		DeclType theDecl = null;
 		for (DeclType mdt : getDeclTypes()) {
 			if (mdt.getName().equals(declName)) {
-				if (theDecl != null)
+				if (theDecl != null) {
 					throw new RuntimeException("ambiguous findDecl!");
+				}
 				theDecl = mdt;
 			}
 		}
@@ -194,10 +199,12 @@ public class StructuralType extends ValueType {
 
 	@Override
 	public ValueType doAvoid(String varName, TypeContext ctx, int count) {
-		if (count > MAX_RECURSION_DEPTH)
+		if (count > MAX_RECURSION_DEPTH) {
 			ToolError.reportError(ErrorMessage.CANNOT_AVOID_VARIABLE, (HasLocation)null, varName);
-		if (varName.equals(selfName))
+		}
+		if (varName.equals(selfName)) {
 			return this;
+		}
 		List<DeclType> newDeclTypes = new LinkedList<DeclType>();
 		boolean changed = false;
 		for (DeclType dt : declTypes) {

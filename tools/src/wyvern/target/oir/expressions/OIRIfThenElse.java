@@ -49,9 +49,10 @@ public class OIRIfThenElse extends OIRExpression{
 		thenType = thenExpression.typeCheck(oirEnv);
 		elseType = elseExpression.typeCheck(oirEnv);
 		
-		if (thenType != elseType)
+		if (thenType != elseType) {
 			/*TODO Error type mismatch */
 			return null;
+		}
 		
 		setExprType (thenType);
 		return thenType;

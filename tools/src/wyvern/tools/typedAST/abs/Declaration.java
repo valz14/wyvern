@@ -64,8 +64,9 @@ public abstract class Declaration extends AbstractTreeWritable implements Enviro
 	@Deprecated
 	public final Environment extend(Environment old, Environment against) {
 		Environment newEnv = doExtend(old, against);
-		if (nextDecl != null)
+		if (nextDecl != null) {
 			newEnv = nextDecl.extend(newEnv, newEnv);
+		}
 		return newEnv;
 	}
 	

@@ -35,8 +35,9 @@ public class ExpressionWriter implements ILWriter {
     public static Expression generate(Consumer<ExpressionWriter> fn) {
         ExpressionWriter writer = new ExpressionWriter();
         fn.accept(writer);
-        for (Function<ASTNode, ASTNode> fun : writer.wrappers)
-            writer.output = (Expression)fun.apply(writer.output);
+        for (Function<ASTNode, ASTNode> fun : writer.wrappers) {
+			writer.output = (Expression)fun.apply(writer.output);
+		}
         return writer.output;
     }
 }

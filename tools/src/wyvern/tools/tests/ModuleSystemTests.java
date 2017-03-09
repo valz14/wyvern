@@ -95,7 +95,7 @@ public class ModuleSystemTests {
 	@Test
 	public void testInst() throws ParseException {
 		String program = TestUtil.readFile(PATH + "inst.wyv");
-		TypedAST ast = TestUtil.getNewAST(program, "test input");
+		TestUtil.getNewAST(program, "test input");
 	}
 
 	/**

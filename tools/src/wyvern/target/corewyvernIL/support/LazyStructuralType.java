@@ -38,14 +38,16 @@ public class LazyStructuralType extends StructuralType {
 		nextMethod: for (Method m : javaClass.getMethods()) {
 			
 			ValueType retType = GenUtil.javaClassToWyvernType(m.getReturnType(), ctx);
-			if (retType == null)
+			if (retType == null) {
 				continue;
+			}
 			List<FormalArg> argTypes = new LinkedList<FormalArg>();
 			Class<?> argClasses[] = m.getParameterTypes(); 
 			for (int i = 0; i < argClasses.length; ++i) {
 				ValueType t = GenUtil.javaClassToWyvernType(argClasses[i], ctx);
-				if (t == null)
+				if (t == null) {
 					continue nextMethod;
+				}
 				argTypes.add(new FormalArg(m.getParameters()[i].getName(), t));
 			}
 			newDeclTypes.add(new DefDeclType(m.getName(), retType, argTypes));

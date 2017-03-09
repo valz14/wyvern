@@ -24,15 +24,12 @@ import wyvern.tools.typedAST.interfaces.CoreAST;
 import wyvern.tools.typedAST.interfaces.ExpressionAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.interfaces.Value;
-import wyvern.tools.typedAST.transformers.GenerationEnvironment;
-import wyvern.tools.typedAST.transformers.ILWriter;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.UnresolvedType;
 import wyvern.tools.types.extensions.ClassType;
 import wyvern.tools.types.extensions.TypeInv;
 import wyvern.tools.util.EvaluationEnvironment;
-import wyvern.tools.util.TreeWriter;
 
 /**
  * Represents a match statement in Wyvern.
@@ -132,16 +129,11 @@ public class Match extends CachingTypedAST implements CoreAST {
 
 		// System.out.println("Evaluating match over tag: " + matchingOverTag + " with matchingOver = " + matchingOver.getType());
 		if (matchingOver.getType() instanceof ClassType) {
-			ClassType ct = (ClassType) matchingOver.getType();
-			// System.out.println("hmm = " + this.matchingOver.typecheck(env, Optional.empty()));
-			// System.out.println("ct = " + ct.getName());
+			matchingOver.getType();
 		}
 
-		// System.out.println("matchingOverTag (latest) = " + matchingOverTag);
-		int cnt = 0;
-
 		for (Case c : cases) {
-			cnt++;
+			
 
 			// String caseTypeName = getTypeName(c.getAST());
 
@@ -199,8 +191,12 @@ public class Match extends CachingTypedAST implements CoreAST {
 	 */
 	//TODO: rename this method to something like isSubtag()
 	private boolean isSubtag(TaggedInfo matchingOver, TaggedInfo matchTarget) {
-		if (matchingOver == null) throw new NullPointerException("Matching Binding cannot be null");
-		if (matchTarget == null) throw new NullPointerException("match target cannot be null");
+		if (matchingOver == null) {
+			throw new NullPointerException("Matching Binding cannot be null");
+		}
+		if (matchTarget == null) {
+			throw new NullPointerException("match target cannot be null");
+		}
 
 		// String matchingOverTag = matchingOver.getTagName();
 		// String matchTargetTag = matchTarget.getTagName();
@@ -209,13 +205,17 @@ public class Match extends CachingTypedAST implements CoreAST {
 
 		// FIXME: Why do equals when that may not correspond to the tags being the same? Only reference == is safe I guess?
 		// if (matchingOverTag.equals(matchTargetTag)) return true;
-		if (matchingOver == matchTarget) return true;
+		if (matchingOver == matchTarget) {
+			return true;
+		}
 
 		// If caseOf is hopelessly broken, this is a "fix": return false; :-)d
 
 		TaggedInfo ti = matchingOver.getCaseOfTaggedInfo();
 
-		if (ti == null) return false;
+		if (ti == null) {
+			return false;
+		}
 		return isSubtag(ti, matchTarget); // FIXME:
 	}
 
@@ -247,8 +247,9 @@ public class Match extends CachingTypedAST implements CoreAST {
 	}
 
 	public void resolve(Environment env) {
-		if (this.defaultCase != null)
+		if (this.defaultCase != null) {
 			this.defaultCase.resolve(env, this);
+		}
 
 		for (Case c : this.cases) {
 			c.resolve(env, this);
@@ -394,7 +395,9 @@ public class Match extends CachingTypedAST implements CoreAST {
 		for (Case c : cases) {
 			Type rt = c.getAST().typecheck(env, expected);
 			// System.out.println("rt = " + rt);
-			if (commonType == null) commonType = rt;
+			if (commonType == null) {
+				commonType = rt;
+			}
 			if (!rt.equals(commonType)) {
 				// System.out.println("WARNING: rt = " + rt + " and commonType = " + commonType);
 				ToolError.reportError(ErrorMessage.MATCH_NO_COMMON_RETURN, this);
@@ -419,13 +422,13 @@ public class Match extends CachingTypedAST implements CoreAST {
 	private void checkAllCasesAreTagged(Environment env) {
 		//All things we match over must be tagged types
 		for (Case c : cases) {
-			if (c.isDefault()) continue;
+			if (c.isDefault()) {
+				continue;
+			}
 
 			Type tagName = c.getTaggedTypeMatch();
 
 			if (tagName instanceof UnresolvedType) {
-				UnresolvedType ut = (UnresolvedType) tagName;
-				// System.out.println("ut = " + ut.resolve(env));
 			}
 
 			if (tagName instanceof TypeInv) {
@@ -462,7 +465,9 @@ public class Match extends CachingTypedAST implements CoreAST {
 		Set<Type> caseSet = new HashSet<Type>();
 
 		for (Case c : cases) {
-			if (c.isTyped()) caseSet.add(c.getTaggedTypeMatch());
+			if (c.isTyped()) {
+				caseSet.add(c.getTaggedTypeMatch());
+			}
 		}
 
 		if (caseSet.size() != cases.size()) {
@@ -479,7 +484,9 @@ public class Match extends CachingTypedAST implements CoreAST {
 			for (int j = i + 1; j < cases.size(); j++) {
 				Case afterCase = cases.get(j);
 
-				if (afterCase.isDefault()) break;
+				if (afterCase.isDefault()) {
+					break;
+				}
 
 				TaggedInfo afterTag = TaggedInfo.lookupTagByType(afterCase.getTaggedTypeMatch()); // FIXME:
 				//TagBinding afterBinding = TagBinding.get(afterCase.getTaggedTypeMatch());
@@ -553,7 +560,9 @@ public class Match extends CachingTypedAST implements CoreAST {
 
 		//check that each tag is present
 		for (Type t : comprisesTags) {
-			if (containsTagBinding(cases, t)) continue;
+			if (containsTagBinding(cases, t)) {
+				continue;
+			}
 
 			//tag wasn't present
 			return false;
@@ -574,7 +583,9 @@ public class Match extends CachingTypedAST implements CoreAST {
 	private boolean containsTagBinding(List<Case> cases, Type tagName) {
 		for (Case c : cases) {
 			//Found a match, this tag is present
-			if (c.getTaggedTypeMatch().equals(tagName)) return true;
+			if (c.getTaggedTypeMatch().equals(tagName)) {
+				return true;
+			}
 		}
 
 		return false;

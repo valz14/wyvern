@@ -23,7 +23,6 @@ import wyvern.tools.types.Environment;
 import wyvern.tools.types.OperatableType;
 import wyvern.tools.types.SubtypeRelation;
 import wyvern.tools.types.Type;
-import wyvern.tools.util.TreeWriter;
 
 public class Intersection implements Type, OperatableType, ApplyableType {
 	private List<Type> types;
@@ -41,11 +40,14 @@ public class Intersection implements Type, OperatableType, ApplyableType {
 	@Override
 	public boolean subtype(Type other, HashSet<SubtypeRelation> subtypes) {
 		if (other instanceof Intersection) {
-			if (((Intersection)other).types.size() > types.size())
+			if (((Intersection)other).types.size() > types.size()) {
 				return false;
-			for (int i = 0; i < types.size(); i++)
-				if (!((Intersection)other).subtype(types.get(i), subtypes))
+			}
+			for (int i = 0; i < types.size(); i++) {
+				if (!((Intersection)other).subtype(types.get(i), subtypes)) {
 					return false;
+				}
+			}
 			return true;
 		}
 		for (Type type : types) {
@@ -55,8 +57,9 @@ public class Intersection implements Type, OperatableType, ApplyableType {
 				continue;
 			}
 			subtypes.add(sr);
-			if (type.subtype(other, subtypes))
+			if (type.subtype(other, subtypes)) {
 				return true;
+			}
 			subtypes.remove(sr);
 		}
 		return false;
@@ -88,13 +91,15 @@ public class Intersection implements Type, OperatableType, ApplyableType {
 
 	@Override
 	public Type checkApplication(Application application, Environment env) {
-		for (Type type : types)
-			if (type instanceof ApplyableType)
+		for (Type type : types) {
+			if (type instanceof ApplyableType) {
 				try {
 					return ((ApplyableType) type).checkApplication(application, env);
 				} catch (ToolError e) {
 					continue;
 				}
+			}
+		}
 		reportError(ACTUAL_FORMAL_TYPE_MISMATCH, application, application.getArgument().typecheck(env, Optional.empty()).toString(),
                 toString());
 		return null; //Unreachable
@@ -102,13 +107,15 @@ public class Intersection implements Type, OperatableType, ApplyableType {
 
 	@Override
 	public Type checkOperator(Invocation opExp, Environment env) {
-		for (Type type : types)
-			if (type instanceof OperatableType)
+		for (Type type : types) {
+			if (type instanceof OperatableType) {
 				try {
 					return ((OperatableType) type).checkOperator(opExp, env);
 				} catch (ToolError e) {
 					continue;
 				}
+			}
+		}
 		reportError(ACTUAL_FORMAL_TYPE_MISMATCH, opExp, opExp.getArgument().typecheck(env, Optional.empty()).toString(),
                 toString());
 		return null; //Unreachable

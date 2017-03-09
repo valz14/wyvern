@@ -19,7 +19,6 @@ import wyvern.tools.types.OperatableType;
 import wyvern.tools.types.SubtypeRelation;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.TypeResolver;
-import wyvern.tools.util.TreeWriter;
 
 public class Tuple extends AbstractTypeImpl implements OperatableType, TypeResolver.Resolvable {
 	private Type[] types;
@@ -48,8 +47,9 @@ public class Tuple extends AbstractTypeImpl implements OperatableType, TypeResol
 	public Map<String, Type> getTypes() {
 		HashMap<String, Type> typesMap = new HashMap<>();
 		int idx = 0;
-		for (Type t : types)
+		for (Type t : types) {
 			typesMap.put(idx++ +"", t);
+		}
 		return typesMap;
 	}
 
@@ -72,8 +72,9 @@ public class Tuple extends AbstractTypeImpl implements OperatableType, TypeResol
 
     public Tuple getRest() {
         Type[] newT = new Type[types.length-1];
-        for (int i = 1; i < types.length; i++)
-            newT[i-1] = types[i];
+        for (int i = 1; i < types.length; i++) {
+			newT[i-1] = types[i];
+		}
         return new Tuple(newT);
     }
 	
@@ -82,34 +83,41 @@ public class Tuple extends AbstractTypeImpl implements OperatableType, TypeResol
 		StringBuilder builder = new StringBuilder(types.length + 2);
 		
 		if (types.length > 1) {
-			if (!types[0].isSimple())
+			if (!types[0].isSimple()) {
 				builder.append('(');
+			}
 			builder.append(types[0].toString());
-			if (!types[0].isSimple())
+			if (!types[0].isSimple()) {
 				builder.append(')');
+			}
 		}
 		for (int i = 1; i < types.length; i++) {
 			builder.append('*');
-			if (!types[i].isSimple())
+			if (!types[i].isSimple()) {
 				builder.append('(');
+			}
 			builder.append(types[i].toString());
-			if (!types[i].isSimple())
+			if (!types[i].isSimple()) {
 				builder.append(')');
+			}
 		}
 		return builder.toString();
 	}
 	
 	@Override
 	public boolean equals(Object otherT) {
-		if (!(otherT instanceof Tuple))
+		if (!(otherT instanceof Tuple)) {
 			return false;
+		}
 		
-		if (((Tuple)otherT).types.length != types.length)
+		if (((Tuple)otherT).types.length != types.length) {
 			return false;
+		}
 		
 		for (int i = 0; i < types.length; i++) {
-			if (!(((Tuple)otherT).types[i].equals(types[i])))
+			if (!(((Tuple)otherT).types[i].equals(types[i]))) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -117,8 +125,9 @@ public class Tuple extends AbstractTypeImpl implements OperatableType, TypeResol
 	@Override
 	public int hashCode() {
 		int hash = 23;
-		for (Type type : types)
+		for (Type type : types) {
 			hash = hash*37 + type.hashCode();
+		}
 		
 		return hash;
 	}	
@@ -126,28 +135,33 @@ public class Tuple extends AbstractTypeImpl implements OperatableType, TypeResol
 	@Override
 	public boolean subtype(Type other, HashSet<SubtypeRelation> subtypes) {
 		// FIXME: Implement S-RcdWidth, S-RcdDepth, and S-RcdPerm I suppose. (Ben: This is factually wrong)
-        if (other == this)
-            return true;
+        if (other == this) {
+			return true;
+		}
 
 
 
-        if (!(other instanceof Tuple))
-            return false;
+        if (!(other instanceof Tuple)) {
+			return false;
+		}
 
         Tuple otherTuple = (Tuple)other;
 
         //n+k = types.length
         //n = otherTuple.types.length
-        if (types.length != otherTuple.types.length) // n+k != n
-            return false;
+        if (types.length != otherTuple.types.length)
+		 {
+			return false;
         //=>k=0=>n+k=n
+		}
 
         boolean sat = true;
         for (int i = 0; i < otherTuple.types.length && sat; i++) {
             Type Si = types[i];
             Type Ti = otherTuple.types[i];
-            if (!Si.subtype(Ti)) // S_i <: T_i
-                sat = false;
+            if (!Si.subtype(Ti)) {
+				sat = false;
+			}
         }
         return sat;
 	}
@@ -160,13 +174,16 @@ public class Tuple extends AbstractTypeImpl implements OperatableType, TypeResol
 	@Override
 	public Type checkOperator(Invocation opExp, Environment env) {
 		String name = opExp.getOperationName();
-		if (name.length() < 2)
+		if (name.length() < 2) {
 			ToolError.reportError(ErrorMessage.CANNOT_INVOKE, opExp.getLocation());
-		if (!name.startsWith("n"))
+		}
+		if (!name.startsWith("n")) {
 			ToolError.reportError(ErrorMessage.CANNOT_INVOKE, opExp.getLocation());
+		}
 		int num = Integer.valueOf(name.substring(1));
-		if (num >= types.length)
+		if (num >= types.length) {
 			ToolError.reportError(ErrorMessage.CANNOT_INVOKE, opExp.getLocation());
+		}
 		return types[num];
 	}
 	@Override

@@ -92,8 +92,9 @@ public class OIRClassDeclaration extends OIRType {
 			
 			oirInterface = (OIRInterface)delegate.getType();
 			
-			if (oirInterface.isMethodInClass(method))
+			if (oirInterface.isMethodInClass(method)) {
 				return getFieldPosition (delegate.getField());
+			}
 		}
 		
 		return -1;
@@ -115,13 +116,15 @@ public class OIRClassDeclaration extends OIRType {
 		{
 			if (memDecls instanceof OIRFieldDeclaration)
 			{
-				if (fieldName == ((OIRFieldDeclaration)memDecls).getName())
+				if (fieldName == ((OIRFieldDeclaration)memDecls).getName()) {
 					return ((OIRFieldDeclaration)memDecls).getType();
+				}
 			}
 			else if (memDecls instanceof OIRMethod)
 			{
-				if (((OIRMethod)memDecls).getDeclaration().getName().equals(fieldName))
+				if (((OIRMethod)memDecls).getDeclaration().getName().equals(fieldName)) {
 					return ((OIRMethod)memDecls).getDeclaration().getReturnType();
+				}
 			}
 		}
 		
@@ -153,8 +156,9 @@ public class OIRClassDeclaration extends OIRType {
 			if (memDecls instanceof OIRFieldDeclaration)
 			{
 				i++;
-				if (fieldName == ((OIRFieldDeclaration)memDecls).getName())
+				if (fieldName == ((OIRFieldDeclaration)memDecls).getName()) {
 					return i;
+				}
 			}
 		}
 		

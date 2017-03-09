@@ -10,7 +10,6 @@ import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.FileLocation;
-import wyvern.tools.errors.WyvernException;
 import wyvern.tools.typedAST.abs.AbstractValue;
 import wyvern.tools.typedAST.core.binding.AssignableValueBinding;
 import wyvern.tools.typedAST.core.binding.evaluation.ValueBinding;
@@ -21,15 +20,12 @@ import wyvern.tools.typedAST.interfaces.Assignable;
 import wyvern.tools.typedAST.interfaces.InvokableValue;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.interfaces.Value;
-import wyvern.tools.typedAST.transformers.GenerationEnvironment;
-import wyvern.tools.typedAST.transformers.ILWriter;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.extensions.ClassType;
 import wyvern.tools.types.extensions.TypeDeclUtils;
 import wyvern.tools.util.EvaluationEnvironment;
 import wyvern.tools.util.Reference;
-import wyvern.tools.util.TreeWriter;
 
 public class Obj extends AbstractValue implements InvokableValue, Assignable {
 	protected Reference<EvaluationEnvironment> intEnv;
@@ -52,8 +48,9 @@ public class Obj extends AbstractValue implements InvokableValue, Assignable {
 
 	@Override
 	public Type getType() {
-		if (typeEquivEnv == null)
-        	updateTee();
+		if (typeEquivEnv == null) {
+			updateTee();
+		}
 		return new ClassType(intEnv.map(EvaluationEnvironment::toTypeEnv), new Reference<>(typeEquivEnv), new LinkedList<String>(), taggedInfo, null);
 	}
 
@@ -80,8 +77,9 @@ public class Obj extends AbstractValue implements InvokableValue, Assignable {
 
 	@Override
 	public void checkAssignment(Assignment ass, Environment env) {
-		if (!(ass.getTarget() instanceof Invocation))
+		if (!(ass.getTarget() instanceof Invocation)) {
 			throw new RuntimeException("Something really, really weird happened.");
+		}
 		String operation = ((Invocation) ass.getTarget()).getOperationName();
 		intEnv.get().lookupValueBinding(operation, AssignableValueBinding.class)
 				.orElseThrow(() -> new RuntimeException("Cannot set a non-existent or immutable var"));
@@ -92,8 +90,9 @@ public class Obj extends AbstractValue implements InvokableValue, Assignable {
 	@Override
     @Deprecated
 	public Value evaluateAssignment(Assignment ass, EvaluationEnvironment env) {
-		if (!(ass.getTarget() instanceof Invocation))
+		if (!(ass.getTarget() instanceof Invocation)) {
 			throw new RuntimeException("Something really, really weird happened.");
+		}
 		String operation = ((Invocation) ass.getTarget()).getOperationName();
 
 		Value newValue = ass.getValue().evaluate(env);

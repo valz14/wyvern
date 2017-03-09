@@ -26,24 +26,30 @@ public class EvaluationEnvironment {
     }
 
     public EvaluationEnvironment extend(EvaluationEnvironment other) {
-        if (other == EMPTY) return this;
+        if (other == EMPTY) {
+			return this;
+		}
         return new EvaluationEnvironment(other.binding, extend(other.parent));
     }
 
     public Optional<ValueBinding> lookup(String name) {
-        if (binding.getName().equals(name) && binding instanceof ValueBinding) return Optional.of((ValueBinding) binding);
+        if (binding.getName().equals(name) && binding instanceof ValueBinding) {
+			return Optional.of((ValueBinding) binding);
+		}
         return parent.flatMap(e -> e.lookup(name));
     }
 
     public <T extends ValueBinding> Optional<T> lookupValueBinding(String name, Class<T> bindingType) {
-        if (bindingType.isAssignableFrom(binding.getClass()) && binding.getName().equals(name))
-            return Optional.of((T)binding);
+        if (bindingType.isAssignableFrom(binding.getClass()) && binding.getName().equals(name)) {
+			return Optional.of((T)binding);
+		}
         return parent.flatMap(e -> e.lookupValueBinding(name, bindingType));
     }
 
     public <T extends EvaluationBinding> Optional<T> lookupBinding(String name, Class<T> bindingType) {
-        if (binding.getClass().equals(bindingType) && binding.getName().equals(name))
-            return Optional.of((T)binding);
+        if (binding.getClass().equals(bindingType) && binding.getName().equals(name)) {
+			return Optional.of((T)binding);
+		}
         return parent.flatMap(e -> e.lookupBinding(name, bindingType));
     }
 
@@ -54,12 +60,16 @@ public class EvaluationEnvironment {
     }
 
     public <T> Optional<T> map(Function<EvaluationEnvironment, T> ifPresent) {
-        if (this == EMPTY) return Optional.empty();
+        if (this == EMPTY) {
+			return Optional.empty();
+		}
         return Optional.of(ifPresent.apply(this));
     }
 
     public <T> Optional<T> flatMap(Function<EvaluationEnvironment, Optional<T>> ifPresent) {
-        if (this == EMPTY) return Optional.empty();
+        if (this == EMPTY) {
+			return Optional.empty();
+		}
         return ifPresent.apply(this);
     }
 

@@ -115,7 +115,7 @@ public class New extends CachingTypedAST implements CoreAST {
         // TODO check arg types
         // Type argTypes = args.typecheck();
 
-        ClassBinding classVarTypeBinding = (ClassBinding) env.lookupBinding(
+        ClassBinding classVarTypeBinding = env.lookupBinding(
             "class", ClassBinding.class
         ).orElse(null);
 
@@ -264,7 +264,7 @@ public class New extends CachingTypedAST implements CoreAST {
             );
         }
 
-        ClassBinding classVarTypeBinding = (ClassBinding) env.lookupValueBinding(
+        ClassBinding classVarTypeBinding = env.lookupValueBinding(
                 "class", 
                 ClassBinding.class
         ).orElse(null);

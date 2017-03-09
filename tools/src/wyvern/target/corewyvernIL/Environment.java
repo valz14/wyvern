@@ -28,15 +28,17 @@ public class Environment {
 		}
 		
 		this.binding = binding;
-		if (binding != null)
+		if (binding != null) {
 			this.name = binding.getName();
+		}
 	}
 	
 	public void setBinding (Binding binding)
 	{
 		this.binding = binding;
-		if (binding != null)
+		if (binding != null) {
 			this.name = binding.getName ();
+		}
 	}
 	
 	public Binding getBinding ()
@@ -48,8 +50,9 @@ public class Environment {
 	}
 	
 	public Environment extend(Environment env) {
-		if (env.binding == null)
+		if (env.binding == null) {
 			return this;
+		}
 		
 		return new Environment(extend(env.nextEnvironment), env.binding);
 	}
@@ -61,18 +64,22 @@ public class Environment {
 	private static Environment emptyEnvironment = new Environment(null, null);
 
 	public NameBinding lookup(String name) {
-		if (this.name == null)
+		if (this.name == null) {
 			return null;
-		if (this.name.equals(name) && this.binding instanceof NameBinding)
+		}
+		if (this.name.equals(name) && this.binding instanceof NameBinding) {
 			return (NameBinding) binding;
+		}
 		return nextEnvironment.lookup(name);
 	}
 
 	public TypeBinding lookupType(String name) {
-		if (this.name == null)
+		if (this.name == null) {
 			return null;
-		if (this.name.equals(name) && this.binding instanceof TypeBinding)
+		}
+		if (this.name.equals(name) && this.binding instanceof TypeBinding) {
 			return (TypeBinding) binding;
+		}
 		return nextEnvironment.lookupType(name);
 	}
 
@@ -83,9 +90,11 @@ public class Environment {
 	}
 
 	private void writeBinding(List<Binding> binding) {
-		if (this.binding != null)
+		if (this.binding != null) {
 			binding.add(this.binding);
-		if (nextEnvironment != null)
+		}
+		if (nextEnvironment != null) {
 			nextEnvironment.writeBinding(binding);
+		}
 	}
 }

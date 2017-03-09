@@ -60,7 +60,6 @@ public class IfExpr extends CachingTypedAST implements CoreAST {
     @Override
     public ExpressionAST doClone(Map<String, TypedAST> newChildren) {
         ArrayList<IfClause> clauses = new ArrayList<>(newChildren.size());
-        int i = 0;
         for (String s : newChildren.keySet()) {
             clauses.add(Integer.parseInt(s), (IfClause)newChildren.get(s));
         }

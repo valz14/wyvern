@@ -117,8 +117,9 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 	@Override
 	public Map<String, TypedAST> getChildren() {
 		Map<String, TypedAST> childMap = new HashMap<>();
-		if (body != null)
+		if (body != null) {
 			childMap.put("body", body);
+		}
 		return childMap;
 	}
 
@@ -140,8 +141,9 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 			type = TypeResolver.resolve(type, env);
 			Type retType = ((Arrow)type).getResult();
 			if (bodyType != null &&
-					!bodyType.subtype(retType))
+					!bodyType.subtype(retType)) {
 				ToolError.reportError(ErrorMessage.NOT_SUBTYPE, this, bodyType.toString(), ((Arrow)type).getResult().toString());
+			}
 		}
 		return type;
 	}
@@ -170,7 +172,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 	@Override
 	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
 		Closure closure = new Closure(this, evalEnv);
-		ValueBinding vb = (ValueBinding) declEnv.lookup(name).get();
+		ValueBinding vb = declEnv.lookup(name).get();
 		vb.setValue(closure);
 	}
 
@@ -193,8 +195,9 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 			NameBinding oldBinding = argNames.get(i);
 			argNames.set(i, new NameBindingImpl(oldBinding.getName(), TypeResolver.resolve(oldBinding.getType(), against)));
 		}
-		if (resolvedType == null)
+		if (resolvedType == null) {
 			resolvedType = TypeResolver.resolve(type, against);
+		}
 		return env.extend(new NameBindingImpl(name, resolvedType));
 	}
 
@@ -212,7 +215,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
     private GenContext serializeArguments(List<FormalArg> args, GenContext ctx) {
         if(isGeneric()) {
             for(String s : this.generics) {
-                ValueType type = this.genericStructuralType(s);
+                ValueType type = DefDeclaration.genericStructuralType(s);
                 String genName = GENERIC_PREFIX + s;
                 args.add(new FormalArg(genName, type));
 
@@ -253,7 +256,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 
             for(String s : this.generics) {
                 String genName = GENERIC_PREFIX + s;
-                ValueType type = this.genericStructuralType(s);
+                ValueType type = DefDeclaration.genericStructuralType(s);
                 args.add(new FormalArg(genName, type));
 
                 methodContext = new TypeGenContext(s, genName, methodContext);
@@ -285,12 +288,14 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		for(NameBinding arg : argNames) {
 			args.add(new Variable(arg.getName()));
 		}
-		if (tlc.getReceiverName() == null)
+		if (tlc.getReceiverName() == null) {
 			throw new RuntimeException("must set receiver name before addModuleDecl on a def");
+		}
 		Expression body = new MethodCall(new Variable(tlc.getReceiverName()), name, args, this);
 		
-		if (argILTypes == null)
+		if (argILTypes == null) {
 			throw new NullPointerException("need to call topLevelGen/generateDecl before addModuleDecl");
+		}
 		wyvern.target.corewyvernIL.decl.DefDeclaration decl =
 			new wyvern.target.corewyvernIL.decl.DefDeclaration(name, getArgILTypes(), getReturnILType(), body, getLocation());
 		

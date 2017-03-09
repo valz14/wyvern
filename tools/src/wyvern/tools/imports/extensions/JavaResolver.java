@@ -82,9 +82,9 @@ public class JavaResolver implements ImportResolver {
 			throw new RuntimeException(e);
 		}
 		String classAlias = uri.getFragment();
-		if (binderHashMap.containsKey(className))
+		if (binderHashMap.containsKey(className)) {
 			return new JavaBinder(binderHashMap.get(className), classAlias);
-		else {
+		} else {
 			JavaClassDecl cd = Util.javaToWyvDecl(resolved);
 			binderHashMap.put(className, cd);
 			return new JavaBinder(cd, classAlias);

@@ -11,18 +11,14 @@ import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.FileLocation;
 import wyvern.tools.errors.ToolError;
-import wyvern.tools.errors.WyvernException;
 import wyvern.tools.typedAST.abs.AbstractValue;
 import wyvern.tools.typedAST.core.expressions.Invocation;
 import wyvern.tools.typedAST.interfaces.InvokableValue;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.interfaces.Value;
-import wyvern.tools.typedAST.transformers.GenerationEnvironment;
-import wyvern.tools.typedAST.transformers.ILWriter;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.extensions.Tuple;
 import wyvern.tools.util.EvaluationEnvironment;
-import wyvern.tools.util.TreeWriter;
 
 public class TupleValue extends AbstractValue implements InvokableValue {
 	private Tuple tuple;
@@ -72,13 +68,16 @@ public class TupleValue extends AbstractValue implements InvokableValue {
 	@Override
 	public Value evaluateInvocation(Invocation exp, EvaluationEnvironment env) {
 		String name = exp.getOperationName();
-		if (name.length() < 2)
+		if (name.length() < 2) {
 			ToolError.reportError(ErrorMessage.CANNOT_INVOKE, exp.getLocation());
-		if (!name.startsWith("n"))
+		}
+		if (!name.startsWith("n")) {
 			ToolError.reportError(ErrorMessage.CANNOT_INVOKE, exp.getLocation());
+		}
 		int num = Integer.valueOf(name.substring(1));
-		if (num >= values.length)
+		if (num >= values.length) {
 			ToolError.reportError(ErrorMessage.CANNOT_INVOKE, exp.getLocation());
+		}
 		return values[num];
 	}
 

@@ -21,9 +21,9 @@ public class TreeWriter {
 		if (o instanceof TreeWritable) {
 			writeObject((TreeWritable)o);
 		} else if (o instanceof Integer) {
-			buf.append((Integer)o);
+			buf.append(o);
 		} else if (o instanceof Boolean) {
-			buf.append((Boolean)o);
+			buf.append(o);
 		} else if (o instanceof String) {
 			buf.append('\"');
 			buf.append((String)o);
@@ -31,10 +31,12 @@ public class TreeWriter {
 		} else if (o instanceof List) {
 			buf.append('[');
 			List<Object> list = (List<Object>)o;
-			if (list.size() > 0)
+			if (list.size() > 0) {
 				first = true;
-			for (Object elem : list)
+			}
+			for (Object elem : list) {
 				writeGenericObject(elem);
+			}
 			buf.append(']');
 		} else if (o == null){
 			buf.append("null");

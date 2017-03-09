@@ -4,18 +4,14 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-import wyvern.target.corewyvernIL.Environment;
 import wyvern.target.corewyvernIL.FormalArg;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.DefDeclType;
-import wyvern.target.corewyvernIL.decltype.ValDeclType;
-import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.type.ValueType;
-import wyvern.target.oir.OIREnvironment;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.FileLocation;
 import wyvern.tools.errors.ToolError;
@@ -30,7 +26,9 @@ public class DefDeclaration extends NamedDeclaration {
 			ValueType type, IExpr iExpr, FileLocation loc) {
 		super(methodName, loc);
 		this.formalArgs = formalArgs;
-		if (type == null) throw new RuntimeException();
+		if (type == null) {
+			throw new RuntimeException();
+		}
 		this.type = type;
 		this.body = iExpr;
 	}
@@ -49,10 +47,11 @@ public class DefDeclaration extends NamedDeclaration {
 		dest.append(indent).append("def ").append(getName()).append('(');
 		boolean first = true;
 		for (FormalArg arg: formalArgs) {
-			if (first)
+			if (first) {
 				first = false;
-			else
+			} else {
 				dest.append(", ");
+			}
 			arg.doPrettyPrint(dest, indent);
 		}
 		String newIndent = indent+"    ";

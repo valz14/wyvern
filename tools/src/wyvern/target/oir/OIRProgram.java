@@ -139,8 +139,9 @@ public class OIRProgram extends OIRAST {
 			if (decl instanceof OIRClassDeclaration)
 			{
 				OIRClassDeclaration classDecl = (OIRClassDeclaration)decl;
-				if (classDecl.getClassID() == classID)
+				if (classDecl.getClassID() == classID) {
 					return classDecl;
+				}
 			}
 		}
 		
@@ -154,8 +155,9 @@ public class OIRProgram extends OIRAST {
 			if (decl instanceof OIRClassDeclaration)
 			{
 				OIRClassDeclaration classDecl = (OIRClassDeclaration)decl;
-				if (classDecl.getClassID() == classID)
+				if (classDecl.getClassID() == classID) {
 					return classDecl.getName();
+				}
 			}
 		}
 		
@@ -172,10 +174,7 @@ public class OIRProgram extends OIRAST {
 		else if (delegateImplementation == DelegateImplementation.PIC)
 		{
 			PIC pic;
-			String className;
-			OIRClassDeclaration oirClassDecl;
-
-			oirClassDecl = getClassDeclaration (classID);
+			getClassDeclaration (classID);
 			pic = picArray [callSiteID];
 			return pic.search(classID, objectAddress);
 		}

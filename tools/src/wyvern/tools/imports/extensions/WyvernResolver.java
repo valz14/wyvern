@@ -50,8 +50,9 @@ public class WyvernResolver implements ImportResolver {
 	public static void clearFiles() {savedResolutions.clear(); getInstance().savedBinders.clear();}
 
 	public static WyvernResolver getInstance() {
-		if (instance == null)
+		if (instance == null) {
 			instance = new WyvernResolver();
+		}
 		return instance;
 	}
 	private WyvernResolver() {}
@@ -64,10 +65,11 @@ public class WyvernResolver implements ImportResolver {
 		public WyvernBinder(String filename, Reader source) {
 			res = null;
 			try {
-				if (useNewParser)
+				if (useNewParser) {
 					res = ParseUtils.makeParser(filename, source).CompilationUnit();
-				else
+				} else {
 					res = (TypedAST)new Wyvern().parse(source, filename);
+				}
 			} catch (IOException | CopperParserException | ParseException e) {
 				throw new RuntimeException(e);
 			}
@@ -121,8 +123,9 @@ public class WyvernResolver implements ImportResolver {
 				throw new RuntimeException("Cyclic dependency");
 			}
 			extending = true;
-			if (res instanceof EnvironmentExtender)
+			if (res instanceof EnvironmentExtender) {
 				in = ((EnvironmentExtender) res).extend(in, in);
+			}
 			extending = false;
 			return in.extend(mib.from(in));
 		}
@@ -152,8 +155,9 @@ public class WyvernResolver implements ImportResolver {
 				throw new RuntimeException("Cyclic dependency");
 			}
 			extending = true;
-			if (res instanceof EnvironmentExtender)
+			if (res instanceof EnvironmentExtender) {
 				env = ((EnvironmentExtender) res).evalDecl(env);
+			}
 			extending = false;
 			return env;
 		}
@@ -172,13 +176,16 @@ public class WyvernResolver implements ImportResolver {
 	}
 	
 	ImportBinder tryOpen(String filename) {
-		if (savedBinders.containsKey(filename))
+		if (savedBinders.containsKey(filename)) {
 			return savedBinders.get(filename);
-		if (savedResolutions.containsKey(filename))
+		}
+		if (savedResolutions.containsKey(filename)) {
 			return addAndBind(filename, new WyvernBinder(filename,new StringReader(savedResolutions.get(filename))));
+		}
 		File fsFile = new File(filename);
-		if (!fsFile.exists() || !fsFile.canRead())
+		if (!fsFile.exists() || !fsFile.canRead()) {
 			return null;
+		}
 		try (FileInputStream fis = new FileInputStream(fsFile)) {
 			return addAndBind(filename, new WyvernBinder(filename, new InputStreamReader(fis)));
 		} catch (Exception e) {
@@ -191,8 +198,9 @@ public class WyvernResolver implements ImportResolver {
 		
 		if (result == null && !filename.contains(".")) {
 			result = tryOpen(filename + ".wyt");
-			if (result == null)
+			if (result == null) {
 				result = tryOpen(filename + ".wyv");
+			}
 		}
 		return result;
 	}
@@ -202,13 +210,15 @@ public class WyvernResolver implements ImportResolver {
 		String filename = uri.getSchemeSpecificPart();
 		ImportBinder result = tryExtensions(filename);
 		
-		if (result != null)
+		if (result != null) {
 			return result;
+		}
 		
 		for (String p : paths) {
 			result = tryExtensions(p + filename);
-			if (result != null)
+			if (result != null) {
 				return result;
+			}
 		}
 		
 		throw new RuntimeException("Cannot read file " + filename);

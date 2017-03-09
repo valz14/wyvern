@@ -21,7 +21,6 @@ import wyvern.tools.types.Environment;
 import wyvern.tools.types.OperatableType;
 import wyvern.tools.types.SubtypeRelation;
 import wyvern.tools.types.Type;
-import wyvern.tools.util.TreeWriter;
 
 public class Bool extends AbstractTypeImpl implements OperatableType {
 	public Bool(FileLocation location) { super(location); }
@@ -37,11 +36,13 @@ public class Bool extends AbstractTypeImpl implements OperatableType {
 		Type type2 = opExp.getArgument().typecheck(env, Optional.empty());
 		String operatorName = opExp.getOperationName();
 		
-		if (!(legalOperators.contains(operatorName)))
+		if (!(legalOperators.contains(operatorName))) {
 			reportError(OPERATOR_DOES_NOT_APPLY, opExp, operatorName, this.toString());
+		}
 		
-		if (!(type2 instanceof Bool))
+		if (!(type2 instanceof Bool)) {
 			reportError(OPERATOR_DOES_NOT_APPLY2, opExp, operatorName, this.toString(), type2.toString());
+		}
 		
 		return this;
 	}

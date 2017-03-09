@@ -3,10 +3,6 @@ package wyvern.target.oir;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.HashSet;
-import java.util.HashMap;
-import java.util.Set;
-
-import wyvern.target.corewyvernIL.decl.VarDeclaration;
 import wyvern.target.oir.declarations.OIRClassDeclaration;
 import wyvern.target.oir.declarations.OIRDelegate;
 import wyvern.target.oir.declarations.OIRFieldDeclaration;
@@ -16,12 +12,10 @@ import wyvern.target.oir.declarations.OIRInterface;
 import wyvern.target.oir.declarations.OIRMethod;
 import wyvern.target.oir.declarations.OIRMethodDeclaration;
 import wyvern.target.oir.declarations.OIRMemberDeclaration;
-import wyvern.target.oir.declarations.OIRType;
 import wyvern.target.oir.expressions.OIRBoolean;
 import wyvern.target.oir.expressions.OIRCast;
 import wyvern.target.oir.expressions.OIRExpression;
 import wyvern.target.oir.expressions.OIRFFIImport;
-import wyvern.target.oir.expressions.FFIType;
 import wyvern.target.oir.expressions.OIRFieldGet;
 import wyvern.target.oir.expressions.OIRFieldSet;
 import wyvern.target.oir.expressions.OIRIfThenElse;
@@ -146,14 +140,16 @@ public class NameMangleVisitor extends ASTVisitor<NameMangleState, OIRAST> {
                         OIRMethodCall oirMethodCall) {
         ArrayList<OIRExpression> newArgs = new ArrayList<>();
         for (OIRExpression arg : oirMethodCall.getArgs()) {
-            if (arg == null)
-                newArgs.add(null);
-            else
-                newArgs.add((OIRExpression) arg.acceptVisitor(this, state));
+            if (arg == null) {
+				newArgs.add(null);
+			} else {
+				newArgs.add((OIRExpression) arg.acceptVisitor(this, state));
+			}
         }
         String methodName = oirMethodCall.getMethodName();
-        if (pythonKeywords.contains(methodName))
-            methodName = keywordPrefix + methodName;
+        if (pythonKeywords.contains(methodName)) {
+			methodName = keywordPrefix + methodName;
+		}
         OIRMethodCall methodCall = new OIRMethodCall((OIRExpression) oirMethodCall.getObjectExpr().acceptVisitor(this, state),
                                                      oirMethodCall.getObjectType(),
                                                      methodName,
@@ -253,8 +249,9 @@ public class NameMangleVisitor extends ASTVisitor<NameMangleState, OIRAST> {
     public OIRAST visit(NameMangleState state,
                         OIRMethod oirMethod) {
         String methodName = oirMethod.getDeclaration().getName();
-        if (pythonKeywords.contains(methodName))
-            oirMethod.getDeclaration().setName(keywordPrefix + methodName);
+        if (pythonKeywords.contains(methodName)) {
+			oirMethod.getDeclaration().setName(keywordPrefix + methodName);
+		}
         OIRMethod method = new OIRMethod(oirMethod.getEnvironment(),
                                          (OIRMethodDeclaration) oirMethod.getDeclaration().acceptVisitor(this, state),
                                          (OIRExpression) oirMethod.getBody().acceptVisitor(this, state));

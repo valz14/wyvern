@@ -18,7 +18,6 @@ import wyvern.tools.types.RecordType;
 import wyvern.tools.types.SubtypeRelation;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.UnresolvedType;
-import wyvern.tools.util.TreeWriter;
 
 public class TypeInv implements Type {
 	Type innerType;
@@ -61,8 +60,9 @@ public class TypeInv implements Type {
 
 			if (fetched.getMetadata().isPresent() && fetched.getMetadata().get().get() != null){
 				return fetched.getUse().cloneWithBinding(fetched);
+			} else {
+				return fetched.getUse();
 			}
-			else return fetched.getUse();
 		}
 
 		// System.out.println("Note: returning plain innertype in TypeInv!");

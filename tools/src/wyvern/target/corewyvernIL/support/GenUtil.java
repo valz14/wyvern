@@ -38,7 +38,7 @@ public class GenUtil {
 			wyvern.target.corewyvernIL.decl.TypeDeclaration td = (wyvern.target.corewyvernIL.decl.TypeDeclaration) decl;
 			return genCtx.extend(td.getName(), new Variable(td.getName()), (ValueType) td.getSourceType()); // manually adding instead of linking
 		} else if (decl instanceof wyvern.target.corewyvernIL.decl.DefDeclaration) {
-			wyvern.target.corewyvernIL.decl.Declaration methodDecl = (wyvern.target.corewyvernIL.decl.DefDeclaration) decl;
+			wyvern.target.corewyvernIL.decl.Declaration methodDecl = decl;
 			List<wyvern.target.corewyvernIL.decl.Declaration> decls =
 					new LinkedList<wyvern.target.corewyvernIL.decl.Declaration>();
 			List<wyvern.target.corewyvernIL.decltype.DeclType> declts =
@@ -73,11 +73,10 @@ public class GenUtil {
 				wyvern.target.corewyvernIL.decl.ValDeclaration vd = (wyvern.target.corewyvernIL.decl.ValDeclaration) decl;
 				return new Let(vd.getName(), vd.getType(), vd.getDefinition(), genExpByIterator(genCtx, ai));
 			} else if (decl instanceof wyvern.target.corewyvernIL.decl.TypeDeclaration) {
-				wyvern.target.corewyvernIL.decl.TypeDeclaration td = (wyvern.target.corewyvernIL.decl.TypeDeclaration) decl;
 				//return new Let(td.getName(), new Variable(td.getName()), genExpByIterator(genCtx, ai)); // manually adding instead of linking
 				return genExpByIterator(genCtx, ai);
 			} else if (decl instanceof wyvern.target.corewyvernIL.decl.DefDeclaration) {
-				wyvern.target.corewyvernIL.decl.Declaration methodDecl = (wyvern.target.corewyvernIL.decl.DefDeclaration) decl;
+				wyvern.target.corewyvernIL.decl.Declaration methodDecl = decl;
 				List<wyvern.target.corewyvernIL.decl.Declaration> decls =
 						new LinkedList<wyvern.target.corewyvernIL.decl.Declaration>();
 				List<wyvern.target.corewyvernIL.decltype.DeclType> declts =

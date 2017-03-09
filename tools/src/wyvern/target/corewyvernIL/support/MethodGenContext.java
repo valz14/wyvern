@@ -19,10 +19,11 @@ public class MethodGenContext extends GenContext {
 	
 	@Override
 	public boolean isPresent(String varName, boolean isValue) {
-		if (isValue && this.methodName.equals(varName))
+		if (isValue && this.methodName.equals(varName)) {
 			return true;
-		else
+		} else {
 			return super.isPresent(varName, isValue);
+		}
 	}
 
 	@Override
@@ -47,10 +48,11 @@ public class MethodGenContext extends GenContext {
 
 	@Override
 	public CallableExprGenerator getCallableExprRec(String varName, GenContext origCtx) {
-		if (this.methodName.equals(varName))
+		if (this.methodName.equals(varName)) {
 			return new InvocationExprGenerator(new Variable(objectName), varName, origCtx, loc);
-		else
+		} else {
 			return getNext().getCallableExprRec(varName, origCtx);
+		}
 	}
 
 }

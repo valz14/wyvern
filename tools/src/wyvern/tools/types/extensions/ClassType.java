@@ -32,7 +32,6 @@ import wyvern.tools.types.RecordType;
 import wyvern.tools.types.SubtypeRelation;
 import wyvern.tools.types.Type;
 import wyvern.tools.util.Reference;
-import wyvern.tools.util.TreeWriter;
 
 public class ClassType extends AbstractTypeImpl implements OperatableType, RecordType, ParameterizableType {
 	private ClassDeclaration decl = null;
@@ -94,16 +93,18 @@ public class ClassType extends AbstractTypeImpl implements OperatableType, Recor
 	@Override
 	public Type checkOperator(Invocation opExp, Environment env) {
 		// should not be any arguments - that is in a separate application at present
-		if (opExp.getArgument() != null)
+		if (opExp.getArgument() != null) {
 			throw new RuntimeException(opExp.getLocation().toString());
+		}
 		assert opExp.getArgument() == null;
 
 		// the operation should exist
 		String opName = opExp.getOperationName();
 		NameBinding m = declEnv.get().lookup(opName);
 
-		if (m == null)
+		if (m == null) {
 			reportError(OPERATOR_DOES_NOT_APPLY, opExp, opName, this.toString());
+		}
 
 		// TODO Auto-generated method stub
 		return m.getType();
@@ -117,15 +118,18 @@ public class ClassType extends AbstractTypeImpl implements OperatableType, Recor
 	public TypeType getEquivType() {
 		if (typeEquivalentEnv == null || typeEquivalentEnv.get() == null) {
 			if (declEnv.get() != null) {
-				if (typeEquivalentEnv == null)
+				if (typeEquivalentEnv == null) {
 					typeEquivalentEnv = new Reference<>();
+				}
 				typeEquivalentEnv.set(TypeDeclUtils.getTypeEquivalentEnvironment(declEnv.get()));
-			} else
+			} else {
 				throw new RuntimeException();
+			}
 		}
 
-		if (equivType == null)
+		if (equivType == null) {
 			equivType = new TypeType(typeEquivalentEnv.get());
+		}
 		return equivType;
 	}
 
@@ -175,8 +179,9 @@ public class ClassType extends AbstractTypeImpl implements OperatableType, Recor
 	private void writeBindings(String prefix, HashMap<String, Type> map, List<Binding> bindings) {
 		int i = 0;
 		for (Binding b : bindings) {
-			if (b == null)
+			if (b == null) {
 				continue;
+			}
 			if (b instanceof NameBindingImpl) {
 				NameBindingImpl ni = (NameBindingImpl)b;
 				map.put(prefix+":"+i++ +":ni:"+ni.getName(), ni.getType());
@@ -221,7 +226,6 @@ public class ClassType extends AbstractTypeImpl implements OperatableType, Recor
     @Deprecated
     public wyvern.target.corewyvernIL.type.ValueType generateILType() {
         if (getTaggedInfo() != null) {
-            TaggedInfo ti = this.tagInfo;
             return new NominalType(new Variable("this"), getName());
         }
         throw new WyvernException("Tagged ClassType conversion not implemented yet", this.getDecl());

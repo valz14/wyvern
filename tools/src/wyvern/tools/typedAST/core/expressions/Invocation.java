@@ -177,7 +177,7 @@ public class Invocation extends CachingTypedAST implements CoreAST, Assignable {
         }
         
         if (argument != null) {
-            IExpr arg  = ((ExpressionAST) argument)
+            IExpr arg  = argument
                 .generateIL(ctx, null, dependencies);
 
             List<IExpr> args = new ArrayList<IExpr>();

@@ -65,15 +65,17 @@ public class OIREnvironment {
 
   public OIRType lookup(String name)
   {
-    if (name == null)
-      return null;
+    if (name == null) {
+		return null;
+	}
 
     OIRType type;
 
     type = nameTable.get(name);
     if (type == null) {
-      if (parent == null)
-        throw new RuntimeException("OIREnvironment looking up \"" + name + "\", parent is null");
+      if (parent == null) {
+		throw new RuntimeException("OIREnvironment looking up \"" + name + "\", parent is null");
+	}
       return parent.lookup(name);
     }
 
@@ -81,15 +83,17 @@ public class OIREnvironment {
   }
 
   public OIRType lookupType(String name) {
-    if (name == null)
-      return null;
+    if (name == null) {
+		return null;
+	}
 
     OIRType type;
 
     type = typeTable.get(name);
     if (type == null) {
-      if (parent == null)
-          throw new RuntimeException("OIREnvironment looking up type \"" + name + "\", parent is null");
+      if (parent == null) {
+		throw new RuntimeException("OIREnvironment looking up type \"" + name + "\", parent is null");
+	}
       return parent.lookupType(name);
     }
     return type;
@@ -97,16 +101,18 @@ public class OIREnvironment {
 
   // TODO: Is this a reasonable approach to finding class declarations?
   public OIRType topDownLookupType(String name) {
-    if (name == null)
-      return null;
+    if (name == null) {
+		return null;
+	}
 
     OIRType type = typeTable.get(name);
 
     if (type == null) {
       for (OIREnvironment child : children) {
         type = child.topDownLookupType(name);
-        if (type != null)
-          return type;
+        if (type != null) {
+			return type;
+		}
       }
     }
     return type;

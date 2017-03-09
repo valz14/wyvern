@@ -23,7 +23,6 @@ import wyvern.tools.types.Environment;
 import wyvern.tools.types.SubtypeRelation;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.TypeResolver;
-import wyvern.tools.util.TreeWriter;
 
 public class Arrow extends AbstractTypeImpl implements ApplyableType {
 	private Type result;
@@ -49,23 +48,26 @@ public class Arrow extends AbstractTypeImpl implements ApplyableType {
 		
 		// System.out.println(argument); //FIXME:
 		
-		if (!actualType.subtype(argument))
+		if (!actualType.subtype(argument)) {
 			reportError(ACTUAL_FORMAL_TYPE_MISMATCH, application,actualType.toString(),argument.toString());
+		}
 		return result;
 	}
 	
 	@Override
 	public String toString() {
 		String argString = (argument == null)?null:argument.toString();
-		if (!argument.isSimple())
+		if (!argument.isSimple()) {
 			argString = "(" + argString + ")";
+		}
 		return argString + " -> " + result;
 	}
 	
 	@Override
 	public boolean equals(Object otherT) {
-		if (!(otherT instanceof Arrow))
+		if (!(otherT instanceof Arrow)) {
 			return false;
+		}
 		Arrow otherAT = (Arrow) otherT; 
 		return argument.equals(otherAT.argument) && result.equals(otherAT.result);
 	}

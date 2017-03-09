@@ -21,7 +21,6 @@ import wyvern.target.corewyvernIL.decltype.VarDeclType;
 import wyvern.target.corewyvernIL.expression.Bind;
 import wyvern.target.corewyvernIL.expression.BooleanLiteral;
 import wyvern.target.corewyvernIL.expression.Cast;
-import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.FFIImport;
 import wyvern.target.corewyvernIL.expression.FieldGet;
 import wyvern.target.corewyvernIL.expression.FieldSet;
@@ -44,7 +43,6 @@ import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.target.oir.OIRAST;
 import wyvern.target.oir.OIREnvironment;
 import wyvern.target.oir.OIRProgram;
-import wyvern.target.oir.OIRTypeBinding;
 import wyvern.target.oir.declarations.OIRClassDeclaration;
 import wyvern.target.oir.declarations.OIRDelegate;
 import wyvern.target.oir.declarations.OIRFieldDeclaration;
@@ -214,7 +212,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
 	}
 
 	public OIRAST visit(EmitOIRState state, FieldSet fieldSet) {
-		IExpr object = (Expression) fieldSet.getObjectExpr();
+		IExpr object = fieldSet.getObjectExpr();
 		IExpr toSet = fieldSet.getExprToAssign();
 		OIRExpression oirObject = (OIRExpression) object.acceptVisitor(this, state);
 		OIRExpression oirToSet = (OIRExpression) toSet.acceptVisitor(this, state);

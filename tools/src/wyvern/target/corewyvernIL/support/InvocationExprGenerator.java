@@ -2,8 +2,6 @@ package wyvern.target.corewyvernIL.support;
 
 import java.util.List;
 
-import wyvern.target.corewyvernIL.FormalArg;
-import wyvern.target.corewyvernIL.decltype.ConcreteTypeMember;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.DefDeclType;
 import wyvern.target.corewyvernIL.decltype.ValDeclType;
@@ -39,10 +37,12 @@ public class InvocationExprGenerator implements CallableExprGenerator {
 		List<DeclType> dts = receiverType.findDecls(operationName, ctx);
 		// not interested in finding Type Decls (abstract or not)
 		dts.removeIf(cdt -> cdt.isTypeDecl());
-		if (dts.size() == 0)
+		if (dts.size() == 0) {
 			ToolError.reportError(ErrorMessage.NO_SUCH_METHOD, loc, operationName);
-		if (dts.size() >1)
+		}
+		if (dts.size() >1) {
 			ToolError.reportError(ErrorMessage.DUPLICATE_MEMBER, loc, receiverType.toString(), operationName);
+		}
 		DeclType dt = dts.get(0);
 		declType = dt.adapt(View.from(iExpr, ctx));
 	}

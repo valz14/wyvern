@@ -6,12 +6,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import wyvern.target.corewyvernIL.Environment;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.target.corewyvernIL.type.ValueType;
-import wyvern.target.oir.OIREnvironment;
 import wyvern.tools.errors.FileLocation;
 
 public class IntegerLiteral extends Literal implements Invokable {
@@ -25,15 +23,19 @@ public class IntegerLiteral extends Literal implements Invokable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		IntegerLiteral other = (IntegerLiteral) obj;
-		if (!value.equals(other.value))
+		if (!value.equals(other.value)) {
 			return false;
+		}
 		return true;
 	}
 

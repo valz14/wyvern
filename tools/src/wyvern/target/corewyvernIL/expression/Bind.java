@@ -7,14 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import wyvern.target.corewyvernIL.Environment;
 import wyvern.target.corewyvernIL.VarBinding;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
-import wyvern.target.corewyvernIL.support.EmptyTypeContext;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.type.ValueType;
-import wyvern.target.oir.OIREnvironment;
 import wyvern.tools.errors.ErrorMessage;
 
 public class Bind extends Expression {
@@ -24,7 +21,9 @@ public class Bind extends Expression {
 	public Bind(List<VarBinding> bindings, IExpr inExpr) {
 		super();
 		this.bindings = bindings;
-		if (inExpr == null) throw new RuntimeException();
+		if (inExpr == null) {
+			throw new RuntimeException();
+		}
 		this.inExpr = inExpr;
 	}
 
@@ -50,7 +49,7 @@ public class Bind extends Expression {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx) {
-		TypeContext bodyCtx = EmptyTypeContext.empty();
+		TypeContext bodyCtx = TypeContext.empty();
 		for (VarBinding vb : bindings) {
 			ValueType t = vb.getExpression().typeCheck(ctx);
 			if (!t.isSubtypeOf(vb.getType(), ctx)) {

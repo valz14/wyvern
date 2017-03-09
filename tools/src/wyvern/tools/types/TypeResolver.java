@@ -31,13 +31,15 @@ public class TypeResolver {
 	private static Type iresolve(Type input, Environment ctx, HashSet<Type> visited) throws IllegalAccessException {
 		// System.out.println("Resolving: " + input + " of class " + input.getClass());
 		
-		if (input instanceof UnresolvedType)
+		if (input instanceof UnresolvedType) {
 			return ((UnresolvedType) input).resolve(ctx);
+		}
 
-		if (input instanceof SpliceType)
+		if (input instanceof SpliceType) {
 			return resolve(((SpliceType) input).getInner(),
 					ctx.lookupBinding("oev", TSLBlock.OuterTypecheckBinding.class).orElseThrow(RuntimeException::new)
 							.getStore(), visited);
+		}
 
 		if (input instanceof Resolvable) {
 			Map<String, Type> toResolve = ((Resolvable) input).getTypes();
@@ -57,16 +59,20 @@ public class TypeResolver {
 			f.setAccessible(true);
 			if (Type[].class.isAssignableFrom(f.getType())) {
 				Type[] inner = (Type[])f.get(input);
-				if (inner == null) continue;
-				for (int i = 0; i < inner.length; i++)
+				if (inner == null) {
+					continue;
+				}
+				for (int i = 0; i < inner.length; i++) {
 					if (inner[i] != null && !(visited.contains(inner[i]))) {
 						visited.add(inner[i]);
 						inner[i] = resolve(inner[i], ctx, visited);
 					}
+				}
 
 			}
-			if (!Type.class.isAssignableFrom(f.getType()))
+			if (!Type.class.isAssignableFrom(f.getType())) {
 				continue;
+			}
 			Type inner = (Type)f.get(input);
 			if (inner != null && !(visited.contains(inner))) {
 				visited.add(inner);

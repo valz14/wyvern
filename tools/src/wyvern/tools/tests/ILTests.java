@@ -1,6 +1,5 @@
 package wyvern.tools.tests;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -21,7 +20,6 @@ import wyvern.target.corewyvernIL.expression.Let;
 import wyvern.target.corewyvernIL.expression.StringLiteral;
 import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.expression.Variable;
-import wyvern.target.corewyvernIL.modules.Module;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.GenContext;
@@ -256,7 +254,7 @@ public class ILTests {
 					 + "    case Nil => 0\n"
 					 + "    case c:Cons => c.element\n"
 					 ;
-		ExpressionAST ast = (ExpressionAST) TestUtil.getNewAST(input, "test input");
+		TestUtil.getNewAST(input, "test input");
 	}
 	
 	@Test
@@ -348,7 +346,7 @@ public class ILTests {
 			GenContext genCtx = GenContext.empty().extend("system", new Variable("system"), null);
 			IExpr program = ((Sequence) ast).generateIL(genCtx, null, null);
 			TypeContext ctx = TypeContext.empty();
-			ValueType t = program.typeCheck(ctx);
+			program.typeCheck(ctx);
 			Assert.fail("typechecking should have failed");
 		} catch (ToolError e) {
 			Assert.assertEquals(2, e.getLine());
@@ -605,7 +603,7 @@ public class ILTests {
 		FObject obj = wyvern.tools.interop.Default.importer().find("java.lang.System.out");
 		List<Object> args = new LinkedList<Object>();
 		args.add("Hello, world!");
-		Object result = obj.invokeMethod("println", args);
+		obj.invokeMethod("println", args);
 	}
 	
 	@Test
@@ -680,10 +678,8 @@ public class ILTests {
                      + "val n : Int = id(~)\n"
                      + "    4 5 +\n"
                      ;
-		ExpressionAST ast = (ExpressionAST) TestUtil.getNewAST(input, "test input");
-		GenContext genCtx = Globals.getGenContext(new InterpreterState(InterpreterState.PLATFORM_JAVA, null, null));
-		// IL generation doesn't work yet!
-		//Expression program = ast.generateIL(genCtx, null);
+		TestUtil.getNewAST(input, "test input");
+		Globals.getGenContext(new InterpreterState(InterpreterState.PLATFORM_JAVA, null, null));
 	}
 
 	@Test
@@ -706,8 +702,7 @@ public class ILTests {
                      ;
         TypedAST ast = TestUtil.getNewAST(input, "test input");
         GenContext genCtx = Globals.getGenContext(new InterpreterState(InterpreterState.PLATFORM_JAVA, null, null));
-		// IL generation doesn't work yet!
-		wyvern.target.corewyvernIL.decl.Declaration decl = ((Declaration) ast).topLevelGen(genCtx, null);
+		((Declaration) ast).topLevelGen(genCtx, null);
 	}
 
 	@Test

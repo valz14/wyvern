@@ -2,16 +2,13 @@ package wyvern.target.corewyvernIL.decltype;
 
 import java.io.IOException;
 
-import wyvern.target.corewyvernIL.Environment;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
-import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
 import wyvern.target.corewyvernIL.type.ValueType;
-import wyvern.target.oir.OIREnvironment;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.ToolError;
 
@@ -83,23 +80,30 @@ public class ConcreteTypeMember extends DeclTypeWithResult {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		ConcreteTypeMember other = (ConcreteTypeMember) obj;
 		if (getName() == null) {
-			if (other.getName() != null)
+			if (other.getName() != null) {
 				return false;
-		} else if (!getName().equals(other.getName()))
+			}
+		} else if (!getName().equals(other.getName())) {
 			return false;
+		}
 		if (getRawResultType() == null) {
-			if (other.getRawResultType() != null)
+			if (other.getRawResultType() != null) {
 				return false;
-		} else if (!getRawResultType().equals(other.getRawResultType()))
+			}
+		} else if (!getRawResultType().equals(other.getRawResultType())) {
 			return false;
+		}
 		return true;
 	}
 
@@ -117,8 +121,9 @@ public class ConcreteTypeMember extends DeclTypeWithResult {
 	
 	@Override
 	public DeclType interpret(EvalContext ctx) {
-		if (metadata == null)
+		if (metadata == null) {
 			return this;
+		}
 		return new ConcreteTypeMember(getName(), this.getRawResultType(), metadata.interpret(ctx));
 	}
 	@Override

@@ -44,8 +44,9 @@ public class ModuleTestCase implements TestCase {
 	public void execute() throws IOException, CopperParserException {
 		Map<String, String> mapped = modules.stream().collect(Collectors.toMap(pair->pair.first, pair->pair.second));
 		String main = mapped.get("main");
-		if (main == null)
+		if (main == null) {
 			throw new RuntimeException("Cannot find a main file - did you forget to put in a \"main\" file?");
+		}
 
 		WyvernResolver.clearFiles();
 		for (Pair<String,String> pair : modules) {

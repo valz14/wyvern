@@ -3,7 +3,6 @@ package wyvern.target.corewyvernIL.expression;
 import java.io.IOException;
 import java.util.Set;
 
-import wyvern.target.corewyvernIL.Environment;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decl.Declaration;
 import wyvern.target.corewyvernIL.decl.VarDeclaration;
@@ -15,7 +14,6 @@ import wyvern.target.corewyvernIL.support.Util;
 import wyvern.target.corewyvernIL.support.View;
 import wyvern.target.corewyvernIL.type.StructuralType;
 import wyvern.target.corewyvernIL.type.ValueType;
-import wyvern.target.oir.OIREnvironment;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.ToolError;
 
@@ -75,16 +73,19 @@ public class FieldSet extends Expression {
 
 		// Figure out the type of the field.
 		DeclType declTypeField = varTypeStructural.findDecl(fieldName, ctx);
-		if (declTypeField == null)
+		if (declTypeField == null) {
 			ToolError.reportError(ErrorMessage.NO_SUCH_FIELD, this, fieldName);
-		if (!(declTypeField instanceof VarDeclType))
+		}
+		if (!(declTypeField instanceof VarDeclType)) {
 			ToolError.reportError(ErrorMessage.CANNOT_BE_ASSIGNED, this,
 								  declTypeField.getName());
+		}
 		ValueType valTypeField = ((VarDeclType) declTypeField).getResultType(View.from(objectExpr, ctx));
 
 		// Make sure assigned type is compatible with the field's type.
-		if (!varTypeExpr.isSubtypeOf(valTypeField, ctx))
+		if (!varTypeExpr.isSubtypeOf(valTypeField, ctx)) {
 			ToolError.reportError(ErrorMessage.ASSIGNMENT_SUBTYPING, this);
+		}
 		return Util.unitType();
 	}
 
@@ -98,16 +99,19 @@ public class FieldSet extends Expression {
 	public Value interpret(EvalContext ctx) {
 		// Evaluate object whose field is being set.
 		Value objExprVal = objectExpr.interpret(ctx);
-		if (!(objExprVal instanceof ObjectValue))
+		if (!(objExprVal instanceof ObjectValue)) {
 			throw new RuntimeException("Runtime error: trying to set field of something which isn't an object.");
+		}
 		ObjectValue object = (ObjectValue) objExprVal;
 
 		// find the declaration corresponding to the field
 		Declaration decl = object.findDecl(fieldName);
-		if (decl == null)
+		if (decl == null) {
 			throw new RuntimeException("Runtime error: trying to set the undeclared field " + fieldName);
-		if (!(decl instanceof wyvern.target.corewyvernIL.decl.VarDeclaration))
+		}
+		if (!(decl instanceof wyvern.target.corewyvernIL.decl.VarDeclaration)) {
 			throw new RuntimeException("Expected assignment to var field in field set.");
+		}
 		VarDeclaration varDecl = (VarDeclaration) decl;
 		
 		// Evaluate the expression in the current context. Update the declaration.

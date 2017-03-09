@@ -44,10 +44,11 @@ public class ParseBuffer extends ScannerBuffer {
 	}
 
 	public ParseBuffer ensureNewline() {
-		if (srcString.endsWith("\n"))
+		if (srcString.endsWith("\n")) {
 			return this;
-		else
+		} else {
 			return new ParseBuffer(srcString + "\n");
+		}
 	}
 
 	public String getSrcString() {

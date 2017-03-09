@@ -7,9 +7,6 @@ import java.util.Optional;
 
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.ValDeclType;
-import wyvern.target.corewyvernIL.expression.Expression;
-import wyvern.target.corewyvernIL.expression.Let;
-import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TopLevelContext;
@@ -27,16 +24,12 @@ import wyvern.tools.typedAST.interfaces.CoreAST;
 import wyvern.tools.typedAST.interfaces.ExpressionAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.interfaces.Value;
-import wyvern.tools.typedAST.transformers.ExpressionWriter;
-import wyvern.tools.typedAST.transformers.GenerationEnvironment;
-import wyvern.tools.typedAST.transformers.ILWriter;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.TypeResolver;
 import wyvern.tools.types.UnresolvedType;
 import wyvern.tools.types.extensions.TypeInv;
 import wyvern.tools.util.EvaluationEnvironment;
-import wyvern.tools.util.TreeWriter;
 
 public class ValDeclaration extends Declaration implements CoreAST {
 	ExpressionAST definition;
@@ -91,12 +84,15 @@ public class ValDeclaration extends Declaration implements CoreAST {
 	@Override
 	protected Type doTypecheck(Environment env) {
 		Type resolved = null;
-		if (binding.getType() != null)
+		if (binding.getType() != null) {
 			resolved = TypeResolver.resolve(binding.getType(), env);
-		if (this.definition != null)
+		}
+		if (this.definition != null) {
 			this.definitionType = this.definition.typecheck(env, Optional.ofNullable(resolved));
-		if (resolved == null)
+		}
+		if (resolved == null) {
 			resolved = definitionType;
+		}
 		
 		// FIXME:
 		// System.out.println(resolved);
@@ -118,8 +114,9 @@ public class ValDeclaration extends Declaration implements CoreAST {
 			declaredType = ((UnresolvedType) declaredType).resolve(env);
 			//System.out.println("ut =" + ((ClassType) ut.resolve(env)).getName());
 		}
-		if (definitionType != null && declaredType != null && !definitionType.subtype(declaredType))
+		if (definitionType != null && declaredType != null && !definitionType.subtype(declaredType)) {
 			ToolError.reportError(ErrorMessage.NOT_SUBTYPE, this, definitionType.toString(), declaredType.toString());
+		}
 
 		// System.out.println(((ClassType) resolvedDeclaredType).getName());
 		
@@ -151,7 +148,9 @@ public class ValDeclaration extends Declaration implements CoreAST {
 	protected Environment doExtend(Environment old, Environment against) {
 		Environment env = extendName(old, against);
 		if (variableName != null)
+		 {
 			env = env.extend(new StaticTypeBinding(variableName, this.declaredTypeName)); // FIXME:
+		}
 		
 		return env;
 	}
@@ -166,27 +165,32 @@ public class ValDeclaration extends Declaration implements CoreAST {
 	@Override
     @Deprecated
 	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
-		if (!declEnv.lookup(binding.getName()).isPresent()) return;
+		if (!declEnv.lookup(binding.getName()).isPresent()) {
+			return;
+		}
 			
 		Value defValue = null;
-		if (definition != null)
+		if (definition != null) {
 			defValue = definition.evaluate(evalEnv);
-		ValueBinding vb = (ValueBinding) declEnv.lookupValueBinding(binding.getName(), ValueBinding.class).get();
+		}
+		ValueBinding vb = declEnv.lookupValueBinding(binding.getName(), ValueBinding.class).get();
 		vb.setValue(defValue);
 	}
 
 	@Override
 	public Map<String, TypedAST> getChildren() {
 		Hashtable<String, TypedAST> children = new Hashtable<>();
-		if (definition != null)
+		if (definition != null) {
 			children.put("definition", definition);
+		}
 		return children;
 	}
 
 	@Override
 	public TypedAST cloneWithChildren(Map<String, TypedAST> nc) {
-		if (nc.containsKey("definition"))
+		if (nc.containsKey("definition")) {
 			return new ValDeclaration(getName(), binding.getType(), nc.get("definition"), location);
+		}
 		return new ValDeclaration(getName(), binding.getType(), null, location);
 	}
 
@@ -206,15 +210,16 @@ public class ValDeclaration extends Declaration implements CoreAST {
 			// System.out.println("Inside ValDeclaration resolving type: " + binding.getType().getClass());
 			
 			if (binding.getType() instanceof TypeInv) {
-				TypeInv ti = (TypeInv) binding.getType();
+				binding.getType();
 				
 				// System.out.println("TypeInv = " + ti);
 				// System.out.println("against = " + against);
 			}
 			resolved = TypeResolver.resolve(binding.getType(), against);
 		} else {
-			if (definitionType == null)
+			if (definitionType == null) {
 				typecheckSelf(against);
+			}
 			resolved = definitionType;
 		}
 		definitionType = resolved;

@@ -3,12 +3,10 @@ package wyvern.target.corewyvernIL.decltype;
 import java.io.IOException;
 
 import wyvern.target.corewyvernIL.IASTNode;
-import wyvern.target.corewyvernIL.Environment;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
 import wyvern.target.corewyvernIL.type.ValueType;
-import wyvern.target.oir.OIREnvironment;
 
 public class ValDeclType extends DeclTypeWithResult implements IASTNode{
 
@@ -42,23 +40,30 @@ public class ValDeclType extends DeclTypeWithResult implements IASTNode{
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		ValDeclType other = (ValDeclType) obj;
 		if (getName() == null) {
-			if (other.getName() != null)
+			if (other.getName() != null) {
 				return false;
-		} else if (!getName().equals(other.getName()))
+			}
+		} else if (!getName().equals(other.getName())) {
 			return false;
+		}
 		if (getRawResultType() == null) {
-			if (other.getRawResultType() != null)
+			if (other.getRawResultType() != null) {
 				return false;
-		} else if (!getRawResultType().equals(other.getRawResultType()))
+			}
+		} else if (!getRawResultType().equals(other.getRawResultType())) {
 			return false;
+		}
 		return true;
 	}
 

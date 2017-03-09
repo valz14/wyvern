@@ -6,19 +6,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
-
-import wyvern.target.corewyvernIL.ASTNode;
-import wyvern.target.corewyvernIL.decl.TypeDeclaration;
-import wyvern.target.corewyvernIL.decl.ValDeclaration;
 import wyvern.target.corewyvernIL.decltype.DeclType;
-import wyvern.target.corewyvernIL.expression.Expression;
-import wyvern.target.corewyvernIL.expression.Let;
-import wyvern.target.corewyvernIL.expression.New;
-import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.GenContext;
-import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.FileLocation;
 import wyvern.tools.errors.ToolError;
@@ -37,8 +27,6 @@ import wyvern.tools.typedAST.core.values.Obj;
 import wyvern.tools.typedAST.interfaces.CoreAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.interfaces.Value;
-import wyvern.tools.typedAST.transformers.GenerationEnvironment;
-import wyvern.tools.typedAST.transformers.ILWriter;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.UnresolvedType;
@@ -50,7 +38,6 @@ import wyvern.tools.types.extensions.Unit;
 import wyvern.tools.util.EvaluationEnvironment;
 import wyvern.tools.util.Pair;
 import wyvern.tools.util.Reference;
-import wyvern.tools.util.TreeWriter;
 
 public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST {
 	protected DeclSequence decls = new DeclSequence(new LinkedList<Declaration>());
@@ -151,8 +138,9 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 	}
 
 	public TypeType getEquivalentType() {
-		if (equivalentType == null)
+		if (equivalentType == null) {
 			equivalentType = new TypeType(TypeDeclUtils.getTypeEquivalentEnvironment(getDecls(), false));
+		}
 		return equivalentType;
 	}
 
@@ -173,8 +161,9 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 		Environment oenv = genv.extend(new NameBindingImpl("this", getObjectType()));
 
 		if (decls != null) {
-			if (this.typeEquivalentEnvironmentRef.get() == null)
+			if (this.typeEquivalentEnvironmentRef.get() == null) {
 				typeEquivalentEnvironmentRef.set(TypeDeclUtils.getTypeEquivalentEnvironment(decls,true));
+			}
 			for (Declaration decl : decls.getDeclIterator()) {
 				TypeBinding binding = new TypeBinding(nameBinding.getName(), getObjectType());
 				if (decl.isClassMember()) {
@@ -193,8 +182,7 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 				ToolError.reportError(ErrorMessage.TYPE_NOT_DECLARED, this, this.implementsName);
 			}
 
-			// since there is a valid implements, check that all methods are indeed present
-			ClassType currentCT = (ClassType) this.nameBinding.getType();
+			this.nameBinding.getType();
             TypeType implementsTT = (TypeType)nameImplements.getType();
 
 			if (!getEquivalentType().subtype(implementsTT)) {
@@ -211,8 +199,7 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 				ToolError.reportError(ErrorMessage.TYPE_NOT_DECLARED, this, this.implementsClassName);
 			}
 
-			// since there is a valid class implements, check that all methods are indeed present
-			ClassType currentCT = (ClassType) this.nameBinding.getType();
+			this.nameBinding.getType();
             TypeType implementsCT = (TypeType) (
 					((ClassType)nameImplementsClass.getType())
 							.getEnv()
@@ -226,7 +213,9 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 			}
 		}
 
-		if (isTagged()) typecheckTags(env);
+		if (isTagged()) {
+			typecheckTags(env);
+		}
 
 		return new Unit();
 	}
@@ -291,8 +280,9 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 			}
 		}
 
-		if (declEvalEnv == null)
+		if (declEvalEnv == null) {
 			declEvalEnv = declEnv.extend(evalEnv);
+		}
 		if (goodTI != null) {
 			HackForArtifactTaggedInfoBinding hfatib = new HackForArtifactTaggedInfoBinding("this");
 			hfatib.setTaggedInfo(goodTI);
@@ -320,8 +310,9 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 
 		EvaluationEnvironment classEnv = EvaluationEnvironment.EMPTY;
 
-		if (decls == null)
+		if (decls == null) {
 			return classEnv;
+		}
 
 		for (Declaration decl : decls.getDeclIterator()) {
 			if (decl.isClassMember()){
@@ -332,10 +323,11 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 		ClassBinding thisBinding = new ClassBinding("class", this);
 		EvaluationEnvironment evalEnv = classEnv.extend(thisBinding);
 
-		for (Declaration decl : decls.getDeclIterator())
+		for (Declaration decl : decls.getDeclIterator()) {
 			if (decl.isClassMember()){
 				decl.bindDecl(extEvalEnv.extend(evalEnv),classEnv);
 			}
+		}
 
 		classEnv = classEnv.extend(new ClassBinding("claasdasdass", this));
 
@@ -378,10 +370,12 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 		if (equivalentClassType == null) {
             List<Declaration> declsi = new LinkedList<>();
             for (Declaration d : decls.getDeclIterator()) {
-                if (d.isClassMember())
-                    declsi.add(d);
-                if (d.isClassMember())
-                    declsi.add(d);
+                if (d.isClassMember()) {
+					declsi.add(d);
+				}
+                if (d.isClassMember()) {
+					declsi.add(d);
+				}
             }
 			equivalentClassType = new TypeType(TypeDeclUtils.getTypeEquivalentEnvironment(new DeclSequence(declsi), true));
         }
@@ -413,8 +407,9 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 				.<Pair<String,Integer>>sorted((a,b)->a.second-b.second)
 				.map(pair->pair.first)::iterator;
 		for (String key : keys) {
-			if (!key.endsWith("decl"))
+			if (!key.endsWith("decl")) {
 				continue;
+			}
 			int idx = Integer.parseInt(key.substring(0,key.length() - 4));
 			decls.add(idx, (Declaration)nc.get(key));
 		}
@@ -443,10 +438,11 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 			classMembersEnv.set(Environment.getEmptyEnvironment());
 			for (Declaration decl : decls.getDeclIterator()) {
 				instanceMembersEnv.set(decl.extendType(instanceMembersEnv.get(), against.extend(objBinding)));
-				if (decl.isClassMember())
+				if (decl.isClassMember()) {
 					classMembersEnv.set(decl.extendName(classMembersEnv.get(), against.extend(objBinding)));
-				else
+				} else {
 					instanceMembersEnv.set(decl.extendName(instanceMembersEnv.get(), against.extend(objBinding)));
+				}
 			}
 			envGuard = true;
 		}

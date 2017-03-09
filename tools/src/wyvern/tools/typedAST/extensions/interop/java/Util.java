@@ -106,8 +106,9 @@ public class Util {
 		}
 	}
 	private static JavaClassDecl getDecl(Class toGet) {
-		if (declCache.containsKey(toGet))
+		if (declCache.containsKey(toGet)) {
 			return declCache.get(toGet);
+		}
 
 		JavaClassDecl decl = new JavaClassDecl(toGet);
 		declCache.put(toGet, decl);
@@ -117,14 +118,18 @@ public class Util {
 
     @Deprecated
 	public static Value toWyvObj(Object arg) {
-		if (arg instanceof JavaWyvObject)
+		if (arg instanceof JavaWyvObject) {
 			return ((JavaWyvObject) arg).getInnerObj();
-		if (arg instanceof String)
+		}
+		if (arg instanceof String) {
 			return new StringConstant((String) arg);
-		if (arg instanceof Integer)
+		}
+		if (arg instanceof Integer) {
 			return new IntegerConstant((Integer) arg);
-		if (arg instanceof Boolean)
+		}
+		if (arg instanceof Boolean) {
 			return new BooleanConstant((Boolean) arg);
+		}
 
 
 		return javaToWyvObj(arg);
@@ -144,8 +149,9 @@ public class Util {
 
 	private static HashSet<Binding> bindings = new HashSet<>();
 	public static void setValueBinding(Object arg, ValueBinding b) {
-		if (bindings.contains(b))
+		if (bindings.contains(b)) {
 			return;
+		}
 		bindings.add(b);
 		Value toSet = toWyvObj(arg);
 		b.setValue(toSet);
@@ -154,14 +160,17 @@ public class Util {
 
 	/** Converts a single Wyvern object to a Java object */
 	public static Object toJavaObject(Value arg, Class hint) {
-		if (arg instanceof StringConstant)
+		if (arg instanceof StringConstant) {
 			return ((StringConstant) arg).getValue();
+		}
 
-		if (arg instanceof IntegerConstant)
+		if (arg instanceof IntegerConstant) {
 			return ((IntegerConstant) arg).getValue();
+		}
 
-		if (!(arg.getType() instanceof ClassType))
+		if (!(arg.getType() instanceof ClassType)) {
 			throw new RuntimeException();
+		}
 
 		if (arg instanceof JavaObj) {
 			return ((JavaObj) arg).getObj();
@@ -183,8 +192,9 @@ public class Util {
 	}
 
 	public static Type javaToWyvType(Class jType) {
-		if (classCache.containsKey(jType))
+		if (classCache.containsKey(jType)) {
 			return classCache.get(jType);
+		}
 
 		Type newType = javaToWyvTypeInternal(jType);
 		classCache.put(jType, newType);
@@ -200,15 +210,15 @@ public class Util {
 	}
 
 	public static Type javaToWyvTypeInternal(Class jType) {
-		if (jType.equals(int.class))
+		if (jType.equals(int.class)) {
 			return new Int();
-		else if (jType.equals(Boolean.class) || jType.equals(boolean.class))
+		} else if (jType.equals(Boolean.class) || jType.equals(boolean.class)) {
 			return new Bool();
-		else if (jType.equals(String.class))
+		} else if (jType.equals(String.class)) {
 			return new Str();
-		else if (jType.equals(void.class))
+		} else if (jType.equals(void.class)) {
 			return new Unit();
-		else {
+		} else {
 			JavaClassDecl jcd = getDecl(jType);
 			classCache.put(jType, jcd.getType()); //Prevent infinite recursion
 			//jcd.initalize();
@@ -217,13 +227,16 @@ public class Util {
 	}
 
 	public static Class wyvToJavaType(Type type) {
-		if (type instanceof Int)
+		if (type instanceof Int) {
 			return int.class;
-		if (type instanceof Str)
+		}
+		if (type instanceof Str) {
 			return String.class;
+		}
 
-		if (type instanceof JavaClassType)
+		if (type instanceof JavaClassType) {
 			return ((JavaClassType)type).getInnerClass();
+		}
 
 		//if (!(type instanceof ClassType))
 		throw new RuntimeException(); //TODO: Think of something cleverer
@@ -259,12 +272,13 @@ public class Util {
 
 	private static Type[] getArgTypes(Arrow methType) {
 		Type argType = methType.getArgument();
-		if (argType instanceof Tuple)
+		if (argType instanceof Tuple) {
 			return ((Tuple) argType).getTypeArray();
-		else if (argType instanceof Unit)
+		} else if (argType instanceof Unit) {
 			return new Type[0];
-		else
+		} else {
 			return new Type[] { argType };
+		}
 	}
 
 	private static Method findCandidate(String name, Arrow methType, Class javaType) {
@@ -272,13 +286,16 @@ public class Util {
 		Type[] args = getArgTypes(methType);
 
 		for (Method m : javaType.getMethods()) {
-			if (m.getParameterTypes().length != nArgs)
+			if (m.getParameterTypes().length != nArgs) {
 				continue;
-			if (!m.getName().equals(name))
+			}
+			if (!m.getName().equals(name)) {
 				continue;
+			}
 
-			if (!methType.getResult().subtype(javaToWyvType(m.getReturnType())))
+			if (!methType.getResult().subtype(javaToWyvType(m.getReturnType()))) {
 				continue;
+			}
 
 			int argIdx = 0;
 			boolean valid = true;
@@ -288,8 +305,9 @@ public class Util {
 					break;
 				}
 			}
-			if (!valid)
+			if (!valid) {
 				continue;
+			}
 
 			return m;
 		}
@@ -321,20 +339,21 @@ public class Util {
 		}
 		ClassWriter cv = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 		String name = "autogen$" + n++ + "$imp$" + javaType.getSimpleName();
-		if (!javaType.isInterface())
+		if (!javaType.isInterface()) {
 			cv.visit(V1_7,
 					ACC_PUBLIC,
 					name,
 					null,
 					org.objectweb.asm.Type.getType(javaType).getInternalName(),
 					new String[] { "wyvern/tools/typedAST/extensions/interop/java/objects/JavaWyvObject" });
-		else
+		} else {
 			cv.visit(V1_7,
 					ACC_PUBLIC,
 					name,
 					null,
 					"java/lang/Object",
 					new String[] { org.objectweb.asm.Type.getType(javaType).getInternalName(), "wyvern/tools/typedAST/extensions/interop/java/objects/JavaWyvObject" });
+		}
 
 		cv.visitField(ACC_PRIVATE, "objref$wyv", "Lwyvern/tools/typedAST/core/values/Obj;", null, null).visitEnd();
 		MethodVisitor mv = cv.visitMethod(ACC_PUBLIC, "<init>", "(Lwyvern/tools/typedAST/core/values/Obj;)V",null,null);
@@ -356,10 +375,12 @@ public class Util {
 		mv.visitMaxs(2,1);
 		mv.visitEnd();
 		for (Binding b : toWrap.getBindings()) {
-			if (!(b instanceof ValueBinding))
+			if (!(b instanceof ValueBinding)) {
 				continue;
-			if (!(((ValueBinding) b).getValue(null) instanceof ApplyableValue))
+			}
+			if (!(((ValueBinding) b).getValue(null) instanceof ApplyableValue)) {
 				continue;
+			}
 
 			Arrow methType = (Arrow) b.getType();
 			String methName = b.getName();
@@ -384,8 +405,9 @@ public class Util {
 				if (parameterTypes[i] instanceof Int) {
 					mv.visitVarInsn(ILOAD, i+1);
 					mv.visitMethodInsn(INVOKESTATIC, "java/lang/Integer", "valueOf", "(I)Ljava/lang/Integer;");
-				} else
+				} else {
 					mv.visitVarInsn(ALOAD, i+1);
+				}
 				mv.visitInsn(AASTORE);
 			}
 			mv.visitMethodInsn(INVOKESTATIC, "wyvern/tools/typedAST/extensions/interop/java/Util", "doInvoke",
@@ -453,12 +475,13 @@ public class Util {
     @Deprecated
 	public static Value invokeValueVarargs(Value reciever, String target, Value... args) {
 		Value iargs;
-		if (args.length == 0)
+		if (args.length == 0) {
 			iargs = UnitVal.getInstance(FileLocation.UNKNOWN);
-		else if (args.length == 1)
+		} else if (args.length == 1) {
 			iargs = args[0];
-		else
+		} else {
 			iargs = new TupleValue(null, args);
+		}
 
 		return new Application(
 				new Invocation(reciever,target, null, FileLocation.UNKNOWN),

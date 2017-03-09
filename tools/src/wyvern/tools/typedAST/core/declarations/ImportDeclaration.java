@@ -4,7 +4,6 @@ import static wyvern.tools.errors.ErrorMessage.MODULE_TYPE_ERROR;
 import static wyvern.tools.errors.ToolError.reportError;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -15,14 +14,10 @@ import wyvern.target.corewyvernIL.FormalArg;
 import wyvern.target.corewyvernIL.VarBinding;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.DefDeclType;
-import wyvern.target.corewyvernIL.decltype.VarDeclType;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.FFI;
 import wyvern.target.corewyvernIL.expression.FFIImport;
-import wyvern.target.corewyvernIL.expression.JavaValue;
-import wyvern.target.corewyvernIL.expression.Let;
 import wyvern.target.corewyvernIL.expression.MethodCall;
-import wyvern.target.corewyvernIL.expression.Path;
 import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.Module;
@@ -31,11 +26,8 @@ import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.GenUtil;
 import wyvern.target.corewyvernIL.support.ModuleResolver;
 import wyvern.target.corewyvernIL.support.TopLevelContext;
-import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.TypeGenContext;
 import wyvern.target.corewyvernIL.support.Util;
-import wyvern.target.corewyvernIL.support.View;
-import wyvern.target.corewyvernIL.type.DynamicType;
 import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.StructuralType;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -44,21 +36,17 @@ import wyvern.tools.errors.FileLocation;
 import wyvern.tools.errors.ToolError;
 import wyvern.tools.imports.ImportBinder;
 import wyvern.tools.interop.FObject;
-import wyvern.tools.tests.TestUtil;
 import wyvern.tools.typedAST.abs.Declaration;
 import wyvern.tools.typedAST.core.binding.NameBinding;
 import wyvern.tools.typedAST.core.binding.compiler.ImportResolverBinding;
 import wyvern.tools.typedAST.interfaces.CoreAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
-import wyvern.tools.typedAST.transformers.GenerationEnvironment;
-import wyvern.tools.typedAST.transformers.ILWriter;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.extensions.ClassType;
 import wyvern.tools.types.extensions.Unit;
 import wyvern.tools.util.EvaluationEnvironment;
 import wyvern.tools.util.Pair;
-import wyvern.tools.util.TreeWriter;
 
 public class ImportDeclaration extends Declaration implements CoreAST {
   private URI uri;
@@ -79,12 +67,14 @@ public class ImportDeclaration extends Declaration implements CoreAST {
     public StringBuilder prettyPrint() {
         StringBuilder sb = new StringBuilder();
         String uriString = "null";
-        if (uriString != null)
-            uriString = uri.toString();
+        if (uriString != null) {
+			uriString = uri.toString();
+		}
         String binderString = "<todo>";
         String locationString = "null";
-        if (location != null)
-            locationString = location.toString();
+        if (location != null) {
+			locationString = location.toString();
+		}
         String requireString = String.valueOf(requireFlag);
         String metadataString = String.valueOf(metadataFlag);
         sb.append("ImportDeclaration(uri=" + uriString +
@@ -102,8 +92,9 @@ public class ImportDeclaration extends Declaration implements CoreAST {
   }
   @Override
   public Environment extendType(Environment env, Environment against) {
-    if (binder == null)
-      binder = against.lookupBinding(uri.getScheme(), ImportResolverBinding.class).get().getBound().resolveImport(uri);
+    if (binder == null) {
+		binder = against.lookupBinding(uri.getScheme(), ImportResolverBinding.class).get().getBound().resolveImport(uri);
+	}
     return binder.extendTypes(env);
   }
 
@@ -117,8 +108,9 @@ public class ImportDeclaration extends Declaration implements CoreAST {
     if(uri.getScheme().equals("wyv")) {
       String schemeSpecificPart = uri.getSchemeSpecificPart();
       NameBinding envModule = env.lookup(schemeSpecificPart);
-      if (envModule == null)
-        return binder.typecheck(env);
+      if (envModule == null) {
+		return binder.typecheck(env);
+	}
       ClassType moduleType = (ClassType) envModule.getType();
       if(!moduleType.isModule()) {
         reportError(MODULE_TYPE_ERROR, this, schemeSpecificPart);
@@ -224,8 +216,9 @@ public class ImportDeclaration extends Declaration implements CoreAST {
       return FFI.importURI(this.getUri(), ctx);
     } else if (scheme.equals("java")) {
       // we are not using Java like a capability in this branch, so check the whitelist!
-      if (!Globals.checkSafeJavaImport(this.getUri().getSchemeSpecificPart()))
-          ToolError.reportError(ErrorMessage.UNSAFE_JAVA_IMPORT, this, this.getUri().getSchemeSpecificPart());
+      if (!Globals.checkSafeJavaImport(this.getUri().getSchemeSpecificPart())) {
+		ToolError.reportError(ErrorMessage.UNSAFE_JAVA_IMPORT, this, this.getUri().getSchemeSpecificPart());
+	}
       return FFI.doJavaImport(getUri(), ctx);
     } else if (this.getUri().getScheme().equals("python")) {
       String moduleName = this.getUri().getRawSchemeSpecificPart();
@@ -287,8 +280,9 @@ public class ImportDeclaration extends Declaration implements CoreAST {
       final Module module = resolver.resolveModule(moduleName);
       final String internalName = module.getSpec().getInternalName();
       if (this.metadataFlag) {
-        if (module.getSpec().getType().isResource(ctx))
-            ToolError.reportError(ErrorMessage.NO_METADATA_FROM_RESOURCE, this);
+        if (module.getSpec().getType().isResource(ctx)) {
+			ToolError.reportError(ErrorMessage.NO_METADATA_FROM_RESOURCE, this);
+		}
         Value v = resolver.wrap(module.getExpression(), module.getDependencies()).interpret(Globals.getStandardEvalContext());
         type = v.getType();
       } else {

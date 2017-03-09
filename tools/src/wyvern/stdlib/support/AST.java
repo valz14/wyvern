@@ -18,8 +18,6 @@ import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.support.Util;
 import wyvern.target.corewyvernIL.type.ValueType;
-import wyvern.tools.interop.FObject;
-import wyvern.tools.interop.JObject;
 
 public class AST {
 	public static AST utils = new AST();

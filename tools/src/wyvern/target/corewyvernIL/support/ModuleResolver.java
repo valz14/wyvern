@@ -43,10 +43,12 @@ public class ModuleResolver {
 	
     public ModuleResolver(String platform, File rootDir, File libDir) {
         ArrayList<File> searchPath = new ArrayList<File>();
-        if (rootDir != null && !rootDir.isDirectory())
-            throw new RuntimeException("the root path \""+rootDir+"\" for the module resolver must be a directory");
-        if (libDir != null && !libDir.isDirectory())
-            throw new RuntimeException("the lib path \""+libDir+"\" for the module resolver must be a directory");
+        if (rootDir != null && !rootDir.isDirectory()) {
+			throw new RuntimeException("the root path \""+rootDir+"\" for the module resolver must be a directory");
+		}
+        if (libDir != null && !libDir.isDirectory()) {
+			throw new RuntimeException("the lib path \""+libDir+"\" for the module resolver must be a directory");
+		}
         if (rootDir != null) {
             searchPath.add(rootDir);
         }
@@ -128,15 +130,17 @@ public class ModuleResolver {
 	 */
 	private File resolve(String qualifiedName, boolean isType) {
 		String names[] = qualifiedName.split("\\.");
-		if (names.length == 0)
+		if (names.length == 0) {
 			throw new RuntimeException();
+		}
 		names[names.length - 1] += isType?".wyt":".wyv";
 
     File f = null;
     for (File searchDir : searchPath) {
         f = findFile(names, searchDir.getAbsolutePath());
-        if (f.exists())
-            break;
+        if (f.exists()) {
+			break;
+		}
     }
 		if (f == null || !f.exists()) {
 			ToolError.reportError(ErrorMessage.MODULE_NOT_FOUND_ERROR, (FileLocation) null, isType?"type":"module", qualifiedName);

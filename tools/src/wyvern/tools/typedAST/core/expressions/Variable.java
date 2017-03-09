@@ -26,7 +26,6 @@ import wyvern.tools.typedAST.interfaces.Value;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.TypeResolver;
-import wyvern.tools.types.extensions.TypeType;
 import wyvern.tools.util.EvaluationEnvironment;
 
 
@@ -54,11 +53,6 @@ public class Variable extends AbstractExpressionAST implements CoreAST, Assignab
         // System.out.println("In variable: " + binding.getName() + ":" + getType());
 
         Type type = getType();
-
-        if (type instanceof TypeType) {
-            TypeType tt = (TypeType) type;
-            // System.out.println("tt = " + tt.getName());
-        }
 
         if (type == null) {
             String name = binding.getName();
@@ -88,10 +82,9 @@ public class Variable extends AbstractExpressionAST implements CoreAST, Assignab
 
     @Override
     public void checkAssignment(Assignment ass, Environment env) {
-        AssignableNameBinding vb =
-                env.lookupBinding(binding.getName(), AssignableNameBinding.class)
-                    .orElseThrow(() -> new RuntimeException(
-                                "Cannot set a non-existent or immutable var"));
+        env.lookupBinding(binding.getName(), AssignableNameBinding.class)
+            .orElseThrow(() -> new RuntimeException(
+                        "Cannot set a non-existent or immutable var"));
     }
 
     @Override

@@ -7,14 +7,12 @@ import java.util.Map;
 import java.util.HashMap;
 
 import wyvern.tools.typedAST.core.declarations.DefDeclaration;
-import wyvern.target.corewyvernIL.Environment;
 import wyvern.target.corewyvernIL.FormalArg;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
 import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.ValueType;
-import wyvern.target.oir.OIREnvironment;
 
 
 public class DefDeclType extends DeclTypeWithResult {
@@ -43,8 +41,9 @@ public class DefDeclType extends DeclTypeWithResult {
 			return false;
 		}
 		DefDeclType ddt = (DefDeclType) dt;
-		if (args.size() != ddt.args.size() || !ddt.getName().equals(getName()))
+		if (args.size() != ddt.args.size() || !ddt.getName().equals(getName())) {
 			return false;
+		}
 		for (int i = 0; i < args.size(); ++i) {
 			if (! (ddt.args.get(i).getType().isSubtypeOf(args.get(i).getType(), ctx))) {
 				return false;
@@ -66,28 +65,37 @@ public class DefDeclType extends DeclTypeWithResult {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		DefDeclType other = (DefDeclType) obj;
 		if (getName() == null) {
-			if (other.getName() != null)
+			if (other.getName() != null) {
 				return false;
-		} else if (!getName().equals(other.getName()))
+			}
+		} else if (!getName().equals(other.getName())) {
 			return false;
+		}
 		if (getRawResultType() == null) {
-			if (other.getRawResultType() != null)
+			if (other.getRawResultType() != null) {
 				return false;
-		} else if (!getRawResultType().equals(other.getRawResultType()))
+			}
+		} else if (!getRawResultType().equals(other.getRawResultType())) {
 			return false;
+		}
 		if (args == null) {
-			if (other.args != null)
+			if (other.args != null) {
 				return false;
-		} else if (!args.equals(other.args))
+			}
+		} else if (!args.equals(other.args)) {
 			return false;
+		}
 		return true;
 	}
 
@@ -96,10 +104,11 @@ public class DefDeclType extends DeclTypeWithResult {
 		dest.append(indent).append("def ").append(getName()).append('(');
 		boolean first = true;
 		for (FormalArg arg: args) {
-			if (first)
+			if (first) {
 				first = false;
-			else
+			} else {
 				dest.append(", ");
+			}
 			arg.doPrettyPrint(dest, indent);
 		}
 		String newIndent = indent+"    ";
@@ -140,10 +149,11 @@ public class DefDeclType extends DeclTypeWithResult {
 			}
 			newArgs.add(new FormalArg(arg.getName(), argT));
 		}
-		if (!changed)
+		if (!changed) {
 			return this;
-		else
+		} else {
 			return new DefDeclType(this.getName(), t, newArgs);
+		}
 	}
 	
 	@Override
@@ -159,7 +169,7 @@ public class DefDeclType extends DeclTypeWithResult {
     public  Map<Integer, List<Integer>> genericMapping() {
         Map<Integer, List<Integer>> inferenceMap = new HashMap<Integer, List<Integer>>();
         List<FormalArg> args = this.getFormalArgs();
-        ValueType rawResultType = this.getRawResultType();
+        this.getRawResultType();
 
         for(int i = 0; i < args.size(); i++) {
             FormalArg arg = args.get(i);

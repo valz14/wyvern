@@ -17,18 +17,15 @@ import org.junit.experimental.categories.Category;
 
 import org.junit.Assert;
 import wyvern.stdlib.Globals;
-import wyvern.target.corewyvernIL.Environment;
 import wyvern.target.corewyvernIL.astvisitor.EmitOIRVisitor;
 import wyvern.target.corewyvernIL.astvisitor.EmitOIRState;
 import wyvern.target.corewyvernIL.astvisitor.TailCallVisitor;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
-import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.InterpreterState;
-import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.oir.OIRAST;
 import wyvern.target.oir.OIREnvironment;
 import wyvern.target.oir.EmitPythonVisitor;
@@ -88,8 +85,9 @@ public class OIRTests {
       new EmitPythonVisitor().emitPython(oirast,
                                          OIREnvironment.getRootEnvironment());
 
-    if (debug)
-      System.out.println("OIR Program:\n" + pprint);
+    if (debug) {
+		System.out.println("OIR Program:\n" + pprint);
+	}
 
     // Call the system python interpreter to execute the code
     try {
@@ -105,8 +103,9 @@ public class OIRTests {
       BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
       BufferedReader stdErr = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
-      if (debug)
-        System.out.println("Python output:");
+      if (debug) {
+		System.out.println("Python output:");
+	}
 
       if (!p.waitFor(10, TimeUnit.SECONDS)) {
         System.out.println("Python code timed out!");
@@ -117,10 +116,12 @@ public class OIRTests {
       String result = "";
       String s = null;
       while ((s = stdInput.readLine()) != null) {
-        if (debug)
-          System.out.println(s);
-        if (result != "")
-          result += "\n";
+        if (debug) {
+			System.out.println(s);
+		}
+        if (result != "") {
+			result += "\n";
+		}
         result += s;
       }
 

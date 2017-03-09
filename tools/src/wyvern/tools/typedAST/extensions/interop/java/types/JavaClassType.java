@@ -17,7 +17,6 @@ import wyvern.tools.types.Type;
 import wyvern.tools.types.extensions.ClassType;
 import wyvern.tools.types.extensions.Str;
 import wyvern.tools.util.Reference;
-import wyvern.tools.util.TreeWriter;
 
 public class JavaClassType extends ClassType implements MetaType {
 	private final Class clazz;
@@ -74,15 +73,20 @@ public class JavaClassType extends ClassType implements MetaType {
 	public boolean subtype(Type other) {
 		decl.initalize();
 		if (other instanceof JavaClassType
-				&& ((JavaClassType)other).decl.getClazz().equals(decl.getClazz()))
+				&& ((JavaClassType)other).decl.getClazz().equals(decl.getClazz())) {
 			return true;
+		}
 		if (other instanceof JavaClassType &&
-				subtypePrim(((JavaClassType) other).getInnerClass(), decl.getClazz()))
+				subtypePrim(((JavaClassType) other).getInnerClass(), decl.getClazz())) {
 			return true;
+		}
 		if (other instanceof Str && this.decl.getClazz().equals(String.class))
+		 {
 			return true;//TODO:clean up
-		if (other instanceof JavaClassType)
+		}
+		if (other instanceof JavaClassType) {
 			return ((JavaClassType) other).decl.getClazz().isAssignableFrom(decl.getClazz());
+		}
 		return super.subtype(other);
 	}
 

@@ -37,8 +37,9 @@ public class MethodCall extends Expression {
 		this.methodName = methodName;
 		this.args = args2;
 		// sanity check
-		if (args2.size() > 0 && args2.get(0) == null)
+		if (args2.size() > 0 && args2.get(0) == null) {
 			throw new NullPointerException("invariant: no null args");
+		}
 	}
 
 	@Override
@@ -47,10 +48,11 @@ public class MethodCall extends Expression {
 		dest.append('.').append(methodName).append('(');
 		boolean first = true;
 		for (IExpr arg : args) {
-			if (first)
+			if (first) {
 				first = false;
-			else
+			} else {
 				dest.append(", ");
+			}
 			arg.doPrettyPrint(dest, indent);
 		}
 		dest.append(')');
@@ -147,12 +149,16 @@ public class MethodCall extends Expression {
 
 			// Ignore non-methods.
 			newCtx = ctx;
-			if (!(declType instanceof DefDeclType)) continue;
+			if (!(declType instanceof DefDeclType)) {
+				continue;
+			}
 			DefDeclType defDeclType = (DefDeclType) declType;
 
 			// Check it has correct number of arguments.
 			List<FormalArg> formalArgs = defDeclType.getFormalArgs();
-			if (args.size() != formalArgs.size()) continue;
+			if (args.size() != formalArgs.size()) {
+				continue;
+			}
 
 			// Typecheck actual args against formal args of this declaration.
 			boolean argsTypechecked = true;
@@ -197,8 +203,9 @@ public class MethodCall extends Expression {
 			errMsg.append(actualArgTypes.get(i).toString());
 			errMsg.append(", ");
 		}
-		if (args.size() > 0)
+		if (args.size() > 0) {
 			errMsg.append(actualArgTypes.get(args.size() - 1).toString());
+		}
 		errMsg.append(")");
 		ToolError.reportError(ErrorMessage.NO_METHOD_WITH_THESE_ARG_TYPES, this, errMsg.toString());
 		return null;

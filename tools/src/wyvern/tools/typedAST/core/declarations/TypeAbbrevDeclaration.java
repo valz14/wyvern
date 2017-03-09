@@ -20,14 +20,11 @@ import wyvern.tools.typedAST.abs.Declaration;
 import wyvern.tools.typedAST.core.binding.typechecking.TypeBinding;
 import wyvern.tools.typedAST.interfaces.CoreAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
-import wyvern.tools.typedAST.transformers.GenerationEnvironment;
-import wyvern.tools.typedAST.transformers.ILWriter;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.types.TypeResolver;
 import wyvern.tools.types.extensions.Unit;
 import wyvern.tools.util.EvaluationEnvironment;
-import wyvern.tools.util.TreeWriter;
 
 // TODO: this represents an abstract type when the reference is null.
 // would be better to have a separate class for representing an abstract type
@@ -143,8 +140,9 @@ public class TypeAbbrevDeclaration extends Declaration implements CoreAST {
 	@Override
 	public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(
 			GenContext ctx, List<TypedModuleSpec> dependencies) {
-		if (reference == null)
+		if (reference == null) {
 			reportError(ErrorMessage.NO_ABSTRACT_TYPES_IN_OBJECTS, this);
+		}
 		ValueType referenceILType = reference.getILType(ctx);
 		return new TypeDeclaration(getName(), referenceILType, getLocation());
 	}

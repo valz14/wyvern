@@ -18,12 +18,9 @@ import wyvern.tools.typedAST.interfaces.CoreAST;
 import wyvern.tools.typedAST.interfaces.ExpressionAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.interfaces.Value;
-import wyvern.tools.typedAST.transformers.GenerationEnvironment;
-import wyvern.tools.typedAST.transformers.ILWriter;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.util.EvaluationEnvironment;
-import wyvern.tools.util.TreeWriter;
 
 public class LetExpr extends CachingTypedAST implements CoreAST {
 	private DeclSequence decl;
@@ -87,7 +84,7 @@ public class LetExpr extends CachingTypedAST implements CoreAST {
 	@Override
 	public Expression generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {
 		final Iterator<Declaration> declIter = decl.getDeclIterator().iterator();
-		Iterator<TypedAST> myIter = new Iterator<TypedAST>() {
+		new Iterator<TypedAST>() {
 			boolean returnedBody = false;
 			
 			@Override
@@ -97,8 +94,9 @@ public class LetExpr extends CachingTypedAST implements CoreAST {
 
 			@Override
 			public TypedAST next() {
-				if (declIter.hasNext())
+				if (declIter.hasNext()) {
 					return declIter.next();
+				}
 				returnedBody = true;
 				return body;
 			}			

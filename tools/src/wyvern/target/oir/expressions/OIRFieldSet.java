@@ -14,9 +14,10 @@ public class OIRFieldSet extends OIRExpression {
 		OIRType objectType;
 		
 		objectType = objectExpr.typeCheck(oirEnv);
-		if (!(objectType instanceof OIRClassDeclaration))
+		if (!(objectType instanceof OIRClassDeclaration)) {
 			/*TODO: Error object is not class */
 			return null;
+		}
 		
 		setExprType (((OIRClassDeclaration)objectType).getTypeForMember(fieldName));
 		return getExprType ();

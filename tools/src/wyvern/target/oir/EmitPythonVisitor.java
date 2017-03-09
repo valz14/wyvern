@@ -6,8 +6,6 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Set;
 
-import wyvern.target.corewyvernIL.decl.VarDeclaration;
-import wyvern.target.corewyvernIL.metadata.HasMetadata;
 import wyvern.target.corewyvernIL.metadata.Metadata;
 import wyvern.target.corewyvernIL.metadata.IsTailCall;
 import wyvern.target.corewyvernIL.type.NominalType;
@@ -89,7 +87,9 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
 
     private boolean isTailCall(OIRAST oirast) {
         for (Metadata m : oirast.getMetadata()) {
-            if (m instanceof IsTailCall) return true;
+            if (m instanceof IsTailCall) {
+				return true;
+			}
         }
         return false;
     }
@@ -100,12 +100,14 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
     int nArgs = exps.size();
     for (int i = 0; i < nArgs; i++) {
       OIRExpression arg_i = exps.get(i);
-      if (arg_i != null)
-          args += arg_i.acceptVisitor(this, state);
-      else
-          args += "None";
-      if (i < nArgs - 1)
-        args += ", ";
+      if (arg_i != null) {
+		args += arg_i.acceptVisitor(this, state);
+	} else {
+		args += "None";
+	}
+      if (i < nArgs - 1) {
+		args += ", ";
+	}
     }
     return args;
   }
@@ -131,8 +133,9 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
           state.classDecls.put(name, (OIRClassDeclaration)NameMangleVisitor.mangleAST(type));
       }
     }
-    for (OIREnvironment child : oirenv.getChildren())
-      findClassDecls(state, child);
+    for (OIREnvironment child : oirenv.getChildren()) {
+		findClassDecls(state, child);
+	}
   }
 
   public String emitPython(OIRAST oirast,
@@ -186,8 +189,9 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
                       OIRInteger oirInteger) {
       state.currentLetVar = "";
     String strVal = Integer.toString(oirInteger.getValue());
-    if (state.expectingReturn)
-      return state.returnType + " " + strVal;
+    if (state.expectingReturn) {
+		return state.returnType + " " + strVal;
+	}
     return strVal;
   }
 
@@ -195,8 +199,9 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
                       OIRBoolean oirBoolean) {
       state.currentLetVar = "";
     String strVal = (oirBoolean.isValue() ? "True" : "False");
-    if (state.expectingReturn)
-      return state.returnType + " " + strVal;
+    if (state.expectingReturn) {
+		return state.returnType + " " + strVal;
+	}
     return strVal;
   }
 
@@ -217,8 +222,9 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
       (objExpr + "." +
        oirFieldGet.getFieldName());
     state.expectingReturn = oldExpectingReturn;
-    if (state.expectingReturn)
-      return state.returnType + " " + strVal;
+    if (state.expectingReturn) {
+		return state.returnType + " " + strVal;
+	}
     return strVal;
   }
 
@@ -246,9 +252,10 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
     }
     state.expectingReturn = oldExpectingReturn;
     // TODO: Handle case where objExpr has side effects
-    if (state.expectingReturn)
-      return strVal + "\n" + indent + state.returnType + " " + objExpr + "." +
-        oirFieldSet.getFieldName();
+    if (state.expectingReturn) {
+		return strVal + "\n" + indent + state.returnType + " " + objExpr + "." +
+		    oirFieldSet.getFieldName();
+	}
     return strVal;
   }
 
@@ -334,8 +341,9 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
     state.prefix = oldPrefix;
 
     String funCall = "\n" + indent;
-    if (state.expectingReturn)
-        funCall += state.returnType + " ";
+    if (state.expectingReturn) {
+		funCall += state.returnType + " ";
+	}
     funCall += "letFn" + Integer.toString(letId) + "(" + toReplaceString + ")";
 
     return (prefix + funDecl + inString + statePrefix + funCall);
@@ -352,8 +360,9 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
         String objExpr = oirMethodCall.getObjectExpr().acceptVisitor(this, state.withExpectingReturn(false));
         String args = commaSeparatedExpressions(state.withExpectingReturn(false), oirMethodCall.getArgs());
         String methodName = oirMethodCall.getMethodName();
-        if (tco)
-            methodName = tco_prefix + methodName;
+        if (tco) {
+			methodName = tco_prefix + methodName;
+		}
         boolean isOperator = methodName.matches("[^a-zA-Z0-9]*");
 
         ValueType objType = oirMethodCall.getObjectType();
@@ -371,10 +380,11 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
                              || methodName.equals("tco_negate"))) {
             return "-(" + objExpr + ")";
         } else {
-            if (isOperator)
-                return "(" + objExpr + " " + methodName + " " + args + ")";
-            else
-                return objExpr + "." + methodName + "(" + args + ")";
+            if (isOperator) {
+				return "(" + objExpr + " " + methodName + " " + args + ")";
+			} else {
+				return objExpr + "." + methodName + "(" + args + ")";
+			}
         }
     }
 
@@ -477,18 +487,21 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
     }
     Set<String> freeVars = decl.getFreeVariables();
     String dict;
-    if (args.equals(""))
-      dict = "env=";
-    else
-      dict = ", env=";
-    if (state.inClass)
-        dict += "mergeDicts(" + NameMangleVisitor.mangle("this") + ".env, {";
-    else
-        dict += "({";
+    if (args.equals("")) {
+		dict = "env=";
+	} else {
+		dict = ", env=";
+	}
+    if (state.inClass) {
+		dict += "mergeDicts(" + NameMangleVisitor.mangle("this") + ".env, {";
+	} else {
+		dict += "({";
+	}
     boolean first = true;
     for (String freeVar : freeVars) {
-      if (!first)
-        dict += ", ";
+      if (!first) {
+		dict += ", ";
+	}
       first = false;
 
       OIRVariable var = new OIRVariable(freeVar);
@@ -515,8 +528,9 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
     classesUsed.add(oirNew.getTypeName());
     String constructorCall =
         oirNew.getTypeName() + "(" + args + dict + d + thisName + ")";
-    if (state.expectingReturn)
-        return state.returnType + " " + constructorCall;
+    if (state.expectingReturn) {
+		return state.returnType + " " + constructorCall;
+	}
     return constructorCall;
   }
 
@@ -547,8 +561,9 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
         state.currentLetVar = "";
         String stringValue = oirString.getValue();
         String strVal = "\"" + escapeString(stringValue) + "\"";
-        if (state.expectingReturn)
-            return state.returnType + " " + strVal;
+        if (state.expectingReturn) {
+			return state.returnType + " " + strVal;
+		}
         return strVal;
     }
 
@@ -562,8 +577,9 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
     } else {
       var = oirVariable.getName();
     }
-    if (state.expectingReturn)
-      return state.returnType + " " + var;
+    if (state.expectingReturn) {
+		return state.returnType + " " + var;
+	}
     return var;
   }
 
@@ -594,7 +610,6 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
     StringBuilder constructor_body = new StringBuilder();
     for (OIRFieldValueInitializePair pair : oirClassDeclaration.getFieldValuePairs()) {
       OIRFieldDeclaration dec = pair.fieldDeclaration;
-      OIRExpression value = pair.valueDeclaration;
       constructor_body.append("\n");
       constructor_body.append(indent + indentIncrement);
       constructor_body.append("this.");
@@ -613,7 +628,7 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
     members += constructor_body.toString();
 
     if (!oirClassDeclaration.getDelegates().isEmpty()) {
-      OIRDelegate delegate = oirClassDeclaration.getDelegates().get(0);
+      oirClassDeclaration.getDelegates().get(0);
       members += "\n\n" + indent + "def __getattr__(self, name):";
       members += "\n" + indent + indentIncrement +
         "return getattr(self.delegate, name)";
@@ -666,7 +681,6 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
       String args = NameMangleVisitor.mangle("this");
       String argsWithoutThis = "";
       OIRMethodDeclaration decl = oirMethod.getDeclaration();
-      boolean firstArg = true;
       for (OIRFormalArg formalArg : decl.getArgs()) {
           argsWithoutThis += ", " + formalArg.getName();
           args += ", " + formalArg.getName();
@@ -705,9 +719,10 @@ public class EmitPythonVisitor extends ASTVisitor<EmitPythonState, String> {
       indent = oldIndent;
       state.currentMethod = oldMethod;
 
-      if (state.expectingReturn)
-          return def + prefix + body + "\n"
+      if (state.expectingReturn) {
+		return def + prefix + body + "\n"
               + indent + state.returnType + " " + name + "\n" + indent + trampolineDecl;
+	}
       return def + prefix + body + "\n" + indent + trampolineDecl;
   }
 

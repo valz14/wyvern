@@ -82,7 +82,9 @@ public class TaggedInfo {
 			// System.out.println("MADE caseOf!" + caseOf);
 		}
 
-		if (caseOfTaggedInfo != null) caseOfTaggedInfo.resolve(env, hl);
+		if (caseOfTaggedInfo != null) {
+			caseOfTaggedInfo.resolve(env, hl);
+		}
 
 		List<Type> resolvedComprises = new ArrayList<Type>(comprises.size());
 		for (Type t : comprises) {
@@ -231,7 +233,9 @@ public class TaggedInfo {
 		String myName = tagName;
 
 		while (info != null) {
-			if (info.tagName.equals(myName)) return true;
+			if (info.tagName.equals(myName)) {
+				return true;
+			}
 
 			info = lookupTagByType(info.caseOf);
 		}
@@ -285,7 +289,9 @@ public class TaggedInfo {
 
 	public static TaggedInfo lookupTagByType(Type t) {
 		if (t == null) { return null; }
-		if (t instanceof ClassType) return ((ClassType) t).getTaggedInfo();
+		if (t instanceof ClassType) {
+			return ((ClassType) t).getTaggedInfo();
+		}
 
 		// System.out.println("Looking for " + t + " inside:");
 		// System.out.println(globalTagStoreList);
@@ -301,13 +307,19 @@ public class TaggedInfo {
 				// FIXME:
 
 				// For static tags:
-				if (ct.getName() != null && ct.getName().equals(i.getTagName())) return i;
+				if (ct.getName() != null && ct.getName().equals(i.getTagName())) {
+					return i;
+				}
 
 				// For dynamic tags:
-				if (ct.toString().equals(cti.toString())) return i;
+				if (ct.toString().equals(cti.toString())) {
+					return i;
+				}
 			}
 
-			if (i.tagType.equals(t)) return i;
+			if (i.tagType.equals(t)) {
+				return i;
+			}
 		}
 		return null;
 	}

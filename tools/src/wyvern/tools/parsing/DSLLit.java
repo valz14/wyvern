@@ -26,12 +26,9 @@ import wyvern.tools.typedAST.extensions.interop.java.Util;
 import wyvern.tools.typedAST.interfaces.ExpressionAST;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.typedAST.interfaces.Value;
-import wyvern.tools.typedAST.transformers.GenerationEnvironment;
-import wyvern.tools.typedAST.transformers.ILWriter;
 import wyvern.tools.types.Environment;
 import wyvern.tools.types.Type;
 import wyvern.tools.util.EvaluationEnvironment;
-import wyvern.tools.util.TreeWriter;
 
 /**
  * Created by Ben Chung on 3/11/14.
@@ -43,8 +40,9 @@ public class DSLLit extends AbstractExpressionAST implements ExpressionAST {
 	FileLocation location;
 
 	public void setText(String text) {
-		if (dslText == null)
+		if (dslText == null) {
 			throw new RuntimeException();
+		}
 		dslText = Optional.of(text);
 	}
 
@@ -135,7 +133,7 @@ public class DSLLit extends AbstractExpressionAST implements ExpressionAST {
 			if (success.getValue()) {
 				ValDeclaration valueDecl = (ValDeclaration)((ObjectValue)parsedAST).findDecl("value");
 				ObjectValue astWrapper = (ObjectValue)valueDecl.getDefinition();
-				ValDeclaration astDecl = (ValDeclaration)((ObjectValue)astWrapper).findDecl("ast");
+				ValDeclaration astDecl = (ValDeclaration)astWrapper.findDecl("ast");
 				return (Expression) ((JavaValue)astDecl.getDefinition()).getWrappedValue();
 			} else {
 				ToolError.reportError(ErrorMessage.TSL_ERROR, this, "[detailed TSL error messages not supported yet]");

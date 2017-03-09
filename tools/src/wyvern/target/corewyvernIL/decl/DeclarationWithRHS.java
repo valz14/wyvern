@@ -1,7 +1,6 @@
 package wyvern.target.corewyvernIL.decl;
 
 import wyvern.target.corewyvernIL.decltype.DeclType;
-import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -18,7 +17,7 @@ public abstract class DeclarationWithRHS extends NamedDeclaration {
 	}
 
 	public IExpr getDefinition() {
-		return (Expression) definition;
+		return definition;
 	}
 	
 	public abstract ValueType getType();
@@ -26,8 +25,9 @@ public abstract class DeclarationWithRHS extends NamedDeclaration {
 	@Override
 	public final DeclType typeCheck(TypeContext ctx, TypeContext thisCtx) {
 		ValueType defType = definition.typeCheck(thisCtx); 
-		if (!defType.isSubtypeOf(getType(), thisCtx))
+		if (!defType.isSubtypeOf(getType(), thisCtx)) {
 			ToolError.reportError(ErrorMessage.ASSIGNMENT_SUBTYPING, this);
+		}
 		return getDeclType();
 	}
 	
