@@ -77,6 +77,7 @@ public class JavaType extends AbstractTreeWritable implements EnvironmentExtende
 	}
 
 	@Override
+	@Deprecated
 	public EvaluationEnvironment evalDecl(EvaluationEnvironment env) {
 		return env;
 	}

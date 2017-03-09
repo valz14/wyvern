@@ -33,10 +33,12 @@ public abstract class Declaration extends AbstractTreeWritable implements Enviro
 		return UnitVal.getInstance(this.getLocation());
 	}
 	
+	@Deprecated
 	public final Type typecheckSelf(Environment env) {
 		return doTypecheck(env);
 	}
 	
+	@Deprecated
 	public final void typecheckAll(Environment env) {
 		Environment newEnv = env;
 		for (Declaration d = this; d != null; d = d.nextDecl) {
@@ -46,6 +48,7 @@ public abstract class Declaration extends AbstractTreeWritable implements Enviro
 	}
 	
 	@Override
+	@Deprecated
 	public final Type typecheck(Environment env, Optional<Type> expected) {
 		Environment tEnv = this.extendType(env, env);
 		Environment nEnv = extendName(tEnv, tEnv);
@@ -54,8 +57,11 @@ public abstract class Declaration extends AbstractTreeWritable implements Enviro
 	}
 
 	public abstract String getName();
+	@Deprecated
 	protected abstract Type doTypecheck(Environment env);
 
+	@Override
+	@Deprecated
 	public final Environment extend(Environment old, Environment against) {
 		Environment newEnv = doExtend(old, against);
 		if (nextDecl != null)
@@ -63,27 +69,36 @@ public abstract class Declaration extends AbstractTreeWritable implements Enviro
 		return newEnv;
 	}
 	
+	@Deprecated
 	public final Environment extendWithSelf(Environment old) {
 		return doExtend(old, old);
 	}
 
+	@Deprecated
 	protected abstract Environment doExtend(Environment old, Environment against);
+	@Deprecated
 	public abstract EvaluationEnvironment extendWithValue(EvaluationEnvironment old);
+	@Deprecated
 	public abstract void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv);
 	
+	@Deprecated
 	public final EvaluationEnvironment bindDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
 		evalDecl(evalEnv, declEnv);
 		return evalEnv;
 	}
 	
+	@Deprecated
 	public final EvaluationEnvironment bindDecl(EvaluationEnvironment evalEnv) {
 		return bindDecl(evalEnv, evalEnv);
 	}
 	
+	@Override
+	@Deprecated
 	public final EvaluationEnvironment evalDecl(EvaluationEnvironment env) {
 		return bindDecl(doExtendWithValue(env));
 	}
 
+	@Deprecated
 	public final EvaluationEnvironment doExtendWithValue(EvaluationEnvironment old) {
 		return extendWithValue(old);
 	}

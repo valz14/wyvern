@@ -192,6 +192,7 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 		return bindDecls(extendWithDecls(env));
 	}
 	
+	@Deprecated
 	public final EvaluationEnvironment bindDecls(EvaluationEnvironment env) {
 		EvaluationEnvironment newEnv = env;
 		for (Declaration d : this.getDeclIterator()) {
@@ -200,6 +201,7 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 		return newEnv;
 	}
 	
+	@Deprecated
 	public final EvaluationEnvironment bindDecls(EvaluationEnvironment bodyEnv, EvaluationEnvironment declEnv) {
 		EvaluationEnvironment newEnv = declEnv;
 		for (Declaration d : this.getDeclIterator()) {
@@ -236,6 +238,7 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 	}
 
 	@Override
+	@Deprecated
 	public EvaluationEnvironment evalDecl(EvaluationEnvironment env) {
 		return evalDecls(env);
 	}

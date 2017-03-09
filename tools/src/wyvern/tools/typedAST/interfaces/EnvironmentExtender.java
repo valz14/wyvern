@@ -24,5 +24,6 @@ public interface EnvironmentExtender extends TypedAST {
 
 	public Environment extend(Environment env, Environment against);
 
+	@Deprecated
 	public EvaluationEnvironment evalDecl(EvaluationEnvironment env);
 }

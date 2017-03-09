@@ -266,6 +266,7 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 	}
 
 	@Override
+	@Deprecated
 	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
 
 		// System.out.println("Inside evalDecl for something called: " + this.getName());
@@ -314,6 +315,7 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 		return thisEnv;
 	}
 
+	@Deprecated
 	public EvaluationEnvironment getClassEnv(EvaluationEnvironment extEvalEnv) {
 
 		EvaluationEnvironment classEnv = EvaluationEnvironment.EMPTY;

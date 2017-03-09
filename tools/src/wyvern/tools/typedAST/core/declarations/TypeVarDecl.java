@@ -79,6 +79,7 @@ public class TypeVarDecl extends Declaration {
 		}
 
 		@Override
+		@Deprecated
 		public EvaluationEnvironment evalDecl(EvaluationEnvironment env) {
 			return env;
 		}
@@ -194,11 +195,13 @@ public class TypeVarDecl extends Declaration {
 	}
 
 	@Override
+	@Deprecated
 	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
 		return body.evalDecl(old);
 	}
 
 	@Override
+	@Deprecated
 	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
 		body.evalDecl(declEnv);
 	}

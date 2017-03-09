@@ -129,6 +129,7 @@ public class WyvernResolver implements ImportResolver {
 
 		boolean typechecking = false;
 		@Override
+		@Deprecated
 		public Type typecheck(Environment env) {
 			if (typechecking) {
 				throw new RuntimeException("Cyclic dependency");
@@ -145,6 +146,7 @@ public class WyvernResolver implements ImportResolver {
 
 		boolean evaling = false;
 		@Override
+		@Deprecated
 		public EvaluationEnvironment extendVal(EvaluationEnvironment env) {
 			if (extending) {
 				throw new RuntimeException("Cyclic dependency");

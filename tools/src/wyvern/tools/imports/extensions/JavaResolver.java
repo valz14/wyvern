@@ -64,6 +64,7 @@ public class JavaResolver implements ImportResolver {
 		}
 
 		@Override
+		@Deprecated
 		public EvaluationEnvironment bindVal(EvaluationEnvironment env) {
 			return resolved.bindDecl(env);
 		}

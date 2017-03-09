@@ -203,6 +203,7 @@ public class JavaClassDecl extends ClassDeclaration {
 		return decls;
 	}
 
+	@Deprecated
 	public Obj getClassObj() {
 		initalize();
 		return new Obj(getClassEnv(EvaluationEnvironment.EMPTY), null);
