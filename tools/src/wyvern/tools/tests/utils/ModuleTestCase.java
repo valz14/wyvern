@@ -39,7 +39,7 @@ public class ModuleTestCase implements TestCase {
 		return name;
 	}
 
-    @Deprecated
+	@Deprecated
 	@Override
 	public void execute() throws IOException, CopperParserException {
 		Map<String, String> mapped = modules.stream().collect(Collectors.toMap(pair->pair.first, pair->pair.second));

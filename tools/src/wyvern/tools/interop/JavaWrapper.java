@@ -5,7 +5,7 @@ package wyvern.tools.interop;
  */
 public class JavaWrapper {
 
-    public static JObject wrapObject(Object obj) {
-        return new JObject(obj);
-    }
+	public static JObject wrapObject(Object obj) {
+		return new JObject(obj);
+	}
 }

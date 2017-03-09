@@ -10,31 +10,31 @@ import wyvern.target.corewyvernIL.ASTNode;
 import wyvern.target.corewyvernIL.decl.Declaration;
 
 public class DeclarationWriter implements ILWriter {
-    private LinkedList<Declaration> decls = new LinkedList<>();
-    private ILWriter parent;
+	private LinkedList<Declaration> decls = new LinkedList<>();
+	private ILWriter parent;
 
-    private DeclarationWriter(ILWriter parent) {
-        this.parent = parent;
-    }
+	private DeclarationWriter(ILWriter parent) {
+		this.parent = parent;
+	}
 
-    @Override
-    public void write(ASTNode node) {
-        decls.add((Declaration)node);
-    }
+	@Override
+	public void write(ASTNode node) {
+		decls.add((Declaration)node);
+	}
 
-    @Override
-    public void writePrefix(ASTNode node) {
-        decls.addFirst((Declaration)node);
-    }
+	@Override
+	public void writePrefix(ASTNode node) {
+		decls.addFirst((Declaration)node);
+	}
 
-    @Override
-    public void wrap(Function<ASTNode, ASTNode> wrapper) {
-        parent.wrap(wrapper);
-    }
+	@Override
+	public void wrap(Function<ASTNode, ASTNode> wrapper) {
+		parent.wrap(wrapper);
+	}
 
-    public static List<Declaration> generate(ILWriter parent, Consumer<DeclarationWriter> node) {
-        DeclarationWriter writer = new DeclarationWriter(parent);
-        node.accept(writer);
-        return writer.decls;
-    }
+	public static List<Declaration> generate(ILWriter parent, Consumer<DeclarationWriter> node) {
+		DeclarationWriter writer = new DeclarationWriter(parent);
+		node.accept(writer);
+		return writer.decls;
+	}
 }

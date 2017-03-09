@@ -14,7 +14,7 @@ import wyvern.tools.errors.ToolError;
 
 
 public class ConcreteTypeMember extends DeclTypeWithResult {
-	
+
 	public ConcreteTypeMember(String name, ValueType sourceType) {
 		this(name, sourceType, null);
 	}
@@ -22,19 +22,19 @@ public class ConcreteTypeMember extends DeclTypeWithResult {
 		super(name, sourceType);
 		this.metadata = metadata;
 	}
-	
+
 	private IExpr metadata;
 
 	/*public void setSourceType (ValueType _type)
 	{
 		sourceType = _type;
 	}*/
-	
+
 	public ValueType getSourceType ()
 	{
 		return getRawResultType();
 	}
-	
+
 	@Override
 	public void checkWellFormed(TypeContext ctx) {
 		/*if (metadata != null) {
@@ -54,7 +54,7 @@ public class ConcreteTypeMember extends DeclTypeWithResult {
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor <S, T> emitILVisitor,
 			S state) {
-    return emitILVisitor.visit(state, this);
+		return emitILVisitor.visit(state, this);
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class ConcreteTypeMember extends DeclTypeWithResult {
 	public DeclType adapt(View v) {
 		return new ConcreteTypeMember(getName(), this.getRawResultType().adapt(v), metadata);
 	}
-	
+
 	@Override
 	public DeclType interpret(EvalContext ctx) {
 		if (metadata == null) {
@@ -135,7 +135,7 @@ public class ConcreteTypeMember extends DeclTypeWithResult {
 			return new ConcreteTypeMember(this.getName(),t, metadata);
 		}
 	}
-	
+
 	@Override
 	public boolean isTypeDecl() {
 		return true;

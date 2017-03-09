@@ -81,7 +81,7 @@ public class JavaClassType extends ClassType implements MetaType {
 			return true;
 		}
 		if (other instanceof Str && this.decl.getClazz().equals(String.class))
-		 {
+		{
 			return true;//TODO:clean up
 		}
 		if (other instanceof JavaClassType) {
@@ -92,15 +92,15 @@ public class JavaClassType extends ClassType implements MetaType {
 
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value getMetaObj() {
 
 		Method creator = Arrays.asList(decl.getClazz().getDeclaredMethods()).stream()
-												.filter(meth-> Modifier.isStatic(meth.getModifiers()))
-												.filter(meth->meth.getName().equals("meta$get"))
-												.filter(meth->meth.getParameterCount() == 0)
-												.findFirst()
-												.orElseThrow(() -> new RuntimeException("Cannot find meta obj creator method"));
+				.filter(meth-> Modifier.isStatic(meth.getModifiers()))
+				.filter(meth->meth.getName().equals("meta$get"))
+				.filter(meth->meth.getParameterCount() == 0)
+				.findFirst()
+				.orElseThrow(() -> new RuntimeException("Cannot find meta obj creator method"));
 		try {
 			Object result = creator.invoke(null);
 			return Util.toWyvObj(result);

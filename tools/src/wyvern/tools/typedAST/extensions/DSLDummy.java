@@ -21,7 +21,7 @@ import wyvern.tools.util.EvaluationEnvironment;
 public class DSLDummy extends AbstractExpressionAST implements ExpressionAST {
 	private final Type expected;
 	private TypedAST dslDef = null;
-    public DSLDummy(Type expected) {
+	public DSLDummy(Type expected) {
 		this.expected = expected;
 	}
 
@@ -29,25 +29,25 @@ public class DSLDummy extends AbstractExpressionAST implements ExpressionAST {
 		return expected;
 	}
 
-    public void setDef(TypedAST ast) {
-        dslDef = ast;
-    }
+	public void setDef(TypedAST ast) {
+		dslDef = ast;
+	}
 
-    @Override
-    public Type getType() {
-        return dslDef.getType();
-    }
+	@Override
+	public Type getType() {
+		return dslDef.getType();
+	}
 
-    @Override
-    public Type typecheck(Environment env, Optional<Type> expected) {
-        return dslDef.typecheck(env, Optional.empty());
-    }
+	@Override
+	public Type typecheck(Environment env, Optional<Type> expected) {
+		return dslDef.typecheck(env, Optional.empty());
+	}
 
-    @Override
-    @Deprecated
-    public Value evaluate(EvaluationEnvironment env) {
-        return dslDef.evaluate(env);
-    }
+	@Override
+	@Deprecated
+	public Value evaluate(EvaluationEnvironment env) {
+		return dslDef.evaluate(env);
+	}
 
 	@Override
 	public Map<String, TypedAST> getChildren() {
@@ -63,14 +63,14 @@ public class DSLDummy extends AbstractExpressionAST implements ExpressionAST {
 		return dslDummy;
 	}
 
-    @Override
-    public FileLocation getLocation() {
-        if (dslDef != null) {
+	@Override
+	public FileLocation getLocation() {
+		if (dslDef != null) {
 			return dslDef.getLocation();
 		} else {
 			return FileLocation.UNKNOWN;
 		}
-    }
+	}
 
 	@Override
 	public Expression generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {

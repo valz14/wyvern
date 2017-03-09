@@ -33,40 +33,40 @@ import wyvern.tools.typedAST.interfaces.TypedAST;
 
 /** Resolves abstract module paths to concrete files, then parses the files into modules.
  *  Knows the root directory
- * 
+ *
  * @author aldrich
  */
 public class ModuleResolver {
-    private List<File> searchPath;
+	private List<File> searchPath;
 	private Map<String, Module> moduleCache = new HashMap<String, Module>();
 	private InterpreterState state;
-	
-    public ModuleResolver(String platform, File rootDir, File libDir) {
-        ArrayList<File> searchPath = new ArrayList<File>();
-        if (rootDir != null && !rootDir.isDirectory()) {
+
+	public ModuleResolver(String platform, File rootDir, File libDir) {
+		ArrayList<File> searchPath = new ArrayList<File>();
+		if (rootDir != null && !rootDir.isDirectory()) {
 			throw new RuntimeException("the root path \""+rootDir+"\" for the module resolver must be a directory");
 		}
-        if (libDir != null && !libDir.isDirectory()) {
+		if (libDir != null && !libDir.isDirectory()) {
 			throw new RuntimeException("the lib path \""+libDir+"\" for the module resolver must be a directory");
 		}
-        if (rootDir != null) {
-            searchPath.add(rootDir);
-        }
-        if (libDir != null) {
-            searchPath.add(libDir);
-            searchPath.add(libDir.toPath().resolve("platform").resolve(platform).toFile());
-        }
-        this.searchPath = searchPath;
-    }
-	
+		if (rootDir != null) {
+			searchPath.add(rootDir);
+		}
+		if (libDir != null) {
+			searchPath.add(libDir);
+			searchPath.add(libDir.toPath().resolve("platform").resolve(platform).toFile());
+		}
+		this.searchPath = searchPath;
+	}
+
 	void setInterpreterState(InterpreterState s) {
 		state = s;
 	}
-	
+
 	/**
 	 * Equivalent to resolveModule, but for types.
 	 * Looks for a .wyt instead of a .wyv
-	 * 
+	 *
 	 * @param qualifiedName
 	 * @return
 	 */
@@ -92,7 +92,7 @@ public class ModuleResolver {
 				return new TypeGenContext(typeName, generatedVariableName, ctx);
 			}};*/
 	}
-	
+
 	public EvalContext contextWith(String... qualifiedNames) {
 		EvalContext ctx = Globals.getStandardEvalContext();
 		for (String qualifiedName : qualifiedNames) {
@@ -105,13 +105,13 @@ public class ModuleResolver {
 		}
 		return ctx;
 	}
-	
+
 	/** The main utility function for the ModuleResolver.
 	 *  Accepts a string argument of the module name to import
 	 *  Loads a module expression from the file (or looks it up in a cache)
 	 *  Returns the uninstantiated module (a function to be applied,
 	 *  or an expression to be evaluated)
-	 * @throws ParseException 
+	 * @throws ParseException
 	 */
 	public Module resolveModule(String qualifiedName) {
 		if (!moduleCache.containsKey(qualifiedName)) {
@@ -120,11 +120,11 @@ public class ModuleResolver {
 		}
 		return moduleCache.get(qualifiedName);
 	}
-	
+
 	/**
 	 * Turns dots into directory slashes.
 	 * Adds a .wyv at the end, and the root to the beginning
-	 * 
+	 *
 	 * @param qualifiedName
 	 * @return
 	 */
@@ -135,13 +135,13 @@ public class ModuleResolver {
 		}
 		names[names.length - 1] += isType?".wyt":".wyv";
 
-    File f = null;
-    for (File searchDir : searchPath) {
-        f = findFile(names, searchDir.getAbsolutePath());
-        if (f.exists()) {
-			break;
+		File f = null;
+		for (File searchDir : searchPath) {
+			f = findFile(names, searchDir.getAbsolutePath());
+			if (f.exists()) {
+				break;
+			}
 		}
-    }
 		if (f == null || !f.exists()) {
 			ToolError.reportError(ErrorMessage.MODULE_NOT_FOUND_ERROR, (FileLocation) null, isType?"type":"module", qualifiedName);
 		}
@@ -156,25 +156,25 @@ public class ModuleResolver {
 		File f = new File(filename);
 		return f;
 	}
-	
+
 	/**
 	 * Reads the file.
 	 * Parses it, generates IL, and typechecks it.
 	 * In the process, loads other modules as necessary.
 	 * Returns the resulting module expression.
-	 * 
+	 *
 	 * @param file
-	 * @param state 
+	 * @param state
 	 * @return
 	 */
 	public Module load(String qualifiedName, File file) {
-        TypedAST ast = null;
+		TypedAST ast = null;
 		try {
 			ast = TestUtil.getNewAST(file);
 		} catch (ParseException e) {
 			ToolError.reportError(ErrorMessage.PARSE_ERROR, new FileLocation(file.getPath(), e.currentToken.beginLine, e.currentToken.beginColumn), e.getMessage());
 		}
-        
+
 		final List<TypedModuleSpec> dependencies = new LinkedList<TypedModuleSpec>();
 		GenContext genCtx = Globals.getGenContext(state);
 		IExpr program;
@@ -200,11 +200,11 @@ public class ModuleResolver {
 		} else {
 			throw new RuntimeException();
 		}
-        
+
 		TypeContext ctx = extendContext(Globals.getStandardTypeContext(), dependencies);
-        ValueType moduleType = program.typeCheck(ctx);
-        
-        TypedModuleSpec spec = new TypedModuleSpec(qualifiedName, moduleType);
+		ValueType moduleType = program.typeCheck(ctx);
+
+		TypedModuleSpec spec = new TypedModuleSpec(qualifiedName, moduleType);
 		return new Module(spec, program, dependencies);
 	}
 
@@ -218,7 +218,7 @@ public class ModuleResolver {
 		}
 		return ctx;
 	}
-	
+
 	// KEEP THIS CONSISTENT WITH ABOVE
 	public GenContext extendGenContext(GenContext ctx, List<TypedModuleSpec> dependencies) {
 		for (TypedModuleSpec spec : dependencies) {
@@ -229,7 +229,7 @@ public class ModuleResolver {
 		}
 		return ctx;
 	}
-	
+
 	public IExpr wrap(IExpr program, List<TypedModuleSpec> dependencies) {
 		for (TypedModuleSpec spec : dependencies) {
 			Module m = resolveModule(spec.getQualifiedName());
@@ -237,7 +237,7 @@ public class ModuleResolver {
 		}
 		return program;
 	}
-	
+
 	public static ModuleResolver getLocal() {
 		return InterpreterState.getLocalThreadInterpreter().getResolver();
 	}

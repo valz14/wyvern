@@ -73,8 +73,8 @@ public class JavaMeth extends DefDeclaration {
 		for (JClosure.JavaInvokableMethod meth : overloads) {
 			methTypes.add(
 					DefDeclaration
-							.getMethodType(getNameBindings(meth.getParamNames(), meth.getParameterTypes()),
-									meth.getReturnType()));
+					.getMethodType(getNameBindings(meth.getParamNames(), meth.getParameterTypes()),
+							meth.getReturnType()));
 		}
 		if (methTypes.size() == 1) {
 			return methTypes.get(0);

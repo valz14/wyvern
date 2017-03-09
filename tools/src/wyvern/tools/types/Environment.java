@@ -32,12 +32,12 @@ public class Environment implements TreeWritable {
 	public Environment extend(Binding binding) {
 		return new Environment(this, binding, extEnv);
 	}
-	
+
 	public Environment extend(Environment env) {
 		if (env.binding == null) {
 			return this;
 		}
-		
+
 		return new Environment(extend(env.parentEnvironment), env.binding, extEnv);
 	}
 
@@ -66,7 +66,7 @@ public class Environment implements TreeWritable {
 		}
 		return parentEnvironment.lookupType(name);
 	}
-	
+
 	public StaticTypeBinding lookupStaticType(String name) {
 		if (this.name == null) {
 			return null;

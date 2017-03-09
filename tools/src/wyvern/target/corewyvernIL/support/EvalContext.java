@@ -17,15 +17,15 @@ public abstract class EvalContext extends TypeContext {
 	public String toString() {
 		return "EvalContext[" + endToString();
 	}
-	
+
 	public abstract Value lookupValue(String varName);
-	
+
 	public abstract EvalContext combine(EvalContext ctx);
-	
+
 	public static EvalContext empty() {
 		return theEmpty;
 	}
-	
+
 	private static EvalContext theEmpty = new EmptyValContext();
 
 	public abstract String endToString();

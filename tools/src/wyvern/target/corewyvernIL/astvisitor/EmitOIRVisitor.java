@@ -97,10 +97,10 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
 		// Add the object to the context.
 		TypeContext ctx = state.getContext();
 		ctx = ctx.extend(newExpr.getSelfName(), newExpr.typeCheck(state.getContext()));
-		
+
 		// Process each declaration.
 		for (Declaration decl : newExpr.getDecls()) {
-			
+
 			// Special case: processing a delegate declaration.
 			if (decl instanceof DelegateDeclaration) {
 				OIRDelegate oirdelegate;
@@ -108,14 +108,14 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
 				delegates.add(oirdelegate);
 				continue;
 			}
-			
+
 			// Otherwise we're processing a declaration for some member of the object.
 			OIRMemberDeclaration memberDecl;
 			memberDecl = (OIRMemberDeclaration) decl.acceptVisitor(this, new EmitOIRState(ctx, classEnv));
-			
+
 			if (decl instanceof VarDeclaration) {
-				 VarDeclaration varDecl = (VarDeclaration) decl;
-				 OIRExpression oirvalue = (OIRExpression) varDecl.getDefinition().acceptVisitor(this,
+				VarDeclaration varDecl = (VarDeclaration) decl;
+				OIRExpression oirvalue = (OIRExpression) varDecl.getDefinition().acceptVisitor(this,
 						new EmitOIRState(ctx, state.getEnvironment()));
 				OIRFieldValueInitializePair pair = new OIRFieldValueInitializePair((OIRFieldDeclaration) memberDecl, oirvalue);
 				fieldValuePairs.add(pair);
@@ -133,7 +133,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
 			classEnv.addName(memberDecl.getName(), memberDecl.getType());
 			memberDecls.add(memberDecl);
 		}
-	
+
 		// Generate the OIR expression.
 		String className = generateClassName();
 		OIRClassDeclaration classDecl = new OIRClassDeclaration(classEnv, className, newExpr.getSelfName(), delegates, memberDecls,
@@ -144,7 +144,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
 		OIRExpression oirExpr = new OIRNew(args, className);
 		oirExpr.copyMetadata(newExpr);
 		return oirExpr;
-		
+
 	}
 
 	public OIRAST visit(EmitOIRState state, MethodCall methodCall) {
@@ -158,13 +158,13 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
 		// Process the method body.
 		IExpr body = methodCall.getObjectExpr();
 		OIRExpression oirbody = (OIRExpression) body.acceptVisitor(this, state);
-		
+
 		// Return the OIRMethodCall.
 		OIRMethodCall oirMethodCall = new OIRMethodCall(oirbody, body.typeCheck(state.getContext()), methodCall.getMethodName(),
 				args);
 		oirMethodCall.copyMetadata(methodCall);
 		return oirMethodCall;
-		
+
 	}
 
 	public OIRAST visit(EmitOIRState state, Match match) {
@@ -266,7 +266,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
 		OIRMethod oirMethod = new OIRMethod(defEnv, oirMethodDecl, oirBody);
 		oirMethod.copyMetadata(defDecl);
 		return oirMethod;
-		
+
 	}
 
 	public OIRAST visit(EmitOIRState state, ValDeclaration valDecl) {
@@ -284,11 +284,11 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
 	}
 
 
-  public OIRAST visit(EmitOIRState state, BooleanLiteral booleanLiteral) {
-    OIRBoolean oirBool = new OIRBoolean(booleanLiteral.getValue());
-    oirBool.copyMetadata(booleanLiteral);
-    return oirBool;
-  }
+	public OIRAST visit(EmitOIRState state, BooleanLiteral booleanLiteral) {
+		OIRBoolean oirBool = new OIRBoolean(booleanLiteral.getValue());
+		oirBool.copyMetadata(booleanLiteral);
+		return oirBool;
+	}
 
 	public OIRAST visit(EmitOIRState state, RationalLiteral rational) {
 		OIRRational oirRational = new OIRRational(rational.getNumerator(), rational.getDenominator());
@@ -326,7 +326,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
 	}
 
 	public OIRAST visit(EmitOIRState state, DefDeclType defDeclType) {
-		
+
 		// Process types of the formal arguments.
 		List<OIRFormalArg> listOIRFormalArgs = new Vector<OIRFormalArg>();
 		for (FormalArg arg : defDeclType.getFormalArgs()) {
@@ -342,7 +342,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
 		methodDecls.addMethodDeclaration(oirMethodDecl);
 		methodDecls.copyMetadata(defDeclType);
 		return methodDecls;
-		
+
 	}
 
 	public OIRAST visit(EmitOIRState state, AbstractTypeMember abstractDeclType) {
@@ -464,7 +464,7 @@ public class EmitOIRVisitor extends ASTVisitor<EmitOIRState, OIRAST> {
 		} else if (ffiImport.getFFIType().equals(pythonType)) {
 			result = new OIRFFIImport(FFIType.PYTHON, ffiImport.getPath());
 		} else {
-        throw new RuntimeException("Unknown FFI type: " + ffiImport.getFFIType());
+			throw new RuntimeException("Unknown FFI type: " + ffiImport.getFFIType());
 		}
 
 		result.copyMetadata(ffiImport);

@@ -12,32 +12,32 @@ import wyvern.target.corewyvernIL.expression.Let;
  * Created by Ben Chung on 6/24/2015.
  */
 public class ExpressionWriter implements ILWriter {
-    private Expression output = null;
-    private LinkedList<Function<ASTNode, ASTNode>> wrappers = new LinkedList<>();
+	private Expression output = null;
+	private LinkedList<Function<ASTNode, ASTNode>> wrappers = new LinkedList<>();
 
-    private ExpressionWriter() {}
+	private ExpressionWriter() {}
 
-    @Override
-    public void write(ASTNode node) {
-        output = (Expression)node;
-    }
+	@Override
+	public void write(ASTNode node) {
+		output = (Expression)node;
+	}
 
-    @Override
-    public void writePrefix(ASTNode node) {
-        output = new Let(GenerationEnvironment.generateVariableName(), null, (Expression)node, output);
-    }
+	@Override
+	public void writePrefix(ASTNode node) {
+		output = new Let(GenerationEnvironment.generateVariableName(), null, (Expression)node, output);
+	}
 
-    @Override
-    public void wrap(Function<ASTNode, ASTNode> wrapper) {
-        wrappers.push(wrapper);
-    }
+	@Override
+	public void wrap(Function<ASTNode, ASTNode> wrapper) {
+		wrappers.push(wrapper);
+	}
 
-    public static Expression generate(Consumer<ExpressionWriter> fn) {
-        ExpressionWriter writer = new ExpressionWriter();
-        fn.accept(writer);
-        for (Function<ASTNode, ASTNode> fun : writer.wrappers) {
+	public static Expression generate(Consumer<ExpressionWriter> fn) {
+		ExpressionWriter writer = new ExpressionWriter();
+		fn.accept(writer);
+		for (Function<ASTNode, ASTNode> fun : writer.wrappers) {
 			writer.output = (Expression)fun.apply(writer.output);
 		}
-        return writer.output;
-    }
+		return writer.output;
+	}
 }

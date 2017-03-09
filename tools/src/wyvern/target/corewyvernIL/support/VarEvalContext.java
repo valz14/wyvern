@@ -12,7 +12,7 @@ public class VarEvalContext extends EvalContext {
 		this.v = v;
 		previous = evalContext;
 	}
-	
+
 	@Override
 	public boolean isPresent(String varName, boolean isValue) {
 		if (isValue && this.varName.equals(varName)) {
@@ -41,7 +41,7 @@ public class VarEvalContext extends EvalContext {
 			return this.extend(vCtx.varName, vCtx.v).combine(vCtx.previous);
 		}
 	}
-	
+
 	@Override
 	public String endToString() {
 		return varName  + " = " + v + ", " + previous.endToString();

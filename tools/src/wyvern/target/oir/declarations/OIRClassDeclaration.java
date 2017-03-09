@@ -17,24 +17,24 @@ public class OIRClassDeclaration extends OIRType {
 	private int classID;
 	private HashSet <String> methods;
 	private HashMap <String, String> methodToFieldMap;
-  private Set <String> freeVariables;
-	
+	private Set <String> freeVariables;
+
 	public OIRClassDeclaration(OIREnvironment environment, String name, String selfName, List<OIRDelegate> delegates,
-                             List<OIRMemberDeclaration> members, List<OIRFieldValueInitializePair> fieldValuePairs,
-                             Set<String> freeVariables)
+			List<OIRMemberDeclaration> members, List<OIRFieldValueInitializePair> fieldValuePairs,
+			Set<String> freeVariables)
 	{
 		super(environment);
 		this.name = name;
 		this.delegates = delegates;
 		this.members = members;
-    this.freeVariables = freeVariables;
+		this.freeVariables = freeVariables;
 		methods = new HashSet <String> ();
 		for (OIRMemberDeclaration member : members)
 		{
 			if (member instanceof OIRMethod)
 			{
 				methods.add(((OIRMethod) member).getDeclaration().getName());
-				environment.addName(((OIRMethod) member).getDeclaration().getName(), 
+				environment.addName(((OIRMethod) member).getDeclaration().getName(),
 						((OIRMethod) member).getDeclaration().getReturnType());
 			}
 			else if (member instanceof OIRFieldDeclaration)
@@ -48,21 +48,21 @@ public class OIRClassDeclaration extends OIRType {
 		// for (OIRDelegate delegate : delegates)
 		// {
 		// 	OIRInterface oirInterface;
-			
+
 		// 	oirInterface = (OIRInterface)delegate.getType();
-			
+
 		// 	for (OIRMethodDeclaration methDecl : oirInterface.getMethods())
 		// 	{
 		// 		methodToFieldMap.put(methDecl.getName(), delegate.getField());
 		// 	}
 		// }
 	}
-	
+
 	public int getDelegateMethodFieldHashMap (String method)
 	{
 		return getFieldPosition (methodToFieldMap.get(method));
 	}
-	
+
 	public OIRFieldDeclaration getFieldDeclarationForPos (int fieldPos)
 	{
 		int i;
@@ -73,14 +73,14 @@ public class OIRClassDeclaration extends OIRType {
 			if (memDecl instanceof OIRFieldDeclaration)
 			{
 				i++;
-				
+
 				if (fieldPos == i)
 				{
 					return (OIRFieldDeclaration)memDecl;
 				}
 			}
 		}
-		
+
 		return null;
 	}
 	/* This method is for searching the method delegated to field sequentially */
@@ -89,29 +89,29 @@ public class OIRClassDeclaration extends OIRType {
 		for (OIRDelegate delegate : delegates)
 		{
 			OIRInterface oirInterface;
-			
+
 			oirInterface = (OIRInterface)delegate.getType();
-			
+
 			if (oirInterface.isMethodInClass(method)) {
 				return getFieldPosition (delegate.getField());
 			}
 		}
-		
+
 		return -1;
 	}
-	
+
 	public boolean isMethodInClass (String method)
 	{
-		boolean ans = methods.contains(method); 
+		boolean ans = methods.contains(method);
 		return ans;
 	}
-	
+
 	public String getSelfName ()
 	{
 		return selfName;
 	}
 	public OIRType getTypeForMember (String fieldName)
-	{		
+	{
 		for (OIRMemberDeclaration memDecls : members)
 		{
 			if (memDecls instanceof OIRFieldDeclaration)
@@ -127,15 +127,15 @@ public class OIRClassDeclaration extends OIRType {
 				}
 			}
 		}
-		
-		/* Not found here, search in the fields 
+
+		/* Not found here, search in the fields
 		 * that delegate this method */
-		
+
 		for (OIRDelegate delegate : delegates)
 		{
 			OIRInterface type;
 			OIRType methodType;
-			
+
 			type = (OIRInterface)delegate.getType();
 			methodType = type.getTypeForMember(fieldName);
 			if (methodType != null)
@@ -146,11 +146,11 @@ public class OIRClassDeclaration extends OIRType {
 		/* TODO Throw field not found error */
 		return null;
 	}
-	
+
 	public int getFieldPosition (String fieldName)
 	{
 		int i = 0;
-		
+
 		for (OIRMemberDeclaration memDecls : members)
 		{
 			if (memDecls instanceof OIRFieldDeclaration)
@@ -161,7 +161,7 @@ public class OIRClassDeclaration extends OIRType {
 				}
 			}
 		}
-		
+
 		return 0;
 	}
 	public String getName() {
@@ -195,23 +195,23 @@ public class OIRClassDeclaration extends OIRType {
 	public <S, T> T acceptVisitor(ASTVisitor<S, T> visitor, S state) {
 		return visitor.visit(state, this);
 	}
-	
+
 	@Override
 	public String toString ()
 	{
 		return getName ();
 	}
-	
+
 	public void setClassID (int classID)
 	{
 		this.classID = classID;
 	}
-	
+
 	public int getClassID ()
 	{
 		return classID;
 	}
-  public Set<String> getFreeVariables() {
-    return freeVariables;
-  }
+	public Set<String> getFreeVariables() {
+		return freeVariables;
+	}
 }

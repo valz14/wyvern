@@ -27,14 +27,14 @@ public class TypeDeclUtils {
 
 		for (Binding b : src.getBindings()) {
 			// System.out.println("Processing: " + b + " which class is " + b.getClass());
-			
+
 			if (b instanceof AssignableNameBinding) {
 				//Indicates that there is a settable value
 				String name = b.getName();
 				Type type = b.getType();
 				tev = tev.extend(
 						new NameBindingImpl("set" + name.substring(0,1).toUpperCase() + name.substring(1),
-						new Arrow(type, new Unit())));
+								new Arrow(type, new Unit())));
 				continue;
 			}
 
@@ -59,17 +59,17 @@ public class TypeDeclUtils {
 				tev = tev.extend(b);
 				continue;
 			}
-			
+
 			if (b.getType() instanceof TypeType || b.getType() instanceof ClassType) {
 				tev = tev.extend(b);
 				continue;
 			}
-			
+
 			/* used to assume it was a getter here, but that seemed unjustified.
 			 * Fixed to instead just copy the binding over
 
 			// System.out.println("Assume it is a getter even if it is wrong! :-)");
-			
+
 			String propName = b.getName();
 			Type type = b.getType();
 

@@ -22,7 +22,7 @@ import wyvern.tools.util.EvaluationEnvironment;
 
 public class IntegerConstant extends AbstractValue implements InvokableValue, CoreAST {
 	private int value;
-	
+
 	@Deprecated
 	public IntegerConstant(int i) {
 		this(i, FileLocation.UNKNOWN);
@@ -43,7 +43,7 @@ public class IntegerConstant extends AbstractValue implements InvokableValue, Co
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluateInvocation(Invocation exp, EvaluationEnvironment env) {
 		IntegerConstant intArgValue = null;
 		String operator = exp.getOperationName();
@@ -58,20 +58,20 @@ public class IntegerConstant extends AbstractValue implements InvokableValue, Co
 		} else if (argValue instanceof IntegerConstant) {		//int op int
 			intArgValue = (IntegerConstant)argValue;
 			switch(operator) {
-				case "+": return new IntegerConstant(value + intArgValue.value);
-				case "-": return new IntegerConstant(value - intArgValue.value);
-				case "*": return new IntegerConstant(value * intArgValue.value);
-				case "/": try { return new IntegerConstant(value / intArgValue.value); } catch (ArithmeticException e) { throw new RuntimeException(exp.getLocation() + "", e); }
-				case ">": return new BooleanConstant(value > intArgValue.value);
-				case "<": return new BooleanConstant(value < intArgValue.value);
-				case ">=": return new BooleanConstant(value >= intArgValue.value);
-				case "<=": return new BooleanConstant(value <= intArgValue.value);
-				case "==": return new BooleanConstant(value == intArgValue.value);
-				case "!=": return new BooleanConstant(value != intArgValue.value);
-				default: throw new RuntimeException("forgot to typecheck!");
+			case "+": return new IntegerConstant(value + intArgValue.value);
+			case "-": return new IntegerConstant(value - intArgValue.value);
+			case "*": return new IntegerConstant(value * intArgValue.value);
+			case "/": try { return new IntegerConstant(value / intArgValue.value); } catch (ArithmeticException e) { throw new RuntimeException(exp.getLocation() + "", e); }
+			case ">": return new BooleanConstant(value > intArgValue.value);
+			case "<": return new BooleanConstant(value < intArgValue.value);
+			case ">=": return new BooleanConstant(value >= intArgValue.value);
+			case "<=": return new BooleanConstant(value <= intArgValue.value);
+			case "==": return new BooleanConstant(value == intArgValue.value);
+			case "!=": return new BooleanConstant(value != intArgValue.value);
+			default: throw new RuntimeException("forgot to typecheck!");
 			}
 		} else {
-//			shouldn't get here
+			//			shouldn't get here
 			throw new RuntimeException("forgot to typecheck!");
 		}
 	}
@@ -92,7 +92,7 @@ public class IntegerConstant extends AbstractValue implements InvokableValue, Co
 		return new IntegerConstant(value, location);
 	}
 
-    @Override
+	@Override
 	public boolean equals(Object o) {
 		if (!(o instanceof IntegerConstant)) {
 			return false;

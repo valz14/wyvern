@@ -31,7 +31,7 @@ public class Cast extends Expression{
 
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor <S, T> emitILVisitor,
-                                S state) {
+			S state) {
 		return emitILVisitor.visit(state, this);
 	}
 
@@ -50,15 +50,15 @@ public class Cast extends Expression{
 	public Set<String> getFreeVariables() {
 		return toCastExpr.getFreeVariables();
 	}
-	
+
 	@Override
-    public void doPrettyPrint(Appendable dest, String indent) throws IOException {
-	    dest.append("((");
-	    getExprType().doPrettyPrint(dest, "");
-	    dest.append(") ");
-	    toCastExpr.doPrettyPrint(dest, "");
-	    dest.append(")"); 
-    }
-    
-	
+	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
+		dest.append("((");
+		getExprType().doPrettyPrint(dest, "");
+		dest.append(") ");
+		toCastExpr.doPrettyPrint(dest, "");
+		dest.append(")");
+	}
+
+
 }

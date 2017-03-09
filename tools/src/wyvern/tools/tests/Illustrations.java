@@ -23,20 +23,19 @@ import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.tools.imports.extensions.WyvernResolver;
 import wyvern.tools.parsing.coreparser.ParseException;
 import wyvern.tools.tests.suites.RegressionTests;
-import wyvern.tools.tests.TestUtil;
 import wyvern.tools.typedAST.abs.Declaration;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 
 @Category(RegressionTests.class)
 public class Illustrations {
-    	
+
 	private static final String BASE_PATH = TestUtil.BASE_PATH;
 	private static final String PATH = BASE_PATH + "illustrations/";
-	
-    @BeforeClass public static void setupResolver() {
-    	TestUtil.setPaths();
+
+	@BeforeClass public static void setupResolver() {
+		TestUtil.setPaths();
 		WyvernResolver.getInstance().addPath(PATH);
-    }
+	}
 
 	@Test
 	public void testFigure5Corrected() throws ParseException {
@@ -45,19 +44,19 @@ public class Illustrations {
 				Util.intType(),
 				new IntegerLiteral(5));
 	}
-	
+
 	@Test(expected=RuntimeException.class)
 	public void testFigure5() throws ParseException {
-		
+
 		String[] fileList = {"FileIO.wyt", "fileIO.wyv", "Logger.wyt",
-							"logger.wyv", "wavyUnderlineV3Fig5.wyv",
-							"example5.wyv", "example5driver.wyv", };
+				"logger.wyv", "wavyUnderlineV3Fig5.wyv",
+				"example5.wyv", "example5driver.wyv", };
 		GenContext genCtx = GenContext.empty().extend("system", new Variable("system"), new NominalType("", "system"));
 		genCtx = new TypeGenContext("Int", "system", genCtx);
 		genCtx = new TypeGenContext("Unit", "system", genCtx);
-		
+
 		List<wyvern.target.corewyvernIL.decl.Declaration> decls = new LinkedList<wyvern.target.corewyvernIL.decl.Declaration>();
-		
+
 		for(String fileName : fileList) {
 			String source = TestUtil.readFile(PATH + fileName);
 			TypedAST ast = TestUtil.getNewAST(source, "test input");
@@ -65,30 +64,30 @@ public class Illustrations {
 			decls.add(decl);
 			genCtx = GenUtil.link(genCtx, decl);
 		}
-		
+
 		Expression mainProgram = GenUtil.genExp(decls, genCtx);
 		// after genExp the modules are transferred into an object. We need to evaluate one field of the main object
-		Expression program = new FieldGet(mainProgram, "x", null); 
-		
-    	TypeContext ctx = TypeContext.empty();
+		Expression program = new FieldGet(mainProgram, "x", null);
+
+		TypeContext ctx = TypeContext.empty();
 		program.typeCheck(ctx);
 		Value v = program.interpret(EvalContext.empty());
-    	IntegerLiteral five = new IntegerLiteral(5);
+		IntegerLiteral five = new IntegerLiteral(5);
 		Assert.assertEquals(five, v);
 	}
-	
+
 	@Test(expected=RuntimeException.class)
 	public void testFigure3() throws ParseException {
-		
+
 		String[] fileList = {"FileIO.wyt", "fileIO.wyv", "Logger.wyt",
-							"logger.wyv", "wavyUnderlineV1.wyv",
-							"example5Fig3.wyv", "example5driver.wyv", };
+				"logger.wyv", "wavyUnderlineV1.wyv",
+				"example5Fig3.wyv", "example5driver.wyv", };
 		GenContext genCtx = GenContext.empty().extend("system", new Variable("system"), new NominalType("", "system"));
 		genCtx = new TypeGenContext("Int", "system", genCtx);
 		genCtx = new TypeGenContext("Unit", "system", genCtx);
-		
+
 		List<wyvern.target.corewyvernIL.decl.Declaration> decls = new LinkedList<wyvern.target.corewyvernIL.decl.Declaration>();
-		
+
 		for(String fileName : fileList) {
 			String source = TestUtil.readFile(PATH + fileName);
 			TypedAST ast = TestUtil.getNewAST(source, "test input");
@@ -96,18 +95,18 @@ public class Illustrations {
 			decls.add(decl);
 			genCtx = GenUtil.link(genCtx, decl);
 		}
-		
+
 		Expression mainProgram = GenUtil.genExp(decls, genCtx);
 		// after genExp the modules are transferred into an object. We need to evaluate one field of the main object
-		Expression program = new FieldGet(mainProgram, "x", null); 
-		
-    	TypeContext ctx = TypeContext.empty();
+		Expression program = new FieldGet(mainProgram, "x", null);
+
+		TypeContext ctx = TypeContext.empty();
 		program.typeCheck(ctx);
 		Value v = program.interpret(EvalContext.empty());
-    	IntegerLiteral five = new IntegerLiteral(5);
+		IntegerLiteral five = new IntegerLiteral(5);
 		Assert.assertEquals(five, v);
 	}
-	
+
 	@Test
 	public void testFigure2() throws ParseException {
 		// uses "lists.wyv", "UserInfo.wyt", "userInfo.wyv", "DocumentLock.wyv", "example2.wyv"
@@ -115,17 +114,17 @@ public class Illustrations {
 				Util.intType(),
 				new IntegerLiteral(5));
 	}
-	
+
 	@Test(expected=RuntimeException.class)
 	public void testFigure4() throws ParseException {
-		
+
 		String[] fileList = {"lists.wyv", "UserInfo.wyt", "userInfo.wyv", "wavyUnderlineV2.wyv", "example4driver.wyv", };
 		GenContext genCtx = GenContext.empty().extend("system", new Variable("system"), new NominalType("", "system"));
 		genCtx = new TypeGenContext("Int", "system", genCtx);
 		genCtx = new TypeGenContext("Unit", "system", genCtx);
-		
+
 		List<wyvern.target.corewyvernIL.decl.Declaration> decls = new LinkedList<wyvern.target.corewyvernIL.decl.Declaration>();
-		
+
 		for(String fileName : fileList) {
 			String source = TestUtil.readFile(PATH + fileName);
 			TypedAST ast = TestUtil.getNewAST(source, "test input");
@@ -133,18 +132,18 @@ public class Illustrations {
 			decls.add(decl);
 			genCtx = GenUtil.link(genCtx, decl);
 		}
-		
+
 		Expression mainProgram = GenUtil.genExp(decls, genCtx);
 		// after genExp the modules are transferred into an object. We need to evaluate one field of the main object
-		Expression program = new FieldGet(mainProgram, "x", null); 
-		
-    	TypeContext ctx = TypeContext.empty();
+		Expression program = new FieldGet(mainProgram, "x", null);
+
+		TypeContext ctx = TypeContext.empty();
 		program.typeCheck(ctx);
 		Value v = program.interpret(EvalContext.empty());
-    	IntegerLiteral five = new IntegerLiteral(5);
+		IntegerLiteral five = new IntegerLiteral(5);
 		Assert.assertEquals(five, v);
 	}
-	
+
 	public static NativeFileIO nativeFileIO = new NativeFileIO();
 	public static class NativeFileIO {
 		public int write(int i) {

@@ -9,12 +9,12 @@ public class GetterAndSetterGeneration {
 
 	/**
 	 * From the name of a mutable variable, return the "this" name of the object containing the
-	 * mutable field and the getter/setter methods operating on that mutable field. 
+	 * mutable field and the getter/setter methods operating on that mutable field.
 	 */
 	public static String varNameToTempObj (String s) {
 		return "_temp" + Character.toUpperCase(s.charAt(0)) + s.substring(1);
 	}
-	
+
 	/**
 	 * From the name of a mutable variable, return the name of its getter method.
 	 */
@@ -35,5 +35,5 @@ public class GetterAndSetterGeneration {
 	public static String getterToVarName (String s) {
 		return s.replaceFirst("_get", "");
 	}
-	
+
 }

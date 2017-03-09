@@ -39,7 +39,7 @@ public class KeywordInvocation extends AbstractExpressionAST {
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluate(EvaluationEnvironment env) {
 		return null;
 	}
@@ -56,7 +56,7 @@ public class KeywordInvocation extends AbstractExpressionAST {
 		return new KeywordInvocation(newChildren.get("tgt"), id, lit);
 	}
 
-    @Override
+	@Override
 	public FileLocation getLocation() {
 		return null;
 	}

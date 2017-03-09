@@ -8,7 +8,7 @@ import wyvern.target.oir.declarations.OIRType;
 public class OIRRational extends OIRLiteral implements OIRValue {
 	private int numerator;
 	private int denominator;
-	
+
 	public int getNumerator() {
 		return numerator;
 	}

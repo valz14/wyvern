@@ -1,6 +1,5 @@
 package wyvern.tools.typedAST.core.declarations;
 
-import wyvern.target.corewyvernIL.decltype.DeclType;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -11,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Stack;
 
+import wyvern.target.corewyvernIL.decltype.DeclType;
 //import wyvern.targets.java.annotations.Val;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.New;
@@ -23,7 +23,6 @@ import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.ToolError;
 import wyvern.tools.typedAST.abs.Declaration;
 import wyvern.tools.typedAST.core.Sequence;
-import wyvern.tools.typedAST.core.declarations.TypeVarDecl;
 import wyvern.tools.typedAST.core.expressions.Instantiation;
 import wyvern.tools.typedAST.interfaces.EnvironmentExtender;
 import wyvern.tools.typedAST.interfaces.TypedAST;
@@ -85,7 +84,7 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 			}
 		});
 	}
-	
+
 	public DeclSequence(final Iterable first) {
 		super(new Iterable<TypedAST>() {
 
@@ -112,7 +111,7 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 			}
 
 		});
-		
+
 	}
 
 	public DeclSequence(final Sequence declAST) {
@@ -137,10 +136,10 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 					public void remove() {
 						iter.remove();
 					}
-					
+
 				};
 			}
-			
+
 		});
 	}
 
@@ -164,10 +163,10 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 		for (TypedAST d : this) {
 			d.typecheck(env, Optional.empty());
 		}
-		
+
 		return new Unit();
 	}
-	
+
 	public static DeclSequence getDeclSeq(TypedAST ast) {
 		if (ast instanceof Declaration) {
 			return new DeclSequence((Declaration)ast);
@@ -186,11 +185,11 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 		}
 		return newEnv;
 	}
-	
+
 	public final EvaluationEnvironment evalDecls(EvaluationEnvironment env) {
 		return bindDecls(extendWithDecls(env));
 	}
-	
+
 	@Deprecated
 	public final EvaluationEnvironment bindDecls(EvaluationEnvironment env) {
 		EvaluationEnvironment newEnv = env;
@@ -199,7 +198,7 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 		}
 		return newEnv;
 	}
-	
+
 	@Deprecated
 	public final EvaluationEnvironment bindDecls(EvaluationEnvironment bodyEnv, EvaluationEnvironment declEnv) {
 		EvaluationEnvironment newEnv = declEnv;
@@ -261,12 +260,12 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 		return new DeclSequence(result);
 	}
 
-    /**
-     * 
-     * @return the sequence of require 
-     */
+	/**
+	 *
+	 * @return the sequence of require
+	 */
 	public Sequence filterRequires() {
-		
+
 		Sequence reqSeq = new DeclSequence();
 		for (Declaration d : this.getDeclIterator()) {
 			if(d instanceof ImportDeclaration && ((ImportDeclaration) d).isRequire()) {
@@ -277,7 +276,7 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the sequence of import/instantiate
 	 */
 	public Sequence filterImportInstantiates() {
@@ -292,7 +291,7 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the sequence of simple declarations, not require/import/instantiate
 	 */
 	public Sequence filterNormal() {
@@ -308,44 +307,44 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 				recSequence = Sequence.append(recSequence, d);
 			} else if(!(d instanceof ImportDeclaration) && !(d instanceof Instantiation)) {
 				if(recBlock == true) {
-				    recBlock = false;
+					recBlock = false;
 					normalSeq = Sequence.append(normalSeq, recSequence);
 				}
 				normalSeq = Sequence.append(normalSeq, d);
 			}
 		}
-		
+
 		if (recBlock == true) {
 			normalSeq = Sequence.append(normalSeq, recSequence);
 		}
 		return normalSeq;
 	}
-	
+
 	@Override
 	public void genTopLevel(TopLevelContext tlc) {
 		String newName = GenContext.generateName();
-		
+
 		List<wyvern.target.corewyvernIL.decl.Declaration> decls =
 				new LinkedList<wyvern.target.corewyvernIL.decl.Declaration>();
 		List<wyvern.target.corewyvernIL.decltype.DeclType> declts =
 				new LinkedList<wyvern.target.corewyvernIL.decltype.DeclType>();
-		
+
 		GenContext newCtx = tlc.getContext();
-		
+
 		for(TypedAST seq_ast : getDeclIterator()) {
 			Declaration d = (Declaration) seq_ast;
 			// TODO: refactor to make rec a method of Declaration
 			newCtx = newCtx.rec(newName, d); // extend the environment
 		}
-		
+
 		for(TypedAST seq_ast : getDeclIterator()) {
 			Declaration d = (Declaration) seq_ast;
 			declts.add(d.genILType(newCtx));
 		}
-		
+
 		ValueType type = new StructuralType(newName, declts);
 		GenContext genCtx = newCtx.extend(newName, new Variable(newName), type);
-		
+
 		tlc.updateContext(genCtx);
 		tlc.setReceiverName(newName);
 		for(TypedAST seq_ast : getDeclIterator()) {
@@ -355,7 +354,7 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 			d.addModuleDecl(tlc);
 		}
 		tlc.setReceiverName(null);
-	
+
 		// determine if we need to be a resource type
 		for (wyvern.target.corewyvernIL.decl.Declaration d: decls) {
 			d.typeCheck(tlc.getContext(), tlc.getContext());
@@ -364,12 +363,12 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 				break;
 			}
 		}
-		
+
 		/* wrap the declarations into an object */
 		Expression newExp = new New(decls, newName, type, getLocation());
 		tlc.addLet(newName, type, newExp, true);
 	}
-	
+
 	/**
 	 * Figure out the structural type represented by this sequence.
 	 * @param ctx: context to evaluate in.
@@ -377,13 +376,13 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 	 */
 	public StructuralType inferStructuralType (GenContext ctx, String selfName) {
 		boolean isResource = false;
-		
+
 		// Fake an appropriate context.
 		GenContext ctxTemp = ctx.extend(selfName, new Variable(selfName), null);
-		
+
 		// Store the types for each declaration in this list.
 		List<DeclType> declTypes = new LinkedList<DeclType>();
-		
+
 		// Look at each declaration.
 		wyvern.tools.typedAST.core.declarations.DelegateDeclaration delegateDecl = null;
 		for (TypedAST d : this) {
@@ -395,7 +394,7 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 				declTypes.add(t);
 			}
 		}
-		
+
 		// Add delegate object's declaration which has not been overridden to the structural type.
 		if (delegateDecl != null) {
 			StructuralType delegateStructuralType = delegateDecl.getType().getILType(ctxTemp).getStructuralType(ctxTemp);
@@ -405,8 +404,8 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 				}
 			}
 		}
-		
+
 		return new StructuralType(selfName, declTypes, isResource);
 	}
-	
+
 }

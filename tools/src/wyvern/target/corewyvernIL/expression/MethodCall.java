@@ -69,7 +69,7 @@ public class MethodCall extends Expression {
 	public List<? extends IExpr> getArgs() {
 		return args;
 	}
-	
+
 	private ValueType getReceiverType(TypeContext ctx) {
 		if (receiverType == null) {
 			receiverType = objectExpr.typeCheck(ctx);
@@ -79,12 +79,12 @@ public class MethodCall extends Expression {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx) {
-	    // If calling on a dynamic receiver, it types to Dyn (provided the args typecheck)
+		// If calling on a dynamic receiver, it types to Dyn (provided the args typecheck)
 		if (Util.isDynamicType(getReceiverType(ctx))) {
-		    for (IExpr arg : args) {
-		        arg.typeCheck(ctx);
-		    }
-		    return Util.dynType();
+			for (IExpr arg : args) {
+				arg.typeCheck(ctx);
+			}
+			return Util.dynType();
 		}
 		typeMethodDeclaration(ctx);
 		return getExprType();
@@ -119,8 +119,8 @@ public class MethodCall extends Expression {
 	public List<ValueType> getArgTypes(TypeContext ctx) {
 		List<? extends IExpr> args = getArgs();
 		return args.stream()
-			.map(arg -> arg.typeCheck(ctx))
-			.collect(Collectors.toList());
+				.map(arg -> arg.typeCheck(ctx))
+				.collect(Collectors.toList());
 	}
 
 	/**

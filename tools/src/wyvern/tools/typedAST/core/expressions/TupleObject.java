@@ -28,17 +28,17 @@ import wyvern.tools.util.EvaluationEnvironment;
 public class TupleObject extends CachingTypedAST implements CoreAST {
 	private ExpressionAST[] objects;
 	private static ExpressionAST[] typeObj = new ExpressionAST[0];
-	
+
 	public TupleObject(List<TypedAST> objects, FileLocation loc) {
 		this(objects.toArray(typeObj), loc);
 	}
 	public TupleObject(TypedAST[] objects, FileLocation loc) {
 		this.location = loc;
-		this.objects = Arrays.copyOf(objects, objects.length, ExpressionAST[].class); 
+		this.objects = Arrays.copyOf(objects, objects.length, ExpressionAST[].class);
 		/*if (objects.length > 0)
 			this.location = objects[0].getLocation();*/
 	}
-	
+
 	public TupleObject(TypedAST first, TypedAST rest, FileLocation commaLine) {
 		if (rest instanceof TupleObject) {
 			objects = new ExpressionAST[((TupleObject) rest).objects.length + 1];
@@ -57,7 +57,7 @@ public class TupleObject extends CachingTypedAST implements CoreAST {
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluate(EvaluationEnvironment env) {
 		Value[] evaluatedResults = new Value[objects.length];
 		for (int i = 0; i < objects.length; i++) {
@@ -96,9 +96,9 @@ public class TupleObject extends CachingTypedAST implements CoreAST {
 		return childMap;
 	}
 
-    @Override
+	@Override
 	public ExpressionAST doClone(Map<String, TypedAST> newChildren) {
-    	ExpressionAST[] objs = new ExpressionAST[newChildren.size()];
+		ExpressionAST[] objs = new ExpressionAST[newChildren.size()];
 		for (String s : newChildren.keySet()) {
 			objs[Integer.parseInt(s)] = (ExpressionAST)newChildren.get(s);
 		}

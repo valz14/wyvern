@@ -15,7 +15,7 @@ public interface TypedAST extends TreeWritable, HasLocation {
 	/** should call typecheck() before getType() -- except maybe for declarations */
 	Type getType();
 	Type typecheck(Environment env, Optional<Type> expected);
-	
+
 	/** an interpreter.  Out of date - should generate IL code and interpret that instead. */
 	@Deprecated
 	Value evaluate(EvaluationEnvironment env);
@@ -36,7 +36,7 @@ public interface TypedAST extends TreeWritable, HasLocation {
 		throw new RuntimeException("genTopLevel not implemented for " + this.getClass());
 	}
 
-    public default StringBuilder prettyPrint() {
-        throw new RuntimeException("prettyPrint not implemented for " + this.getClass());
-    }
+	public default StringBuilder prettyPrint() {
+		throw new RuntimeException("prettyPrint not implemented for " + this.getClass());
+	}
 }

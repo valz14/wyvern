@@ -7,21 +7,21 @@ public class OIRStringType extends OIRType{
 
 	private static OIRStringType type = new OIRStringType ();
 	private static String stringRep = "string";
-	
+
 	protected OIRStringType ()
 	{
 		super (new OIREnvironment (null));
 	}
-	
+
 	public static OIRStringType getStringType ()
 	{
 		return type;
 	}
-	
+
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor<S, T> visitor, S state) {
-    // TODO Auto-generated method stub
-    return null;
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override
@@ -29,7 +29,7 @@ public class OIRStringType extends OIRType{
 	{
 		return OIRStringType.stringRep;
 	}
-	
+
 	@Override
 	public String getName() {
 		return toString ();

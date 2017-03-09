@@ -25,7 +25,7 @@ import wyvern.tools.util.EvaluationEnvironment;
 public class LetExpr extends CachingTypedAST implements CoreAST {
 	private DeclSequence decl;
 	private TypedAST body;
-	
+
 	public LetExpr(DeclSequence decl, TypedAST body) {
 		this.decl = decl;
 		this.body = body;
@@ -40,7 +40,7 @@ public class LetExpr extends CachingTypedAST implements CoreAST {
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluate(EvaluationEnvironment env) {
 		EvaluationEnvironment newEnv = decl.evalDecls(env);
 		return body.evaluate(newEnv);
@@ -54,7 +54,7 @@ public class LetExpr extends CachingTypedAST implements CoreAST {
 		return childMap;
 	}
 
-    @Override
+	@Override
 	public ExpressionAST doClone(Map<String, TypedAST> newChildren) {
 		return new LetExpr((DeclSequence)newChildren.get("decl"), newChildren.get("body"));
 	}
@@ -69,9 +69,9 @@ public class LetExpr extends CachingTypedAST implements CoreAST {
 	}
 	public Declaration getDecl() {
 		return decl;
-	}	
-	*/
-	
+	}
+	 */
+
 	public TypedAST getBody() {
 		return body;
 	}
@@ -86,7 +86,7 @@ public class LetExpr extends CachingTypedAST implements CoreAST {
 		final Iterator<Declaration> declIter = decl.getDeclIterator().iterator();
 		new Iterator<TypedAST>() {
 			boolean returnedBody = false;
-			
+
 			@Override
 			public boolean hasNext() {
 				return !returnedBody;
@@ -99,11 +99,11 @@ public class LetExpr extends CachingTypedAST implements CoreAST {
 				}
 				returnedBody = true;
 				return body;
-			}			
+			}
 		};
 		throw new RuntimeException("not implemented");
 		//return GenUtil.doGenModuleIL(ctx, ctx, ctx, myIter, false);
-		
+
 		/*if (!declIter.hasNext())
 			throw new RuntimeException("oops, no decls in the let");
 		Declaration d = declIter.next();
@@ -114,8 +114,8 @@ public class LetExpr extends CachingTypedAST implements CoreAST {
 			String name = vd.getName();
 			return new Let(name, vd.getDefinition().generateIL(ctx), body.generateIL(ctx.extend(name, new wyvern.target.corewyvernIL.expression.Variable(name))));
 		} else {
-			throw new RuntimeException("only handle val decls for now");			
+			throw new RuntimeException("only handle val decls for now");
 		}
-		*/
+		 */
 	}
 }

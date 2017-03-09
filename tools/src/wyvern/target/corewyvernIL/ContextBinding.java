@@ -5,11 +5,11 @@ import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.type.ValueType;
 
 /*
- * Represents a 
+ * Represents a
  */
 public abstract class ContextBinding extends VarBinding {
 	private String contextName;
-	
+
 	public ContextBinding(String varName, ValueType type, Expression expr, String contextName) {
 		super(varName, type, expr);
 		this.contextName = contextName;
@@ -18,7 +18,7 @@ public abstract class ContextBinding extends VarBinding {
 	public String getContextName() {
 		return contextName;
 	}
-	
+
 	public abstract GenContext extendContext(GenContext ctx);
 
 	/*public static Expression wrap(Expression program, List<TypedModuleSpec> dependencies) {

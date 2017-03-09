@@ -86,7 +86,7 @@ public class Util {
 		}
 
 	}
-	
+
 	/** Converts the Java objects passed as arguments to a tuple of Wyvern objects */
 	public static Value toWyvObjs(Object... args) {
 		if (args.length == 0) {
@@ -116,7 +116,7 @@ public class Util {
 		return decl;
 	}
 
-    @Deprecated
+	@Deprecated
 	public static Value toWyvObj(Object arg) {
 		if (arg instanceof JavaWyvObject) {
 			return ((JavaWyvObject) arg).getInnerObj();
@@ -329,7 +329,7 @@ public class Util {
 
 	private static volatile int n = 0; //How many classes have been generated
 
-    @Deprecated
+	@Deprecated
 	private static Class<?> generateJavaWrapper(EvaluationEnvironment toWrap, Class javaType) {
 		if (typeCache.containsKey(toWrap)) {
 			Map<Class,Class> innerMap = typeCache.get(toWrap);
@@ -438,41 +438,41 @@ public class Util {
 		}
 	}
 
-    @Deprecated
+	@Deprecated
 	public static Object doInvoke(Obj receiver, String target, Object[] args) {
 		Value arguments = toWyvObjs(args);
 		return toJavaObject((
 				new Application(
 						new Invocation(receiver, target, null, FileLocation.UNKNOWN),
 						arguments, FileLocation.UNKNOWN)
-						.evaluate(EvaluationEnvironment.EMPTY)), null);//Therefore, can only handle strings and ints
+				.evaluate(EvaluationEnvironment.EMPTY)), null);//Therefore, can only handle strings and ints
 	}
 
-    @Deprecated
+	@Deprecated
 	public static Value getInternalValue(Obj receiver, String target) {
 		return new Invocation(receiver, target, null, FileLocation.UNKNOWN)
-						.evaluate(EvaluationEnvironment.EMPTY);//Therefore, can only handle strings and ints
+				.evaluate(EvaluationEnvironment.EMPTY);//Therefore, can only handle strings and ints
 	}
-	
 
-    @Deprecated
+
+	@Deprecated
 	public static Object doInvokeVarargs(Obj receiver, String target, Object... args) {
 		Value arguments = toWyvObjs(args);
 		return toJavaObject((
 				new Application(
 						new Invocation(receiver, target, null, FileLocation.UNKNOWN),
 						arguments, FileLocation.UNKNOWN)
-						.evaluate(EvaluationEnvironment.EMPTY)), null);//Therefore, can only handle strings and ints
+				.evaluate(EvaluationEnvironment.EMPTY)), null);//Therefore, can only handle strings and ints
 	}
 
-    @Deprecated
+	@Deprecated
 	public static Value invokeValue(Value reciever, String target, Value args) {
 		return new Application(
 				new Invocation(reciever,target, null, FileLocation.UNKNOWN),
 				args, FileLocation.UNKNOWN).evaluate(EvaluationEnvironment.EMPTY);
 	}
 
-    @Deprecated
+	@Deprecated
 	public static Value invokeValueVarargs(Value reciever, String target, Value... args) {
 		Value iargs;
 		if (args.length == 0) {

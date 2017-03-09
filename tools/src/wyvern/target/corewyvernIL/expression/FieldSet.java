@@ -51,22 +51,22 @@ public class FieldSet extends Expression {
 		} else if (objectExpr instanceof Variable) {
 			receiverType = ctx.lookupTypeOf(((Variable)objectExpr).getName());
 		} else if (objectExpr instanceof Cast) {
-		    receiverType = objectExpr.typeCheck(ctx);
+			receiverType = objectExpr.typeCheck(ctx);
 		} else {
-		    throw new RuntimeException("Target of FieldSet is unsupported. Type: " + objectExpr.getClass());
-	    }
+			throw new RuntimeException("Target of FieldSet is unsupported. Type: " + objectExpr.getClass());
+		}
 		return Util.isDynamicType(receiverType);
 	}
-	
+
 	@Override
 	public ValueType typeCheck(TypeContext ctx) {
 
-	    // Setting the field of a dynamic object.
+		// Setting the field of a dynamic object.
 		if (settingDynamicObject(ctx)) {
-		    exprToAssign.typeCheck(ctx);
-		    return Util.unitType();
+			exprToAssign.typeCheck(ctx);
+			return Util.unitType();
 		}
-		
+
 		// Figure out types of object and expression.
 		StructuralType varTypeStructural = objectExpr.typeCheck(ctx).getStructuralType(ctx);
 		ValueType varTypeExpr = exprToAssign.typeCheck(ctx);
@@ -78,7 +78,7 @@ public class FieldSet extends Expression {
 		}
 		if (!(declTypeField instanceof VarDeclType)) {
 			ToolError.reportError(ErrorMessage.CANNOT_BE_ASSIGNED, this,
-								  declTypeField.getName());
+					declTypeField.getName());
 		}
 		ValueType valTypeField = ((VarDeclType) declTypeField).getResultType(View.from(objectExpr, ctx));
 
@@ -113,7 +113,7 @@ public class FieldSet extends Expression {
 			throw new RuntimeException("Expected assignment to var field in field set.");
 		}
 		VarDeclaration varDecl = (VarDeclaration) decl;
-		
+
 		// Evaluate the expression in the current context. Update the declaration.
 		Value exprInterpreted = exprToAssign.interpret(ctx);
 		VarDeclaration varDeclUpdated = null;

@@ -106,7 +106,7 @@ public class DefDeclaration extends NamedDeclaration {
 			ValueType resultType = getType();
 			bodyType.isSubtypeOf(resultType, methodCtx);
 			ToolError.reportError(ErrorMessage.NOT_SUBTYPE, this, "method body's type", "declared type");;
-			
+
 		}
 		return new DefDeclType(getName(), type, formalArgs);
 	}
@@ -115,14 +115,14 @@ public class DefDeclaration extends NamedDeclaration {
 	public Set<String> getFreeVariables() {
 		// Get all free variables in the body of the method.
 		Set<String> freeVars = body.getFreeVariables();
-		
+
 		// Remove variables that became bound in this method's scope.
 		for (FormalArg farg : formalArgs) {
 			freeVars.remove(farg.getName());
 		}
 		return freeVars;
 	}
-	
+
 	@Override
 	public DeclType getDeclType() {
 		return new DefDeclType(getName(), type, formalArgs);

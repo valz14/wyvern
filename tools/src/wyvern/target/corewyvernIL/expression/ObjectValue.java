@@ -14,18 +14,18 @@ public class ObjectValue extends New implements Invokable {
 	final EvalContext evalCtx; // captured eval context
 	final boolean hasDelegate;
 	ObjectValue delegateTarget;
-	
+
 	/** Precondition: the decls argument must be unique.
 	 * It is owned by this ObjectValue after the constructor call.
 	 */
 	public ObjectValue(List<Declaration> decls, String selfName, ValueType exprType, DelegateDeclaration delegateDecl,FileLocation loc,EvalContext ctx) {
 		super(decls, selfName, exprType, loc);
-		
+
 		if (selfName == null || selfName.length() == 0) {
 			throw new RuntimeException("selfName invariant violated");
 		}
 		evalCtx = ctx.extend(selfName, this);
-		hasDelegate = delegateDecl != null ? true : false; 
+		hasDelegate = delegateDecl != null ? true : false;
 		if (hasDelegate) {
 			delegateTarget = (ObjectValue)ctx.lookupValue(delegateDecl.getFieldName());
 		}
@@ -58,7 +58,7 @@ public class ObjectValue extends New implements Invokable {
 		else if(delegateTarget != null && delegateTarget.findDecl(fieldName) != null) {
 			return delegateTarget.getField(fieldName);
 		}
-		
+
 		throw new RuntimeException("can't find field: " + fieldName);
 	}
 
@@ -94,13 +94,13 @@ public class ObjectValue extends New implements Invokable {
 			return false;
 		}
 		ObjectValue other = (ObjectValue) obj;
-		
+
 		// Other ObjectValue needs the same declarations, in the same order.
 		if (this.getDecls().size() != other.getDecls().size()) {
 			return false;
 		}
 		return this.getDecls().equals(other.getDecls());
-		
+
 	}
-	
+
 }

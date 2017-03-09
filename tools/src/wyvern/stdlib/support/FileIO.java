@@ -7,13 +7,13 @@ import java.io.PrintWriter;
 
 public class FileIO
 {
-    public static FileIO file = new FileIO();
+	public static FileIO file = new FileIO();
 
-    public PrintWriter openForAppend(String path) throws IOException
-    {
-        FileWriter fileWriter = new FileWriter(path, true);
-        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+	public PrintWriter openForAppend(String path) throws IOException
+	{
+		FileWriter fileWriter = new FileWriter(path, true);
+		BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
-        return new PrintWriter(bufferedWriter);
-    }
+		return new PrintWriter(bufferedWriter);
+	}
 }

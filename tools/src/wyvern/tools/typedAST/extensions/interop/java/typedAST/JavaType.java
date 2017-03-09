@@ -35,7 +35,7 @@ public class JavaType extends AbstractTreeWritable implements EnvironmentExtende
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluate(EvaluationEnvironment env) {
 		return null;
 	}
@@ -50,7 +50,7 @@ public class JavaType extends AbstractTreeWritable implements EnvironmentExtende
 		return this;
 	}
 
-    @Override
+	@Override
 	public FileLocation getLocation() {
 		return FileLocation.UNKNOWN;
 	}

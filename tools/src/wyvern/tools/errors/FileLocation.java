@@ -17,10 +17,10 @@ public final class FileLocation {
 		line = copperState.getLine();
 		character = copperState.getColumn();
 	}
-	
+
 	public String toString() {
 		return filename+":"+line+","+character;
 	}
-	
+
 	public final static FileLocation UNKNOWN = new FileLocation("Unknown",-1,-1);
 }

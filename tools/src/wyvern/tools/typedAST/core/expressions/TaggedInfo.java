@@ -102,7 +102,7 @@ public class TaggedInfo {
 				Type tt = ((TypeInv) t).resolve(env);
 				resolvedComprises.add(tt);
 			}
-			*/
+			 */
 		}
 		this.comprises = resolvedComprises;
 		if (comprisesTaggedInfos != null) {

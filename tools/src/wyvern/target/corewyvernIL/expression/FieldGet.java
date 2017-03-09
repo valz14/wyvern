@@ -73,7 +73,7 @@ public class FieldGet extends Expression implements Path {
 		}
 		Invokable ov = (Invokable) receiver;
 		return ov.getField(fieldName);
- 	}
+	}
 
 	@Override
 	public Path adapt(View v) {

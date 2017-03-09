@@ -8,7 +8,7 @@ public class Case extends ASTNode {
 	private String varName;
 	private NominalType pattern;
 	private Expression body;
-	
+
 	public Case(String varName, NominalType pattern, Expression body) {
 		super();
 		this.pattern = pattern;

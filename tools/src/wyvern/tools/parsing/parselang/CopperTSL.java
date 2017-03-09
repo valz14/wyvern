@@ -124,7 +124,7 @@ public class CopperTSL implements ExtParser {
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public TypedAST parse(ParseBuffer input) throws Exception {
 		StringReader isr = new StringReader(input.getSrcString());
 		ArrayList<edu.umn.cs.melt.copper.runtime.auxiliary.Pair<String,Reader>> inp = new ArrayList<>();
@@ -154,13 +154,13 @@ public class CopperTSL implements ExtParser {
 		}
 
 		res.getGrammars().stream().map(res::getGrammar)
-				.flatMap(grm -> grm.getElementsOfType(CopperElementType.TERMINAL).stream().map(grm::getGrammarElement).<Terminal>map(term->(Terminal)term))
-				.filter(term->Optional.ofNullable(term.getCode()).map(String::isEmpty).orElseGet(() -> true)
-						&& Optional.ofNullable(term.getReturnType()).map(String::isEmpty).orElseGet(() -> true) )
-				.forEach(term -> {
-					term.setCode("()");
-					term.setReturnType("Unit");
-				});
+		.flatMap(grm -> grm.getElementsOfType(CopperElementType.TERMINAL).stream().map(grm::getGrammarElement).<Terminal>map(term->(Terminal)term))
+		.filter(term->Optional.ofNullable(term.getCode()).map(String::isEmpty).orElseGet(() -> true)
+				&& Optional.ofNullable(term.getReturnType()).map(String::isEmpty).orElseGet(() -> true) )
+		.forEach(term -> {
+			term.setCode("()");
+			term.setReturnType("Unit");
+		});
 
 		Environment ntEnv = res.getGrammars().stream().map(res::getGrammar)
 				.flatMap(grm -> grm.getElementsOfType(CopperElementType.NON_TERMINAL).stream().map(grm::getGrammarElement))
@@ -168,7 +168,7 @@ public class CopperTSL implements ExtParser {
 				.collect(() -> new Reference<Environment>(Environment.getEmptyEnvironment()),
 						(env, elem) -> env.set(env.get().extend(new NameBindingImpl(elem.first(), elem.second()))),
 						(a, b) -> a.set(a.get().extend(b.get()))).get();
-		
+
 		final Environment savedNtEnv = ntEnv;
 		ntEnv = res.getGrammars().stream().map(res::getGrammar)
 				.flatMap(grm -> grm.getElementsOfType(CopperElementType.TERMINAL).stream().map(grm::getGrammarElement))
@@ -187,23 +187,23 @@ public class CopperTSL implements ExtParser {
 
 		final Environment savedNtEnv2 = ntEnv;
 		res.getGrammars().stream().map(res::getGrammar)
-				.flatMap(grm->grm.getElementsOfType(CopperElementType.PRODUCTION).stream().map(grm::getGrammarElement).<Production>map(el->(Production)el))
-				.<Pair<Production, List<NameBinding>>>map(prod->new Pair<Production, List<NameBinding>>(prod, CopperTSL.<Type,String,Optional<NameBinding>>
-						zip(prod.getRhs().stream().map(cer->savedNtEnv2.lookup(cer.getName().toString()).getType()), prod.getRhsVarNames().stream(),
-						(type, name) -> (name == null)?Optional.empty():Optional.of(new NameBindingImpl(name, type)))
-						.<NameBinding>flatMap(o -> o.isPresent() ? Stream.of(o.get()) : Stream.empty())
-						.collect(Collectors.<NameBinding>toList()))
+		.flatMap(grm->grm.getElementsOfType(CopperElementType.PRODUCTION).stream().map(grm::getGrammarElement).<Production>map(el->(Production)el))
+		.<Pair<Production, List<NameBinding>>>map(prod->new Pair<Production, List<NameBinding>>(prod, CopperTSL.<Type,String,Optional<NameBinding>>
+		zip(prod.getRhs().stream().map(cer->savedNtEnv2.lookup(cer.getName().toString()).getType()), prod.getRhsVarNames().stream(),
+				(type, name) -> (name == null)?Optional.empty():Optional.of(new NameBindingImpl(name, type)))
+		.<NameBinding>flatMap(o -> o.isPresent() ? Stream.of(o.get()) : Stream.empty())
+		.collect(Collectors.<NameBinding>toList()))
 				).forEach(updateCode(toGen,ntEnv,methNum, res.getClassName()));
 
 		LinkedList<BiConsumer<Type,Type>> splicers = new LinkedList<>();
 
 		res.getGrammars().stream().map(res::getGrammar)
-				.flatMap(grm->grm.getElementsOfType(CopperElementType.TERMINAL).stream().map(grm::getGrammarElement)
-						.<Terminal>map(el->(Terminal)el)).forEach(this.updateTerminalCode(toGen,ntEnv,methNum, res.getClassName(), splicers));
+		.flatMap(grm->grm.getElementsOfType(CopperElementType.TERMINAL).stream().map(grm::getGrammarElement)
+				.<Terminal>map(el->(Terminal)el)).forEach(this.updateTerminalCode(toGen,ntEnv,methNum, res.getClassName(), splicers));
 
 		res.getGrammars().stream().map(res::getGrammar).flatMap(grm->grm.getElementsOfType(CopperElementType.DISAMBIGUATION_FUNCTION)
 				.stream().map(grm::getGrammarElement).<DisambiguationFunction>map(el->(DisambiguationFunction)el))
-				.forEach(this.updateDisambiguationCode(toGen,ntEnv,methNum));
+		.forEach(this.updateDisambiguationCode(toGen,ntEnv,methNum));
 
 		res.setClassName(javaClassName);
 
@@ -245,7 +245,7 @@ public class CopperTSL implements ExtParser {
 
 		res.setParserClassAuxCode(
 				"Value "+PAIRED_OBJECT_NAME+" = null;\n" +
-				"ExternalFunction pushTokenV = new ExternalFunction(new Arrow(new Tuple(Util.javaToWyvType(Terminals.class),new Str()), new Unit()), (ee,v)->{\n" +
+						"ExternalFunction pushTokenV = new ExternalFunction(new Arrow(new Tuple(Util.javaToWyvType(Terminals.class),new Str()), new Unit()), (ee,v)->{\n" +
 						"\tpushToken((Terminals)(((JavaObj)((TupleValue)v).getValue(0)).getObj()), ((StringConstant)((TupleValue)v).getValue(1)).getValue());\n" +
 						"\treturn UnitVal.getInstance(FileLocation.UNKNOWN);\n" +
 						"});\n" +
@@ -305,7 +305,7 @@ public class CopperTSL implements ExtParser {
 
 
 			@Override
-            @Deprecated
+			@Deprecated
 			public MethodVisitor visitMethod(int access, String name, String desc, String signature, String[] exceptions) {
 				if (!name.equals("<init>")) {
 					return super.visitMethod(access, name, desc, signature, exceptions);
@@ -393,11 +393,11 @@ public class CopperTSL implements ExtParser {
 						new Invocation(new Variable(new NameBindingImpl(wyvClassName, null), unkLoc), "create", null, unkLoc),
 						UnitVal.getInstance(unkLoc), unkLoc), unkLoc);
 		TypedAST body = new Application(new ExternalFunction(new Arrow(Util.javaToWyvType(Object.class), Util.javaToWyvType(TypedAST.class)),
-					(env,arg)-> (Value)Util.toJavaObject(arg,Value.class)),
+				(env,arg)-> (Value)Util.toJavaObject(arg,Value.class)),
 				new Application(new Invocation(new Application(
-					new Invocation(new Variable(new NameBindingImpl(javaClassName, null), unkLoc), "create", null, unkLoc),
-					javaObjInit, unkLoc), "parse", null, unkLoc),
-					new TupleObject(new ExpressionAST[] {bufGet, new StringConstant("TSL code")}, unkLoc), unkLoc), unkLoc);
+						new Invocation(new Variable(new NameBindingImpl(javaClassName, null), unkLoc), "create", null, unkLoc),
+						javaObjInit, unkLoc), "parse", null, unkLoc),
+						new TupleObject(new ExpressionAST[] {bufGet, new StringConstant("TSL code")}, unkLoc), unkLoc), unkLoc);
 
 		DefDeclaration parseDef =
 				new DefDeclaration("parse",
@@ -410,7 +410,7 @@ public class CopperTSL implements ExtParser {
 	}
 
 	private Consumer<? super DisambiguationFunction> updateDisambiguationCode(HashMap<String, Pair<Type, SpliceBindExn>> toGen,
-																			  Environment ntEnv, Reference<Integer> methNum) {
+			Environment ntEnv, Reference<Integer> methNum) {
 		return (dis) -> {
 			String disambiguationCode = dis.getCode();
 
@@ -449,13 +449,13 @@ public class CopperTSL implements ExtParser {
 			Type resType = lhsEnv.lookup(term.getName().toString()).getType();
 
 			splicers.add((termClassType,termObjType) -> {
-						SpliceBindExn spliced = LangUtil.spliceBinding(new IParseBuffer(oCode), Arrays.asList(new NameBinding[]{
-								new NameBindingImpl("lexeme", new Str()),
-								new NameBindingImpl("pushToken", new Arrow(new Tuple(termObjType, new Str()), new Unit())),
-								new NameBindingImpl("Terminals", termClassType)}), term.getDisplayName());
+				SpliceBindExn spliced = LangUtil.spliceBinding(new IParseBuffer(oCode), Arrays.asList(new NameBinding[]{
+						new NameBindingImpl("lexeme", new Str()),
+						new NameBindingImpl("pushToken", new Arrow(new Tuple(termObjType, new Str()), new Unit())),
+						new NameBindingImpl("Terminals", termClassType)}), term.getDisplayName());
 
-						toGen.put(newName, new Pair<>(resType, spliced));
-					});
+				toGen.put(newName, new Pair<>(resType, spliced));
+			});
 
 			String newCode = String.format("RESULT = Util.invokeValueVarargs(%s, \"%s\", %s);", PAIRED_OBJECT_NAME, newName, "new StringConstant(lexeme), pushTokenV, terminals");
 			term.setCode(newCode);
@@ -495,8 +495,8 @@ public class CopperTSL implements ExtParser {
 
 	//Via stackoverflow and the old Java zip
 	private static<A, B, C> Stream<C> zip(Stream<? extends A> a,
-										 Stream<? extends B> b,
-										 BiFunction<? super A, ? super B, ? extends C> zipper) {
+			Stream<? extends B> b,
+			BiFunction<? super A, ? super B, ? extends C> zipper) {
 		Objects.requireNonNull(zipper);
 		@SuppressWarnings("unchecked")
 		Spliterator<A> aSpliterator = (Spliterator<A>) Objects.requireNonNull(a).spliterator();
@@ -510,26 +510,26 @@ public class CopperTSL implements ExtParser {
 
 		long zipSize = ((characteristics & Spliterator.SIZED) != 0)
 				? Math.min(aSpliterator.getExactSizeIfKnown(), bSpliterator.getExactSizeIfKnown())
-				: -1;
+						: -1;
 
-		Iterator<A> aIterator = Spliterators.iterator(aSpliterator);
-		Iterator<B> bIterator = Spliterators.iterator(bSpliterator);
-		Iterator<C> cIterator = new Iterator<C>() {
-			@Override
-			public boolean hasNext() {
-				return aIterator.hasNext() && bIterator.hasNext();
-			}
+				Iterator<A> aIterator = Spliterators.iterator(aSpliterator);
+				Iterator<B> bIterator = Spliterators.iterator(bSpliterator);
+				Iterator<C> cIterator = new Iterator<C>() {
+					@Override
+					public boolean hasNext() {
+						return aIterator.hasNext() && bIterator.hasNext();
+					}
 
-			@Override
-			public C next() {
-				return zipper.apply(aIterator.next(), bIterator.next());
-			}
-		};
+					@Override
+					public C next() {
+						return zipper.apply(aIterator.next(), bIterator.next());
+					}
+				};
 
-		Spliterator<C> split = Spliterators.spliterator(cIterator, zipSize, characteristics);
-		return (a.isParallel() || b.isParallel())
-				? StreamSupport.stream(split, true)
-				: StreamSupport.stream(split, false);
+				Spliterator<C> split = Spliterators.spliterator(cIterator, zipSize, characteristics);
+				return (a.isParallel() || b.isParallel())
+						? StreamSupport.stream(split, true)
+								: StreamSupport.stream(split, false);
 	}
 
 }

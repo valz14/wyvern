@@ -19,7 +19,7 @@ import wyvern.tools.util.EvaluationEnvironment;
 
 public class TypeInstance extends AbstractTreeWritable implements CoreAST {
 	private TypeBinding binding;
-	
+
 	public TypeInstance(TypeBinding binding) {
 		this.binding = binding;
 	}
@@ -27,7 +27,7 @@ public class TypeInstance extends AbstractTreeWritable implements CoreAST {
 	public String getName() {
 		return this.binding.getName();
 	}
-	
+
 	@Override
 	public Type getType() {
 		return binding.getType();
@@ -49,7 +49,7 @@ public class TypeInstance extends AbstractTreeWritable implements CoreAST {
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluate(EvaluationEnvironment env) {
 		Value value = env.lookup(binding.getName()).get().getValue(env);
 		assert value != null;
@@ -67,7 +67,7 @@ public class TypeInstance extends AbstractTreeWritable implements CoreAST {
 		return new TypeInstance(binding);
 	}
 
-    private FileLocation location = FileLocation.UNKNOWN;
+	private FileLocation location = FileLocation.UNKNOWN;
 	public FileLocation getLocation() {
 		return this.location;
 	}

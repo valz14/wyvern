@@ -6,7 +6,7 @@ import wyvern.target.oir.OIRAST;
 public class OIRDelegate extends OIRAST {
 	private OIRType type;
 	private String field;
-	
+
 	public OIRDelegate(OIRType type, String field) {
 		super();
 		this.type = type;

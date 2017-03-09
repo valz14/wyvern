@@ -3,8 +3,8 @@ package wyvern.target.corewyvernIL.support;
 import java.util.LinkedList;
 
 import wyvern.target.corewyvernIL.FormalArg;
-import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decl.Declaration;
+import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.DefDeclType;
 import wyvern.target.corewyvernIL.expression.ObjectValue;
 import wyvern.target.corewyvernIL.type.DynamicType;
@@ -43,10 +43,10 @@ public class Util {
 		return new ObjectValue(new LinkedList<Declaration>(), "unitSelf", theUnitType, null, null, EvalContext.empty());
 	}
 	public static final String APPLY_NAME = "apply";
-	
+
 	public static boolean isDynamicType(ValueType type) {
 		return type.equals(new NominalType("system", "Dyn"))
 				|| type instanceof DynamicType;
 	}
-	
+
 }

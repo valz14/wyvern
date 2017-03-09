@@ -1,7 +1,11 @@
 package wyvern.target.corewyvernIL.expression;
 
 import java.math.BigInteger;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -10,7 +14,8 @@ import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.StructuralType;
 import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.FileLocation;
-import wyvern.tools.interop.*;
+import wyvern.tools.interop.FObject;
+import wyvern.tools.interop.JavaWrapper;
 
 public class JavaValue extends AbstractValue implements Invokable {
 	// FObject is part of a non-Wyvern-specific Java interop library
@@ -52,11 +57,11 @@ public class JavaValue extends AbstractValue implements Invokable {
 	private Value javaToWyvern(Object result) {
 		if (result instanceof Integer) {
 			return new IntegerLiteral((Integer)result);
-        } else if(result instanceof String) {
-            return new StringLiteral((String) result);
-        } else if(result == null) {
-            return Util.unitValue();
-        } else if(result instanceof List) {
+		} else if(result instanceof String) {
+			return new StringLiteral((String) result);
+		} else if(result == null) {
+			return Util.unitValue();
+		} else if(result instanceof List) {
 			return new JavaValue(JavaWrapper.wrapObject(result), new NominalType("system", "List"));
 		} else if(result instanceof Boolean) {
 			return new BooleanLiteral((Boolean) result);
@@ -74,7 +79,7 @@ public class JavaValue extends AbstractValue implements Invokable {
 
 	/**
 	 * Only handles integers right now
-	 * @param hintClass 
+	 * @param hintClass
 	 */
 	private Object wyvernToJava(Value arg, Class hintClass) {
 		if (arg instanceof IntegerLiteral) {
@@ -82,8 +87,8 @@ public class JavaValue extends AbstractValue implements Invokable {
 				return ((IntegerLiteral)arg).getFullValue();
 			}
 			return new Integer(((IntegerLiteral)arg).getValue());
-        } else if (arg instanceof StringLiteral) {
-            return new String(((StringLiteral) arg).getValue());
+		} else if (arg instanceof StringLiteral) {
+			return new String(((StringLiteral) arg).getValue());
 		} else if (arg instanceof ObjectValue) {
 			List<Value> emptyList = new LinkedList<>();
 			// Extremely hacky. Won't work if a different list implementation is used, for example.

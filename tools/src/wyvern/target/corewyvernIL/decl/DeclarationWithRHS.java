@@ -10,7 +10,7 @@ import wyvern.tools.errors.ToolError;
 
 public abstract class DeclarationWithRHS extends NamedDeclaration {
 	private IExpr definition;
-	
+
 	public DeclarationWithRHS(String name, IExpr definition, FileLocation loc) {
 		super(name, loc);
 		this.definition = definition;
@@ -19,16 +19,16 @@ public abstract class DeclarationWithRHS extends NamedDeclaration {
 	public IExpr getDefinition() {
 		return definition;
 	}
-	
+
 	public abstract ValueType getType();
-	
+
 	@Override
 	public final DeclType typeCheck(TypeContext ctx, TypeContext thisCtx) {
-		ValueType defType = definition.typeCheck(thisCtx); 
+		ValueType defType = definition.typeCheck(thisCtx);
 		if (!defType.isSubtypeOf(getType(), thisCtx)) {
 			ToolError.reportError(ErrorMessage.ASSIGNMENT_SUBTYPING, this);
 		}
 		return getDeclType();
 	}
-	
+
 }

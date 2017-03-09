@@ -19,9 +19,9 @@ public abstract class AbstractTypeDeclaration extends Declaration {
 			this.taggedInfo.associateWithClassOrType(typeBinding);
 		}
 	}
-	
+
 	private TaggedInfo taggedInfo;
-	
+
 	protected void typecheckTags(Environment env) {
 		taggedInfo.resolve(env, this);
 
@@ -90,7 +90,7 @@ public abstract class AbstractTypeDeclaration extends Declaration {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the tag information associated with this type declaration.
 	 * If this class isn't tagged this information will be null.
@@ -100,7 +100,7 @@ public abstract class AbstractTypeDeclaration extends Declaration {
 	public TaggedInfo getTaggedInfo() {
 		return taggedInfo;
 	}
-	
+
 	/**
 	 * Returns if this class is tagged or not.
 	 *

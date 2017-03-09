@@ -7,7 +7,7 @@ import wyvern.tools.types.Type;
 
 public class ParseUtils {
 	/** Creates an instance of the new Wyvern parser
-	 * 
+	 *
 	 * @param filename
 	 * @param source
 	 * @return

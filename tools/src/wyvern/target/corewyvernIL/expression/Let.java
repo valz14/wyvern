@@ -33,9 +33,9 @@ public class Let extends Expression {
 		return binding.getVarName();
 	}
 
-    public ValueType getVarType() {
-        return binding.getType();
-    }
+	public ValueType getVarType() {
+		return binding.getType();
+	}
 
 	public IExpr getToReplace() {
 		return binding.getExpression();
@@ -63,9 +63,9 @@ public class Let extends Expression {
 	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
 		String newIndent = indent + "    ";
 		dest.append("let\n");
-		
+
 		binding.doPrettyPrint(dest, newIndent);
-		
+
 		dest.append(indent).append("in ");
 		inExpr.doPrettyPrint(dest,indent);
 	}

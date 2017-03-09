@@ -16,7 +16,7 @@ public abstract class ValueType extends CaseType implements IASTNode {
 	 * is unknown (e.g. because this is a nominal type and the
 	 * corresponding type member is abstract from this context) then
 	 * the empty structural type is returned.
-	 *  
+	 *
 	 * @param ctx TODO
 	 */
 	public final StructuralType getStructuralType(TypeContext ctx) {
@@ -27,14 +27,14 @@ public abstract class ValueType extends CaseType implements IASTNode {
 	 * Returns the equivalent structural type.  If the structural type
 	 * is unknown (e.g. because this is a nominal type and the
 	 * corresponding type member is abstract from this context) then
-	 * the default type is returned 
-	 *  
+	 * the default type is returned
+	 *
 	 * @param ctx TODO
 	 */
 	public StructuralType getStructuralType(TypeContext ctx, StructuralType theDefault) {
 		return theDefault;
 	}
-	
+
 	/** For nominal types that are transitively equivalent to a known type, return that type.
 	 *  For all other types, this is the identity.
 	 */
@@ -81,12 +81,12 @@ public abstract class ValueType extends CaseType implements IASTNode {
 	}
 
 	/**
-	 * Evaluates any metadata that might be present in this type to a value  
+	 * Evaluates any metadata that might be present in this type to a value
 	 */
 	public ValueType interpret(EvalContext ctx) {
 		return this;
 	}
-	
+
 	/**
 	 * Gets the metadata, if any, for this type.
 	 * Returns null if no metadata is associated with this type.
@@ -94,12 +94,12 @@ public abstract class ValueType extends CaseType implements IASTNode {
 	public Value getMetadata(TypeContext ctx) {
 		return null;
 	}
-	
+
 	/**
 	 * Checks if this type is well-formed, throwing an exception if not
 	 */
 	abstract public void checkWellFormed(TypeContext ctx);
-	
+
 	/**
 	 * Returns this type, avoiding the named variable if possible
 	 * @param count TODO
@@ -109,5 +109,5 @@ public abstract class ValueType extends CaseType implements IASTNode {
 	}
 	// TODO: depth limit is hacky, find a more principled approach to avoidance
 	abstract public ValueType doAvoid(String varName, TypeContext ctx, int depth);
-	public static final int MAX_RECURSION_DEPTH = 10; 
+	public static final int MAX_RECURSION_DEPTH = 10;
 }

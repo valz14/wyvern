@@ -39,11 +39,11 @@ public class TypeAbbrevDeclaration extends Declaration implements CoreAST {
 		this.reference = reference;
 		this.location = loc;
 	}
-	
+
 	public Type getReference() {
 		return reference;
 	}
-	
+
 	@Override
 	public Type getType() {
 		// TODO Auto-generated method stub
@@ -95,14 +95,14 @@ public class TypeAbbrevDeclaration extends Declaration implements CoreAST {
 			ToolError.reportError(ErrorMessage.TYPE_NOT_DEFINED, this);
 			return null;
 		}
-		
+
 	}
 
 	private Type resolveReferenceType(Environment env) {
 		Type resolved_type = TypeResolver.resolve(reference, env);
 		return resolved_type;
 	}
-	
+
 	@Override
 	protected Environment doExtend(Environment old, Environment against) {
 		return old.extend(new TypeBinding(alias, resolveReferenceType(old)));
@@ -118,14 +118,14 @@ public class TypeAbbrevDeclaration extends Declaration implements CoreAST {
 	public void evalDecl(EvaluationEnvironment evalEnv,
 			EvaluationEnvironment declEnv) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public DeclType genILType(GenContext ctx) {
-        if (this.reference == null) {
-            return new AbstractTypeMember(this.alias);
-        }
+		if (this.reference == null) {
+			return new AbstractTypeMember(this.alias);
+		}
 		ValueType referenceILType = reference.getILType(ctx);
 		return new ConcreteTypeMember(getName(), referenceILType);
 	}
@@ -146,7 +146,7 @@ public class TypeAbbrevDeclaration extends Declaration implements CoreAST {
 		ValueType referenceILType = reference.getILType(ctx);
 		return new TypeDeclaration(getName(), referenceILType, getLocation());
 	}
-	
+
 	@Override
 	public void addModuleDecl(TopLevelContext tlc) {
 		wyvern.target.corewyvernIL.decl.Declaration decl = topLevelGen(tlc.getContext(), null);
@@ -154,8 +154,8 @@ public class TypeAbbrevDeclaration extends Declaration implements CoreAST {
 		tlc.addModuleDecl(decl,dt);
 	}
 
-	
 
 
-	
+
+
 }

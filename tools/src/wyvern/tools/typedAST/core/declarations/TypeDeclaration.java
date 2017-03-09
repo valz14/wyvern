@@ -35,11 +35,11 @@ public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST 
 	private Reference<Optional<TypedAST>> metadata;
 	private NameBinding nameBinding;
 	private TypeBinding typeBinding;
-	
+
 	private EvaluationEnvironment declEvalEnv;
-    protected Reference<Environment> declEnv = new Reference<>(Environment.getEmptyEnvironment());
+	protected Reference<Environment> declEnv = new Reference<>(Environment.getEmptyEnvironment());
 	protected Reference<Environment> attrEnv = new Reference<>(Environment.getEmptyEnvironment());
-	
+
 	public static EvaluationEnvironment attrEvalEnv = EvaluationEnvironment.EMPTY; // HACK
 	private Reference<Value> metaValue = new Reference<>();
 
@@ -66,7 +66,7 @@ public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST 
 
 		return env.extend(nameBinding);
 	}
-	
+
 	public TypeDeclaration(String name, DeclSequence decls, Reference<Value> metadata, TaggedInfo taggedInfo, FileLocation clsNameLine) {
 		// System.out.println("Initialising TypeDeclaration ( " + name + "): decls" + decls);
 		this.name = name;
@@ -79,7 +79,7 @@ public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST 
 
 
 		nameBinding = new LateNameBinding(nameBinding.getName(), () ->
-				metadata.get().getType());
+		metadata.get().getType());
 		typeBinding = new TypeBinding(nameBinding.getName(), objectType, metadata);
 
 		setupTags(name, typeBinding, taggedInfo);
@@ -88,8 +88,8 @@ public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST 
 		this.location = clsNameLine;
 		this.metaValue = metadata;
 	}
-	
-    public TypeDeclaration(String name, DeclSequence decls, Reference<Value> metadata, FileLocation clsNameLine) {
+
+	public TypeDeclaration(String name, DeclSequence decls, Reference<Value> metadata, FileLocation clsNameLine) {
 		this(name, decls, metadata, null, clsNameLine);
 	}
 
@@ -111,10 +111,10 @@ public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST 
 		return decls1;
 	}
 
-    @Override
+	@Override
 	public Type doTypecheck(Environment env) {
 		Environment eenv = decls.extend(env, env);
-		
+
 		for (Declaration decl : decls.getDeclIterator()) {
 			decl.typecheckSelf(eenv);
 		}
@@ -122,15 +122,15 @@ public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST 
 		if (isTagged()) {
 			typecheckTags(env);
 		}
-		
+
 		return this.typeBinding.getType();
-	}	
-	
+	}
+
 	@Override
 	protected Environment doExtend(Environment old, Environment against) {
 		Environment newEnv = old.extend(nameBinding).extend(typeBinding);
 		// newEnv = newEnv.extend(new NameBindingImpl("this", nameBinding.getType())); // Why is there "this" in a type (not class)?
-		
+
 		return newEnv;
 	}
 
@@ -141,7 +141,7 @@ public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST 
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
 		declEvalEnv = declEnv;
 		if (metaValue.get() == null) {
@@ -161,15 +161,15 @@ public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST 
 	}
 
 	private FileLocation location = FileLocation.UNKNOWN;
-	
+
 	@Override
 	public FileLocation getLocation() {
-		return location; 
+		return location;
 	}
 
-    public NameBinding lookupDecl(String name) {
-        return declEnv.get().lookup(name);
-    }
+	public NameBinding lookupDecl(String name) {
+		return declEnv.get().lookup(name);
+	}
 
 
 	public Reference<Environment> getDeclEnv() {
@@ -199,8 +199,8 @@ public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST 
 		for(Declaration d : decls.getDeclIterator()) {
 			declts.add(d.genILType(ctx));
 		}
-		
+
 		return declts;
 	}
-	
+
 }

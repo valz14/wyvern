@@ -27,12 +27,12 @@ public class OIRMethodDeclaration extends OIRAST {
 	public void setArgs(List<OIRFormalArg> args) {
 		this.args = args;
 	}
-	
+
 	public void addArgs (OIRFormalArg arg)
 	{
 		args.add(arg);
 	}
-	
+
 	public OIRMethodDeclaration(OIRType returnType, String name, List<OIRFormalArg> args) {
 		super();
 		this.returnType = returnType;
@@ -43,5 +43,5 @@ public class OIRMethodDeclaration extends OIRAST {
 	public <S, T> T acceptVisitor(ASTVisitor<S, T> visitor, S state) {
 		return visitor.visit(state, this);
 	}
-	
+
 }

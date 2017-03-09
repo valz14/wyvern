@@ -19,8 +19,8 @@ public class DataType extends TagType {
 		return cases;
 	}
 
-  public <S, T> T acceptVisitor (ASTVisitor<S, T> emitILVisitor,
-                                 S state) {
-    return emitILVisitor.visit(state, this);
-  }
+	public <S, T> T acceptVisitor (ASTVisitor<S, T> emitILVisitor,
+			S state) {
+		return emitILVisitor.visit(state, this);
+	}
 }

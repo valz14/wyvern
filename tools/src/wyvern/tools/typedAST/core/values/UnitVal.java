@@ -21,14 +21,14 @@ public class UnitVal extends AbstractValue implements Value, CoreAST {
 	private UnitVal(FileLocation location) { this.location = location; }
 	// private static UnitVal instance = new UnitVal(); // FIXME: I have to move away from instance to provide line number! :(
 	public static UnitVal getInstance(FileLocation fileLocation) {
-		return new UnitVal(fileLocation); // instance; 
+		return new UnitVal(fileLocation); // instance;
 	}
-	
+
 	@Override
 	public Type getType() {
 		return new Unit();
 	}
-	
+
 	@Override
 	public String toString() {
 		return "()";
@@ -45,7 +45,7 @@ public class UnitVal extends AbstractValue implements Value, CoreAST {
 		return new UnitVal(location);
 	}
 
-    private FileLocation location;
+	private FileLocation location;
 	public FileLocation getLocation() {
 		return this.location;
 	}

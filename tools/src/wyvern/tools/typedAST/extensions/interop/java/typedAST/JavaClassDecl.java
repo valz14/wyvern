@@ -112,14 +112,14 @@ public class JavaClassDecl extends ClassDeclaration {
 				MethodHandle gethandle = MethodHandles.arrayElementGetter(clazz);
 
 				switch (elementType.getName()) {
-					case "int": break;
-					case "boolean": break;
-					case "byte": break;
-					case "char": break;
-					case "double": break;
-					case "float": break;
-					case "long": break;
-					case "short": break;
+				case "int": break;
+				case "boolean": break;
+				case "byte": break;
+				case "char": break;
+				case "double": break;
+				case "float": break;
+				case "long": break;
+				case "short": break;
 				}
 
 				MethodHandle sethandle = MethodHandles.arrayElementSetter(clazz);
@@ -170,7 +170,7 @@ public class JavaClassDecl extends ClassDeclaration {
 		if (creator.isPresent()) {
 			typeBinding = new TypeBinding(typeBinding.getName(), typeBinding.getType(), new Reference<Value>() {
 				@Override
-			    @Deprecated
+				@Deprecated
 				public Value get() {
 					try {
 						return Util.toWyvObj(creator.get().invoke(null));
@@ -297,10 +297,10 @@ public class JavaClassDecl extends ClassDeclaration {
 		}
 	}
 
-    @Override
-    public String toString() {
-        return "JavaClassDecl("+this.clazz.getName()+")";
-    }
+	@Override
+	public String toString() {
+		return "JavaClassDecl("+this.clazz.getName()+")";
+	}
 
 	@Override
 	public EvaluationEnvironment evaluateDeclarations(EvaluationEnvironment addtlEnv) {

@@ -11,9 +11,9 @@ import wyvern.tools.tests.RossettaCodeTests;
 
 @RunWith(Categories.class)
 @SuiteClasses( {
-		RossettaCodeTests.class, CoreParserTests.class,
-		LexingTests.class, ILTests.class,
-	})
+	RossettaCodeTests.class, CoreParserTests.class,
+	LexingTests.class, ILTests.class,
+})
 public class NewParserTestSuite {
 
 }

@@ -21,19 +21,19 @@ public class InvocationExprGenerator implements CallableExprGenerator {
 	private final IExpr receiver;
 	private final DeclType declType;
 	private final FileLocation location;
-	
+
 	public InvocationExprGenerator(IExpr iExpr, String operationName, GenContext ctx, FileLocation loc) {
-		
+
 		this.receiver = iExpr;
 		this.location = loc;
-	
+
 		ValueType receiverType = iExpr.typeCheck(ctx);
-		
+
 		if (Util.isDynamicType(receiverType)) {
 			this.declType = null;
 			return;
 		}
-		
+
 		List<DeclType> dts = receiverType.findDecls(operationName, ctx);
 		// not interested in finding Type Decls (abstract or not)
 		dts.removeIf(cdt -> cdt.isTypeDecl());
@@ -46,7 +46,7 @@ public class InvocationExprGenerator implements CallableExprGenerator {
 		DeclType dt = dts.get(0);
 		declType = dt.adapt(View.from(iExpr, ctx));
 	}
-	
+
 	@Override
 	public Expression genExpr() {
 		if (declType instanceof ValDeclType || declType instanceof VarDeclType) {
@@ -64,16 +64,16 @@ public class InvocationExprGenerator implements CallableExprGenerator {
 			IExpr e = genExpr();
 			return new MethodCall(e, Util.APPLY_NAME, args, loc);
 		} else {
-			return new MethodCall(receiver, declType.getName(), args, loc);			
+			return new MethodCall(receiver, declType.getName(), args, loc);
 		}
 	}
 
 	@Override
 	/**
-	 * 
+	 *
 	 */
 	public DefDeclType getDeclType(TypeContext ctx) {
-		
+
 		if (declType == null) {
 			return null;
 		} else if (declType instanceof ValDeclType || declType instanceof VarDeclType) {

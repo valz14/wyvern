@@ -109,20 +109,20 @@ public class TypeInv implements Type {
 		throw new RuntimeException("Cannot resolve to a type invocation");
 	}
 
-    private Expression resolvePath() {
-        if (innerType instanceof TypeInv) {
-            return new FieldGet(((TypeInv) innerType).resolvePath(), invName, getLocation());
-        } else if (innerType instanceof Variable) {
-            return new wyvern.target.corewyvernIL.expression.Variable(((Variable) innerType).getName());
-        }
-        throw new RuntimeException("Unreachable");
-    }
+	private Expression resolvePath() {
+		if (innerType instanceof TypeInv) {
+			return new FieldGet(((TypeInv) innerType).resolvePath(), invName, getLocation());
+		} else if (innerType instanceof Variable) {
+			return new wyvern.target.corewyvernIL.expression.Variable(((Variable) innerType).getName());
+		}
+		throw new RuntimeException("Unreachable");
+	}
 
-    @Override
-    @Deprecated
-    public ValueType generateILType() {
-        return new NominalType((Path)resolvePath(), invName);
-    }
+	@Override
+	@Deprecated
+	public ValueType generateILType() {
+		return new NominalType((Path)resolvePath(), invName);
+	}
 
 	@Override
 	public ValueType getILType(GenContext ctx) {

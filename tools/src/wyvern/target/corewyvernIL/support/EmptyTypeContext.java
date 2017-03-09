@@ -11,7 +11,7 @@ public class EmptyTypeContext extends TypeContext {
 	protected TypeContext getNext() {
 		return null;
 	}
-	
+
 	@Override
 	protected String endToString() {
 		return "]";

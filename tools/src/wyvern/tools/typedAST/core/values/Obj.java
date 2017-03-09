@@ -31,20 +31,20 @@ public class Obj extends AbstractValue implements InvokableValue, Assignable {
 	protected Reference<EvaluationEnvironment> intEnv;
 	private TaggedInfo taggedInfo;
 	private Environment typeEquivEnv;
-	
+
 	public Obj(EvaluationEnvironment declEnv, TaggedInfo taggedInfo) {
 		this.taggedInfo = taggedInfo;
 		this.intEnv = new Reference<>(declEnv);
 	}
 
-    public Obj(Reference<EvaluationEnvironment> declEnv, TaggedInfo taggedInfo) {
+	public Obj(Reference<EvaluationEnvironment> declEnv, TaggedInfo taggedInfo) {
 		intEnv = declEnv;
 		this.taggedInfo = taggedInfo;
 	}
 
-    private void updateTee() {
-        typeEquivEnv = TypeDeclUtils.getTypeEquivalentEnvironment(intEnv.get().toTypeEnv());
-    }
+	private void updateTee() {
+		typeEquivEnv = TypeDeclUtils.getTypeEquivalentEnvironment(intEnv.get().toTypeEnv());
+	}
 
 	@Override
 	public Type getType() {
@@ -70,7 +70,7 @@ public class Obj extends AbstractValue implements InvokableValue, Assignable {
 		return getIntEnv().lookup(operation).orElseThrow(() -> new RuntimeException("Cannot find class member"))
 				.getValue(env.extend(new ValueBinding("this", this)));
 	}
-	
+
 	public EvaluationEnvironment getIntEnv() {
 		return intEnv.get();
 	}
@@ -82,13 +82,13 @@ public class Obj extends AbstractValue implements InvokableValue, Assignable {
 		}
 		String operation = ((Invocation) ass.getTarget()).getOperationName();
 		intEnv.get().lookupValueBinding(operation, AssignableValueBinding.class)
-				.orElseThrow(() -> new RuntimeException("Cannot set a non-existent or immutable var"));
+		.orElseThrow(() -> new RuntimeException("Cannot set a non-existent or immutable var"));
 
 		return;
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluateAssignment(Assignment ass, EvaluationEnvironment env) {
 		if (!(ass.getTarget() instanceof Invocation)) {
 			throw new RuntimeException("Something really, really weird happened.");
@@ -98,8 +98,8 @@ public class Obj extends AbstractValue implements InvokableValue, Assignable {
 		Value newValue = ass.getValue().evaluate(env);
 
 		intEnv.get().lookupValueBinding(operation, AssignableValueBinding.class)
-				.orElseThrow(() -> new RuntimeException("Trying to assign a non-var"))
-				.assign(newValue);
+		.orElseThrow(() -> new RuntimeException("Trying to assign a non-var"))
+		.assign(newValue);
 
 		return newValue;
 	}

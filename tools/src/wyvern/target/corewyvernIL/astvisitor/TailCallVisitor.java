@@ -41,197 +41,197 @@ import wyvern.target.corewyvernIL.type.StructuralType;
  */
 public class TailCallVisitor extends ASTVisitor<Boolean, Void> {
 
-    public static void annotate(IExpr program) {
-        program.acceptVisitor(new TailCallVisitor(), false);
-    }
+	public static void annotate(IExpr program) {
+		program.acceptVisitor(new TailCallVisitor(), false);
+	}
 
-    public Void visit(Boolean inTailPosition, New newExpr) {
-        for (Declaration decl : newExpr.getDecls()) {
-            decl.acceptVisitor(this, false);
-        }
-        return null;
-    }
+	public Void visit(Boolean inTailPosition, New newExpr) {
+		for (Declaration decl : newExpr.getDecls()) {
+			decl.acceptVisitor(this, false);
+		}
+		return null;
+	}
 
-    public Void visit(Boolean inTailPosition, Case c) {
-        c.getBody().acceptVisitor(this, inTailPosition);
-        return null;
-    }
+	public Void visit(Boolean inTailPosition, Case c) {
+		c.getBody().acceptVisitor(this, inTailPosition);
+		return null;
+	}
 
-    public Void visit(Boolean inTailPosition, MethodCall methodCall) {
-        methodCall.getObjectExpr().acceptVisitor(this, false);
-        for (IExpr arg : methodCall.getArgs()) {
-            arg.acceptVisitor(this, false);
-        }
+	public Void visit(Boolean inTailPosition, MethodCall methodCall) {
+		methodCall.getObjectExpr().acceptVisitor(this, false);
+		for (IExpr arg : methodCall.getArgs()) {
+			arg.acceptVisitor(this, false);
+		}
 
-        if (inTailPosition) {
-            methodCall.addMetadata(new IsTailCall());
-        }
-        return null;
-    }
-
-
-    public Void visit(Boolean inTailPosition, Match match) {
-        match.getMatchExpr().acceptVisitor(this, false);
-        match.getElseExpr().acceptVisitor(this, inTailPosition);
-        for (Case matchCase : match.getCases()) {
-            matchCase.getBody().acceptVisitor(this, inTailPosition);
-        }
-        return null;
-    }
+		if (inTailPosition) {
+			methodCall.addMetadata(new IsTailCall());
+		}
+		return null;
+	}
 
 
-    public Void visit(Boolean inTailPosition, FieldGet fieldGet) {
-        fieldGet.getObjectExpr().acceptVisitor(this, false);
-        return null;
-    }
+	public Void visit(Boolean inTailPosition, Match match) {
+		match.getMatchExpr().acceptVisitor(this, false);
+		match.getElseExpr().acceptVisitor(this, inTailPosition);
+		for (Case matchCase : match.getCases()) {
+			matchCase.getBody().acceptVisitor(this, inTailPosition);
+		}
+		return null;
+	}
 
 
-    public Void visit(Boolean inTailPosition, Let let) {
-        let.getToReplace().acceptVisitor(this, false);
-        let.getInExpr().acceptVisitor(this, inTailPosition);
-        return null;
-    }
+	public Void visit(Boolean inTailPosition, FieldGet fieldGet) {
+		fieldGet.getObjectExpr().acceptVisitor(this, false);
+		return null;
+	}
 
 
-    public Void visit(Boolean inTailPosition, FieldSet fieldSet) {
-        fieldSet.getObjectExpr().acceptVisitor(this, false);
-        fieldSet.getExprToAssign().acceptVisitor(this, false);
-        return null;
-    }
+	public Void visit(Boolean inTailPosition, Let let) {
+		let.getToReplace().acceptVisitor(this, false);
+		let.getInExpr().acceptVisitor(this, inTailPosition);
+		return null;
+	}
 
 
-    public Void visit(Boolean inTailPosition, Variable variable) {
-        return null;
-    }
+	public Void visit(Boolean inTailPosition, FieldSet fieldSet) {
+		fieldSet.getObjectExpr().acceptVisitor(this, false);
+		fieldSet.getExprToAssign().acceptVisitor(this, false);
+		return null;
+	}
 
 
-    public Void visit(Boolean inTailPosition, Cast cast) {
-        cast.getToCastExpr().acceptVisitor(this, false);
-        return null;
-    }
+	public Void visit(Boolean inTailPosition, Variable variable) {
+		return null;
+	}
 
 
-    public Void visit(Boolean inTailPosition, VarDeclaration varDecl) {
-        varDecl.getDefinition().acceptVisitor(this, false);
-        return null;
-    }
-
-    public Void visit(Boolean inTailPosition, DefDeclaration defDecl) {
-        defDecl.getBody().acceptVisitor(this, true);
-        return null;
-    }
-
-    public Void visit(Boolean inTailPosition, ValDeclaration valDecl) {
-        valDecl.getDefinition().acceptVisitor(this, false);
-        return null;
-    }
+	public Void visit(Boolean inTailPosition, Cast cast) {
+		cast.getToCastExpr().acceptVisitor(this, false);
+		return null;
+	}
 
 
-    public Void visit(Boolean inTailPosition,
-                         IntegerLiteral integerLiteral) {
-        return null;
-    }
+	public Void visit(Boolean inTailPosition, VarDeclaration varDecl) {
+		varDecl.getDefinition().acceptVisitor(this, false);
+		return null;
+	}
+
+	public Void visit(Boolean inTailPosition, DefDeclaration defDecl) {
+		defDecl.getBody().acceptVisitor(this, true);
+		return null;
+	}
+
+	public Void visit(Boolean inTailPosition, ValDeclaration valDecl) {
+		valDecl.getDefinition().acceptVisitor(this, false);
+		return null;
+	}
 
 
-    public Void visit(Boolean inTailPosition,
-                      BooleanLiteral booleanLiteral) {
-        return null;
-    }
+	public Void visit(Boolean inTailPosition,
+			IntegerLiteral integerLiteral) {
+		return null;
+	}
 
 
-    public Void visit(Boolean inTailPosition,
-                         RationalLiteral rational) {
-        return null;
-    }
+	public Void visit(Boolean inTailPosition,
+			BooleanLiteral booleanLiteral) {
+		return null;
+	}
 
 
-    public Void visit(Boolean inTailPosition,
-                         FormalArg formalArg) {
-        return null;
-    }
+	public Void visit(Boolean inTailPosition,
+			RationalLiteral rational) {
+		return null;
+	}
 
 
-    public Void visit(Boolean inTailPosition,
-                         VarDeclType varDeclType) {
-        return null;
-    }
-
-    public Void visit(Boolean inTailPosition,
-                         ValDeclType valDeclType) {
-        return null;
-    }
+	public Void visit(Boolean inTailPosition,
+			FormalArg formalArg) {
+		return null;
+	}
 
 
-    public Void visit(Boolean inTailPosition,
-                         DefDeclType defDeclType) {
-        return null;
-    }
+	public Void visit(Boolean inTailPosition,
+			VarDeclType varDeclType) {
+		return null;
+	}
+
+	public Void visit(Boolean inTailPosition,
+			ValDeclType valDeclType) {
+		return null;
+	}
 
 
-    public Void visit(Boolean inTailPosition,
-                         AbstractTypeMember abstractDeclType) {
-        return null;
-    }
+	public Void visit(Boolean inTailPosition,
+			DefDeclType defDeclType) {
+		return null;
+	}
 
-    public Void visit(Boolean inTailPosition,
-                         StructuralType structuralType) {
-        return null;
-    }
 
-    public Void visit(Boolean inTailPosition, NominalType nominalType) {
-        return null;
-    }
+	public Void visit(Boolean inTailPosition,
+			AbstractTypeMember abstractDeclType) {
+		return null;
+	}
 
-    public Void visit(Boolean inTailPosition, StringLiteral stringLiteral) {
-        return null;
-    }
+	public Void visit(Boolean inTailPosition,
+			StructuralType structuralType) {
+		return null;
+	}
 
-    public Void visit(Boolean inTailPosition, DelegateDeclaration delegateDecl) {
-        return null;
-    }
+	public Void visit(Boolean inTailPosition, NominalType nominalType) {
+		return null;
+	}
 
-    @Override
-    public Void visit(Boolean inTailPosition, Bind bind) {
-        for (IExpr expr : bind.getToReplaceExps()) {
-            expr.acceptVisitor(this, false);
-        }
-        bind.getInExpr().acceptVisitor(this, inTailPosition);
-        return null;
-    }
+	public Void visit(Boolean inTailPosition, StringLiteral stringLiteral) {
+		return null;
+	}
 
-    @Override
-    public Void visit(Boolean inTailPosition,
-                         ConcreteTypeMember concreteTypeMember) {
-        return null;
-    }
+	public Void visit(Boolean inTailPosition, DelegateDeclaration delegateDecl) {
+		return null;
+	}
 
-    @Override
-    public Void visit(Boolean inTailPosition,
-                         TypeDeclaration typeDecl) {
-        return null;
-    }
+	@Override
+	public Void visit(Boolean inTailPosition, Bind bind) {
+		for (IExpr expr : bind.getToReplaceExps()) {
+			expr.acceptVisitor(this, false);
+		}
+		bind.getInExpr().acceptVisitor(this, inTailPosition);
+		return null;
+	}
 
-    @Override
-    public Void visit(Boolean inTailPosition,
-                         CaseType caseType) {
-        return null;
-    }
+	@Override
+	public Void visit(Boolean inTailPosition,
+			ConcreteTypeMember concreteTypeMember) {
+		return null;
+	}
 
-    @Override
-    public Void visit(Boolean inTailPosition,
-                         ExtensibleTagType extensibleTagType) {
-        return null;
-    }
+	@Override
+	public Void visit(Boolean inTailPosition,
+			TypeDeclaration typeDecl) {
+		return null;
+	}
 
-    @Override
-    public Void visit(Boolean inTailPosition,
-                         DataType dataType) {
-        return null;
-    }
+	@Override
+	public Void visit(Boolean inTailPosition,
+			CaseType caseType) {
+		return null;
+	}
 
-    @Override
-    public Void visit(Boolean inTailPosition, FFIImport ffiImport) {
-        return null;
-    }
+	@Override
+	public Void visit(Boolean inTailPosition,
+			ExtensibleTagType extensibleTagType) {
+		return null;
+	}
+
+	@Override
+	public Void visit(Boolean inTailPosition,
+			DataType dataType) {
+		return null;
+	}
+
+	@Override
+	public Void visit(Boolean inTailPosition, FFIImport ffiImport) {
+		return null;
+	}
 
 }

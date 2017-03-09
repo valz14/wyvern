@@ -30,7 +30,7 @@ public class TypeResolver {
 
 	private static Type iresolve(Type input, Environment ctx, HashSet<Type> visited) throws IllegalAccessException {
 		// System.out.println("Resolving: " + input + " of class " + input.getClass());
-		
+
 		if (input instanceof UnresolvedType) {
 			return ((UnresolvedType) input).resolve(ctx);
 		}
@@ -38,7 +38,7 @@ public class TypeResolver {
 		if (input instanceof SpliceType) {
 			return resolve(((SpliceType) input).getInner(),
 					ctx.lookupBinding("oev", TSLBlock.OuterTypecheckBinding.class).orElseThrow(RuntimeException::new)
-							.getStore(), visited);
+					.getStore(), visited);
 		}
 
 		if (input instanceof Resolvable) {
@@ -84,7 +84,7 @@ public class TypeResolver {
 		if (input instanceof TypeInv) { // This might be a variable!
 			return ((TypeInv)input).resolve(ctx);
 		}
-		
+
 		return input;
 	}
 }

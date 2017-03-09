@@ -10,17 +10,17 @@ import wyvern.target.oir.declarations.OIRInterface;
 import wyvern.target.oir.declarations.OIRType;
 
 public class OIRMethodCall extends OIRExpression{
-    private OIRExpression objectExpr;
-    private String methodName;
-    private List<OIRExpression> args;
-    private ValueType objectType;
+	private OIRExpression objectExpr;
+	private String methodName;
+	private List<OIRExpression> args;
+	private ValueType objectType;
 	@Override
 	public OIRType typeCheck(OIREnvironment oirEnv) {
 		OIRType type = objectExpr.typeCheck(oirEnv);
 		if (type instanceof OIRClassDeclaration)
 		{
 			OIRType oirType;
-			
+
 			oirType = ((OIRClassDeclaration)type).getTypeForMember(methodName);
 			if (oirType == null)
 			{
@@ -38,11 +38,11 @@ public class OIRMethodCall extends OIRExpression{
 		/* TODO: Throw type is not class */
 		return null;
 	}
-    public OIRMethodCall(OIRExpression objectExpr, ValueType objectType,
-                         String methodName, List<OIRExpression> args) {
+	public OIRMethodCall(OIRExpression objectExpr, ValueType objectType,
+			String methodName, List<OIRExpression> args) {
 		super();
 		this.objectExpr = objectExpr;
-    this.objectType = objectType;
+		this.objectType = objectType;
 		this.methodName = methodName;
 		this.args = args;
 	}
@@ -58,9 +58,9 @@ public class OIRMethodCall extends OIRExpression{
 	public void setMethodName(String methodName) {
 		this.methodName = methodName;
 	}
-    public ValueType getObjectType() {
-        return objectType;
-    }
+	public ValueType getObjectType() {
+		return objectType;
+	}
 	public List<OIRExpression> getArgs() {
 		return args;
 	}

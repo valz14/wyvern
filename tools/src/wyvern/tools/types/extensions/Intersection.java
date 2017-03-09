@@ -101,7 +101,7 @@ public class Intersection implements Type, OperatableType, ApplyableType {
 			}
 		}
 		reportError(ACTUAL_FORMAL_TYPE_MISMATCH, application, application.getArgument().typecheck(env, Optional.empty()).toString(),
-                toString());
+				toString());
 		return null; //Unreachable
 	}
 
@@ -117,7 +117,7 @@ public class Intersection implements Type, OperatableType, ApplyableType {
 			}
 		}
 		reportError(ACTUAL_FORMAL_TYPE_MISMATCH, opExp, opExp.getArgument().typecheck(env, Optional.empty()).toString(),
-                toString());
+				toString());
 		return null; //Unreachable
 	}
 	@Override
@@ -158,11 +158,11 @@ public class Intersection implements Type, OperatableType, ApplyableType {
 		return cloned;
 	}
 
-    @Override
-    @Deprecated
-    public ValueType generateILType() {
-        throw new WyvernException("Invalid interop type, cannot generate IL", FileLocation.UNKNOWN);
-    }
+	@Override
+	@Deprecated
+	public ValueType generateILType() {
+		throw new WyvernException("Invalid interop type, cannot generate IL", FileLocation.UNKNOWN);
+	}
 
 	@Override
 	public ValueType getILType(GenContext ctx) {

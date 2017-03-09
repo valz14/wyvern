@@ -20,9 +20,9 @@ public class VarValue extends AbstractValue {
 	public VarValue(Value initial) {
 		this.innerValue = initial;
 	}
-	
+
 	public void setValue(Value newV) {
-        //Assume typecheck alright
+		//Assume typecheck alright
 		innerValue = newV;
 	}
 

@@ -5,7 +5,7 @@ import wyvern.target.corewyvernIL.type.ValueType;
 
 public class EmptyGenContext extends GenContext {
 	private InterpreterState state;
-	
+
 	protected EmptyGenContext() {
 		super(null);
 	}

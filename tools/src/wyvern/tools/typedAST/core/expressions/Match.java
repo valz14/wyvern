@@ -88,7 +88,7 @@ public class Match extends CachingTypedAST implements CoreAST {
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluate(EvaluationEnvironment env) {
 		//TaggedInfo.resolveAll(env, this);
 
@@ -124,7 +124,7 @@ public class Match extends CachingTypedAST implements CoreAST {
 		System.out.println("v.type = " + tttmo.getName());
 
 		TaggedInfo.dumpall(env);
-		*/
+		 */
 
 
 		// System.out.println("Evaluating match over tag: " + matchingOverTag + " with matchingOver = " + matchingOver.getType());
@@ -133,7 +133,7 @@ public class Match extends CachingTypedAST implements CoreAST {
 		}
 
 		for (Case c : cases) {
-			
+
 
 			// String caseTypeName = getTypeName(c.getAST());
 
@@ -281,7 +281,7 @@ public class Match extends CachingTypedAST implements CoreAST {
 		if (staticBinding == null) {
 			throw new RuntimeException("variable matching over must be statically tagged");
 		}
-		*/
+		 */
 
 		// Variable we're matching must exist and be a tagged type
 		// String typeName = getTypeName(matchOverType);
@@ -436,7 +436,7 @@ public class Match extends CachingTypedAST implements CoreAST {
 				// System.out.println("ti = " + ti.resolve(env));
 				// tagName = ti.resolve(env);
 				// if (tagName instanceof UnresolvedType) {
-					// tagName = ((UnresolvedType) tagName).resolve(env);
+				// tagName = ((UnresolvedType) tagName).resolve(env);
 				// } DO NOT UNCOMMENT THIS AS BREAKS CASES
 				return; // FIXME: Assume TypeInv will sort itself out during runtime.
 			}

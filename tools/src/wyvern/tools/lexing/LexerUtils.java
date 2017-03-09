@@ -9,14 +9,14 @@ import wyvern.tools.parsing.coreparser.Token;
 public class LexerUtils {
 	public static boolean isSpecial(Token t) {
 		switch (t.kind) {
-			case SINGLE_LINE_COMMENT:
-			case MULTI_LINE_COMMENT:
-			case WHITESPACE:
-					return true;
-			default:
-					return false;
+		case SINGLE_LINE_COMMENT:
+		case MULTI_LINE_COMMENT:
+		case WHITESPACE:
+			return true;
+		default:
+			return false;
 		}
 	}
-	
+
 
 }

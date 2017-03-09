@@ -17,13 +17,13 @@ public class EmitLLVMNative {
 	public static native void functionCreated (String toReturn);
 	public static native void executeLLVMJIT ();
 	public static native String letToLLVMIR (OIRLet let, String toReplaceExpr, String toReplaceType);
-	
+
 	/* Constants */
 	public static native String integerToLLVMIR (OIRInteger oirinteger);
 	public static native String booleanToLLVMIR (OIRBoolean let);
 	public static native String rationalToLLVMIR (OIRRational let);
 	public static native String stringToLLVMIR (OIRString let);
-	
+
 	/* IfThenElse conversion functions */
 	public static native String ifCondExprToLLVMIR (String condExpr);
 	public static native String createThenBasicBlock ();
@@ -35,14 +35,14 @@ public class EmitLLVMNative {
 	public static native String emitElseBasicBlock (String elseExpr, String elseBB, String mergeBB);
 	public static native String emitMergeBasicBlock (String mergeBB, String strThenExpr, String thenBB, String strElseExpr, String elseBB);
 	public static native String createMergeLocalVar ();
-	
+
 	public static native void beginClassStructure (String className, String selfName);
 	public static native void fieldDeclarationToLLVMIR (String fieldName, String typeName);
 	public static native void endFieldDecls (String className);
 
 	public static native String methodDeclToLLVMIR (String retTypeName, String methodName, String[] args);
 	public static native void endClassStructure (String className);
-	
+
 	public static native void interfaceToLLVMIR (String interfaceName);
 	public static native String fieldGetToLLVMIR (String objTypeName, String objName, String fieldName, String fieldTypeName);
 	public static native String fieldSetToLLVMIR (String valueName, String objTypeName, String objName, String fieldName, String fieldTypeName);

@@ -17,7 +17,7 @@ public class StringLiteral extends Literal {
 	public StringLiteral(java.lang.String value) {
 		this(value, FileLocation.UNKNOWN);
 	}
-	
+
 	public StringLiteral(java.lang.String value, FileLocation loc) {
 		super(Util.stringType(), loc);
 		this.value = value;
@@ -31,33 +31,33 @@ public class StringLiteral extends Literal {
 		this.value = value;
 	}
 
-    @Override
-    public int hashCode() {
-        return this.value.hashCode();
-    }
+	@Override
+	public int hashCode() {
+		return this.value.hashCode();
+	}
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if(obj == null) {
-            return false;
-        }
-        if(this.getClass() != obj.getClass()) {
-            return false;
-        }
-        try {
-            StringLiteral other = (StringLiteral) obj;
-            return this.getValue().equals(other.getValue());
-        } catch(ClassCastException e) {
-            return false;
-        }
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if(obj == null) {
+			return false;
+		}
+		if(this.getClass() != obj.getClass()) {
+			return false;
+		}
+		try {
+			StringLiteral other = (StringLiteral) obj;
+			return this.getValue().equals(other.getValue());
+		} catch(ClassCastException e) {
+			return false;
+		}
+	}
 
 	@Override
 	public ValueType typeCheck(TypeContext env) {
-        return Util.stringType();
+		return Util.stringType();
 	}
 
 	@Override

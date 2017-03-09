@@ -9,25 +9,25 @@ import wyvern.target.corewyvernIL.metadata.Metadata;
 
 public abstract class OIRAST implements EmitLLVM, HasMetadata {
 
-    private HashSet<Metadata> metadataSet;
+	private HashSet<Metadata> metadataSet;
 
-    public OIRAST() {
-        metadataSet = new HashSet<>();
-    }
+	public OIRAST() {
+		metadataSet = new HashSet<>();
+	}
 
-    public Set<Metadata> getMetadata() {
-        return Collections.unmodifiableSet(metadataSet);
-    }
+	public Set<Metadata> getMetadata() {
+		return Collections.unmodifiableSet(metadataSet);
+	}
 
-    public void addMetadata(Metadata metadata) {
-        metadataSet.add(metadata);
-    }
+	public void addMetadata(Metadata metadata) {
+		metadataSet.add(metadata);
+	}
 
-    public void copyMetadata(HasMetadata other) {
-        Set<Metadata> metadata = other.getMetadata();
-        for (Metadata m : metadata) {
-            addMetadata(m);
-        }
-    }
+	public void copyMetadata(HasMetadata other) {
+		Set<Metadata> metadata = other.getMetadata();
+		for (Metadata m : metadata) {
+			addMetadata(m);
+		}
+	}
 
 }

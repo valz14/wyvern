@@ -48,7 +48,7 @@ public class TypeAsc extends AbstractExpressionAST implements ExpressionAST {
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluate(EvaluationEnvironment env) {
 		return exn.evaluate(env);
 	}
@@ -65,7 +65,7 @@ public class TypeAsc extends AbstractExpressionAST implements ExpressionAST {
 		return new TypeAsc(newChildren.get("exn"), should);
 	}
 
-    @Override
+	@Override
 	public FileLocation getLocation() {
 		return null;
 	}

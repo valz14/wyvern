@@ -11,28 +11,28 @@ public class Environment {
 	private Environment nextEnvironment;
 	private String name;
 	private Binding binding;
-	
+
 	private static Environment rootEnvironment = new Environment(null, null);
-	
+
 	public static Environment getRootEnvironment ()
 	{
 		return rootEnvironment;
 	}
-	
+
 	public Environment (Environment parent, Binding binding)
 	{
 		if (parent != null)
 		{
-			this.nextEnvironment = parent.nextEnvironment;	
+			this.nextEnvironment = parent.nextEnvironment;
 			parent.nextEnvironment = this;
 		}
-		
+
 		this.binding = binding;
 		if (binding != null) {
 			this.name = binding.getName();
 		}
 	}
-	
+
 	public void setBinding (Binding binding)
 	{
 		this.binding = binding;
@@ -40,7 +40,7 @@ public class Environment {
 			this.name = binding.getName ();
 		}
 	}
-	
+
 	public Binding getBinding ()
 	{
 		return binding;
@@ -48,12 +48,12 @@ public class Environment {
 	public Environment extend(Binding binding) {
 		return new Environment(this, binding);
 	}
-	
+
 	public Environment extend(Environment env) {
 		if (env.binding == null) {
 			return this;
 		}
-		
+
 		return new Environment(extend(env.nextEnvironment), env.binding);
 	}
 

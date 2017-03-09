@@ -7,8 +7,8 @@ public class RuntimeType {
 	private String fieldValueClass;
 	private RuntimeType parent;
 	private int classID;
-	
-	public RuntimeType (int classID, String className, int fieldValueAssigned, 
+
+	public RuntimeType (int classID, String className, int fieldValueAssigned,
 			long fieldAddress, String fieldValueClass, RuntimeType parent)
 	{
 		this.setClassID(classID);

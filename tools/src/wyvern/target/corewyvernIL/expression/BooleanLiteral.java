@@ -13,30 +13,30 @@ import wyvern.target.corewyvernIL.type.ValueType;
 
 public class BooleanLiteral extends Literal implements Invokable {
 
-    private boolean value;
+	private boolean value;
 
-    public BooleanLiteral(boolean value) {
-        super(Util.booleanType(), null);
-        this.value = value;
-    }
+	public BooleanLiteral(boolean value) {
+		super(Util.booleanType(), null);
+		this.value = value;
+	}
 
-    public boolean getValue() {
-        return value;
-    }
+	public boolean getValue() {
+		return value;
+	}
 
 	@Override
 	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
 		dest.append(value?"true":"false");
 	}
 
-    @Override
-    public ValueType typeCheck(TypeContext env) {
-        return Util.booleanType();
-    }
+	@Override
+	public ValueType typeCheck(TypeContext env) {
+		return Util.booleanType();
+	}
 
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
-      return emitILVisitor.visit(state, this);
+		return emitILVisitor.visit(state, this);
 	}
 
 	@Override
@@ -52,16 +52,16 @@ public class BooleanLiteral extends Literal implements Invokable {
 	@Override
 	public Value invoke(String methodName, List<Value> args) {
 		switch (methodName) {
-			case "ifTrue":
-				if (this.value) {
-					return ((ObjectValue) args.get(0)).invoke("apply", new ArrayList<>());
-				}
-				return ((ObjectValue) args.get(1)).invoke("apply", new ArrayList<>());
-      case "&&":
-        return new BooleanLiteral(this.value && ((BooleanLiteral) args.get(0)).value);
-      case "||":
-        return new BooleanLiteral(this.value || ((BooleanLiteral) args.get(0)).value);
-			default: throw new RuntimeException();
+		case "ifTrue":
+			if (this.value) {
+				return ((ObjectValue) args.get(0)).invoke("apply", new ArrayList<>());
+			}
+			return ((ObjectValue) args.get(1)).invoke("apply", new ArrayList<>());
+		case "&&":
+			return new BooleanLiteral(this.value && ((BooleanLiteral) args.get(0)).value);
+		case "||":
+			return new BooleanLiteral(this.value || ((BooleanLiteral) args.get(0)).value);
+		default: throw new RuntimeException();
 		}
 	}
 

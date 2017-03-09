@@ -131,8 +131,8 @@ public class ModuleDeclaration extends Declaration implements CoreAST {
 					Environment delta = ((EnvironmentExtender) ast).extendType(Environment.getEmptyEnvironment(), importEnv.get().extend(Globals.getStandardEnv()));
 					dclEnv.set(dclEnv.get().extend(delta));
 					delta.getBindings().stream()
-							.flatMap(bndg -> (bndg instanceof TypeBinding)? Stream.of((TypeBinding)bndg) : Stream.empty())
-							.forEach(bndg -> typeEnv.set(typeEnv.get().extend(bndg)));
+					.flatMap(bndg -> (bndg instanceof TypeBinding)? Stream.of((TypeBinding)bndg) : Stream.empty())
+					.forEach(bndg -> typeEnv.set(typeEnv.get().extend(bndg)));
 				}
 			}
 			typeGuard = true;
@@ -259,12 +259,12 @@ public class ModuleDeclaration extends Declaration implements CoreAST {
 
 			// must be import
 			ImportDeclaration imp = (ImportDeclaration) ast;
-			
+
 			Pair<VarBinding, GenContext> bindingAndCtx = imp.genBinding(ctx, dependencies);
-			
+
 			IExpr e = wrapLetWithIterator(ai, normalSeq, bindingAndCtx.second, dependencies);
 			final Let letBinding = new Let(bindingAndCtx.first, e);
-			
+
 			//ValueType t = letBinding.typeCheck(ctx); // sanity check - catch errors early
 			return letBinding;
 		} else {
@@ -274,17 +274,17 @@ public class ModuleDeclaration extends Declaration implements CoreAST {
 			// generate arguments
 			TypedAST argument = inst.getArgs();
 			List<IExpr> args = new LinkedList<IExpr>();
-		    if (argument instanceof TupleObject) {
-		    	for (ExpressionAST arg : ((TupleObject) argument).getObjects()) {
-		    		args.add(arg.generateIL(ctx, null, dependencies));
-		    	}
-		    } else {
-		    	if(! (argument instanceof UnitVal)) {
-		    		/* single argument */
-			    	args.add(((ExpressionAST)argument).generateIL(ctx, null, null));
-		    	}
-		    	/* no argument */
-		    }
+			if (argument instanceof TupleObject) {
+				for (ExpressionAST arg : ((TupleObject) argument).getObjects()) {
+					args.add(arg.generateIL(ctx, null, dependencies));
+				}
+			} else {
+				if(! (argument instanceof UnitVal)) {
+					/* single argument */
+					args.add(((ExpressionAST)argument).generateIL(ctx, null, null));
+				}
+				/* no argument */
+			}
 
 			MethodCall instValue =
 					new MethodCall(
@@ -300,10 +300,10 @@ public class ModuleDeclaration extends Declaration implements CoreAST {
 
 	/**
 	 * Computes and returns the set of arguments this module requires.
-	 * 
+	 *
 	 * loadedTypes is updated with all the types that had to be loaded in
 	 * order to specify the required types.
-	 * 
+	 *
 	 * @param reqSeq
 	 * @param ctx
 	 * @param loadedTypes
@@ -383,7 +383,7 @@ public class ModuleDeclaration extends Declaration implements CoreAST {
 		for(FormalArg arg : formalArgs) {
 			methodContext = methodContext.extend(arg.getName(), new Variable(arg.getName()), arg.getType());
 		}
-	    /* importing modules and instantiations are translated into let sentence */
+		/* importing modules and instantiations are translated into let sentence */
 		wyvern.target.corewyvernIL.expression.IExpr body = wrapLet(impInstSeq, normalSeq, methodContext, dependencies);
 		TypeContext tempContext = methodContext.getInterpreterState().getResolver().extendContext(methodContext, dependencies);
 		wyvern.target.corewyvernIL.type.ValueType returnType = body.typeCheck(tempContext);

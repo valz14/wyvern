@@ -8,7 +8,7 @@ public class OIRIfThenElse extends OIRExpression{
 	private OIRExpression condition;
 	private OIRExpression thenExpression;
 	private OIRExpression elseExpression;
-	
+
 	public OIRExpression getCondition() {
 		return condition;
 	}
@@ -40,20 +40,20 @@ public class OIRIfThenElse extends OIRExpression{
 		this.thenExpression = thenExpression;
 		this.elseExpression = elseExpression;
 	}
-	
+
 	@Override
 	public OIRType typeCheck(OIREnvironment oirEnv) {
 		OIRType thenType;
 		OIRType elseType;
-		
+
 		thenType = thenExpression.typeCheck(oirEnv);
 		elseType = elseExpression.typeCheck(oirEnv);
-		
+
 		if (thenType != elseType) {
 			/*TODO Error type mismatch */
 			return null;
 		}
-		
+
 		setExprType (thenType);
 		return thenType;
 	}
@@ -61,5 +61,5 @@ public class OIRIfThenElse extends OIRExpression{
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor<S, T> visitor, S state) {
 		return visitor.visit(state, this);
-	}	
+	}
 }

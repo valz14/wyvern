@@ -7,18 +7,17 @@ import org.junit.experimental.categories.Category;
 import wyvern.tools.imports.extensions.WyvernResolver;
 import wyvern.tools.parsing.coreparser.ParseException;
 import wyvern.tools.tests.suites.RegressionTests;
-import wyvern.tools.tests.TestUtil;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 
 @Category(RegressionTests.class)
 public class RossettaCodeTests {
-    @BeforeClass public static void setupResolver() {
-    	TestUtil.setPaths();
+	@BeforeClass public static void setupResolver() {
+		TestUtil.setPaths();
 		WyvernResolver.getInstance().addPath(PATH);
-    }
+	}
 
 	@Test
-    @Deprecated
+	@Deprecated
 	public void testHello() throws ParseException {
 		String program = TestUtil.readFile(PATH + "hello.wyv");
 
@@ -36,7 +35,7 @@ public class RossettaCodeTests {
                            + "java.lang.System.out\n";			// result of the stdout module - of course could also be wrapped
 		String stdoutSig = "type stdout\n"						// type sig for stdout; part of std prelude, so this is always in scope
                          + "    def print(String text):void";
-        */
+		 */
 		TypedAST ast = TestUtil.getNewAST(program, "test input");
 		//Type resultType = ast.typecheck(Globals.getStandardEnv(), Optional.<Type>empty());
 		TestUtil.evaluateNew(ast);

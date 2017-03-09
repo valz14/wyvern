@@ -28,12 +28,12 @@ public class Str extends AbstractTypeImpl implements OperatableType {
 	public Str() {}
 
 	private static final Set<String> legalOperators = new HashSet<String>(Arrays.asList(new String[] {"+", "=="}));
-	
+
 	@Override
 	public Type checkOperator(Invocation opExp, Environment env) {
 		String operatorName = opExp.getOperationName();
 
-		
+
 		if (!(legalOperators.contains(operatorName))) {
 			JavaClassDecl strDecl = Util.javaToWyvDecl(String.class);
 			try {
@@ -58,7 +58,7 @@ public class Str extends AbstractTypeImpl implements OperatableType {
 			}
 			return new Bool();
 		}
-		
+
 		return this;
 	}
 
@@ -85,13 +85,13 @@ public class Str extends AbstractTypeImpl implements OperatableType {
 		return this;
 	}
 
-    @Override
-    @Deprecated
-    public ValueType generateILType() {
-        throw new WyvernException("Primitive type conversion unimplmented"); //TODO
-    }
+	@Override
+	@Deprecated
+	public ValueType generateILType() {
+		throw new WyvernException("Primitive type conversion unimplmented"); //TODO
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object other) { return other instanceof Str; }
 
 	@Override

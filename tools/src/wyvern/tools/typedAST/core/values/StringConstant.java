@@ -24,7 +24,7 @@ import wyvern.tools.util.EvaluationEnvironment;
 
 public class StringConstant extends AbstractValue implements InvokableValue, CoreAST {
 	private String value;
-	
+
 	public StringConstant(String s) { this.value = s; }
 	public StringConstant(String s, FileLocation loc) { this.value = s; location = loc; }
 
@@ -36,10 +36,10 @@ public class StringConstant extends AbstractValue implements InvokableValue, Cor
 	public String getValue() {
 		return value;
 	}
-	
+
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluateInvocation(Invocation exp, EvaluationEnvironment env) {
 		String operator = exp.getOperationName();
 		if (!operator.equals("+") && !operator.equals("==")) {
@@ -68,7 +68,7 @@ public class StringConstant extends AbstractValue implements InvokableValue, Cor
 			return new StringConstant(this.value + ((JavaObj) argValue).getObj());
 		} else
 		{
-//			shouldn't get here.
+			//			shouldn't get here.
 			throw new RuntimeException("forgot to typecheck!");
 		}
 	}
@@ -84,7 +84,7 @@ public class StringConstant extends AbstractValue implements InvokableValue, Cor
 		return new StringConstant(value);
 	}
 
-    private FileLocation location = FileLocation.UNKNOWN;
+	private FileLocation location = FileLocation.UNKNOWN;
 	public FileLocation getLocation() {
 		return this.location;
 	}
@@ -94,11 +94,11 @@ public class StringConstant extends AbstractValue implements InvokableValue, Cor
 		return new StringLiteral(value, location);
 	}
 
-    public StringBuilder prettyPrint() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("StringConstant(");
-        sb.append(value);
-        sb.append(")");
-        return sb;
-    }
+	public StringBuilder prettyPrint() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("StringConstant(");
+		sb.append(value);
+		sb.append(")");
+		return sb;
+	}
 }

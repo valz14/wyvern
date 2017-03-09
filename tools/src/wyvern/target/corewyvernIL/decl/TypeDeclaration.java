@@ -26,7 +26,7 @@ public class TypeDeclaration extends NamedDeclaration {
 		this.sourceType = sourceType;
 		this.metadata = metadata;
 	}
-	
+
 	public Type getSourceType() {
 		return sourceType;
 	}
@@ -61,7 +61,7 @@ public class TypeDeclaration extends NamedDeclaration {
 	public Set<String> getFreeVariables() {
 		return new HashSet<>();
 	}
-	
+
 	/** LIMITATION: only works if sourceType is a ValueType.
 	 * in the future maybe we'll extract the ValueType from the source type somehow.
 	 */

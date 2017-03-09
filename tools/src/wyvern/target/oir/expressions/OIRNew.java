@@ -9,7 +9,7 @@ import wyvern.target.oir.declarations.OIRType;
 public class OIRNew extends OIRExpression {
 	private List<OIRExpression> args;
 	private String typeName;
-	
+
 	public List<OIRExpression> getArgs() {
 		return args;
 	}

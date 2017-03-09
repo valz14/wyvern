@@ -70,27 +70,27 @@ public class TypeType extends AbstractTypeImpl implements OperatableType, Record
 			throw new RuntimeException(opExp.getLocation().toString());
 		}
 		assert opExp.getArgument() == null;
-		
+
 		// the operation should exist
 		String opName = opExp.getOperationName();
 
 		NameBinding m = typeDeclEnv.get().lookup(opName);
 		TypeBinding t = typeDeclEnv.get().lookupType(opName);
-		
+
 		// Accessing type members should be OK!!! // FIXME:
 		if (m == null && t == null) {
 			throw new RuntimeException("Invalid operation "+opName+" on type " + this);
 		}
-		
+
 		// TODO Auto-generated method stub
-		
+
 		if (m != null) {
 			return m.getType();
 		} else {
 			return t.getType();
 		}
 	}
-	
+
 	public Map<String, Type> getMembers() {
 		HashMap<String, Type> thisMembers = new HashMap<>();
 		for (Binding b : typeDeclEnv.get().getBindings()) {
@@ -113,20 +113,20 @@ public class TypeType extends AbstractTypeImpl implements OperatableType, Record
 		if (other instanceof TypeType) {
 			Map<String, Type> thisMembers = this.getMembers();
 			// System.out.println("this (" + this + ") : " + thisMembers);
-			
+
 			Map<String, Type> otherMembers = ((TypeType) other).getMembers();
 			// System.out.println("other (" + other + ") : " + otherMembers);
-			
+
 			return checkSubtypeRecursively(this, other, thisMembers, otherMembers, subtypes);
 		}
-		
+
 		return false;
 	}
-	
+
 	public static boolean checkSubtypeRecursively(Type thisType, Type otherType,
 			Map<String, Type> thisMembers, Map<String, Type> otherMembers,
 			HashSet<SubtypeRelation> subtypes) {
-		
+
 		boolean subset = true;
 		for (Map.Entry<String, Type> memberOther : otherMembers.entrySet()) {
 			boolean hasImplementingCandidate = false;
@@ -161,14 +161,14 @@ public class TypeType extends AbstractTypeImpl implements OperatableType, Record
 		// System.out.println("Currently inside TypeType: " + this);
 		// System.out.println("this.decl.getName = " + this.decl.getName());
 		// System.out.println("this.getMembers() = " + this.getMembers());
-		
+
 		TypeBinding tb = typeDeclEnv.get().lookupType(name);
 		if (tb == null) {
 			// System.out.println("Maybe it is a name?");
-			
+
 			NameBinding nm = typeDeclEnv.get().lookup(name);
 			// System.out.println(nm.getType());
-			
+
 			return new TypeBinding(nm.getName(), nm.getType());
 		} else {
 			return tb;
@@ -222,16 +222,16 @@ public class TypeType extends AbstractTypeImpl implements OperatableType, Record
 		return typeType;
 	}
 
-    @Override
-    @Deprecated
-    public wyvern.target.corewyvernIL.type.ValueType generateILType() {
-        LinkedList<DeclType> declTypes = typeDeclEnv.get().getBindings().stream()
-                .map(b -> new ValDeclType(b.getName(), b.getType().generateILType()))
-                .collect(Collectors.toCollection(LinkedList::new));
-        return new StructuralType(getName(), declTypes);
-    }
+	@Override
+	@Deprecated
+	public wyvern.target.corewyvernIL.type.ValueType generateILType() {
+		LinkedList<DeclType> declTypes = typeDeclEnv.get().getBindings().stream()
+				.map(b -> new ValDeclType(b.getName(), b.getType().generateILType()))
+				.collect(Collectors.toCollection(LinkedList::new));
+		return new StructuralType(getName(), declTypes);
+	}
 
-    private Environment getEnvForDict(Map<String, Type> newChildren, Environment ndEnv, ArrayList<String> list) {
+	private Environment getEnvForDict(Map<String, Type> newChildren, Environment ndEnv, ArrayList<String> list) {
 		for (String key : list) {
 			String[] kSplit = key.split(":");
 			Type nt = newChildren.get(key);
@@ -248,7 +248,7 @@ public class TypeType extends AbstractTypeImpl implements OperatableType, Record
 
 	/**
 	 * Returns the name of this type-type.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getName() {

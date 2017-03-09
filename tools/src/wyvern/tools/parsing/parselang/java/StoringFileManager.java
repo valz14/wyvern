@@ -42,7 +42,7 @@ public class StoringFileManager extends ForwardingJavaFileManager<JavaFileManage
 
 	@Override
 	public FileObject getFileForInput(Location location, String packageName,
-									  String relativeName) throws IOException {
+			String relativeName) throws IOException {
 		FileObject o = fileObjects.get(packageName + relativeName);
 		if (o != null) {
 			return o;
@@ -51,7 +51,7 @@ public class StoringFileManager extends ForwardingJavaFileManager<JavaFileManage
 	}
 
 	public void putFileForInput(StandardLocation location, String packageName,
-								String relativeName, JavaFileObject file) {
+			String relativeName, JavaFileObject file) {
 		fileObjects.put(packageName + relativeName, file);
 	}
 
@@ -65,7 +65,7 @@ public class StoringFileManager extends ForwardingJavaFileManager<JavaFileManage
 	 */
 	@Override
 	public JavaFileObject getJavaFileForOutput(Location location, String qualifiedName,
-											   JavaFileObject.Kind kind, FileObject outputFile) throws IOException {
+			JavaFileObject.Kind kind, FileObject outputFile) throws IOException {
 		JavaFileObject file = new CachingJavaFileObject(qualifiedName, kind);
 		classLoader.add(qualifiedName, file);
 		return file;
@@ -91,7 +91,7 @@ public class StoringFileManager extends ForwardingJavaFileManager<JavaFileManage
 
 	@Override
 	public Iterable<JavaFileObject> list(Location location, String packageName,
-										 Set<JavaFileObject.Kind> kinds, boolean recurse) throws IOException {
+			Set<JavaFileObject.Kind> kinds, boolean recurse) throws IOException {
 		Iterable<JavaFileObject> result = super.list(location, packageName, kinds,
 				recurse);
 		ArrayList<JavaFileObject> files = new ArrayList<JavaFileObject>();

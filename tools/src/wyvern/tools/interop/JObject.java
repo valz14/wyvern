@@ -6,7 +6,7 @@ import java.util.List;
 
 public class JObject implements FObject {
 	private Object jObject;
-	
+
 	JObject(Object wrapped) {
 		jObject = wrapped;
 	}
@@ -68,7 +68,7 @@ public class JObject implements FObject {
 
 	private Class<?> mapPrimitives(Class<?> class1) {
 		if (class1.isPrimitive()) {
-			// boolean, byte, char, short, int, long, float, and double. 
+			// boolean, byte, char, short, int, long, float, and double.
 			if (class1 == boolean.class) {
 				return Boolean.class;
 			} else if (class1 == byte.class) {
@@ -102,12 +102,12 @@ public class JObject implements FObject {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public Class<?> getJavaClass() {
 		return jObject.getClass();
 	}
-	
+
 	@Override
 	public Object getWrappedValue() {
 		return jObject;

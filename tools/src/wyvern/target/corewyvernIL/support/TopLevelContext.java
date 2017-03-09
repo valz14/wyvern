@@ -20,7 +20,7 @@ import wyvern.target.corewyvernIL.type.StructuralType;
 import wyvern.target.corewyvernIL.type.ValueType;
 
 public class TopLevelContext {
-	
+
 	private Stack<VarBinding> pending = new Stack<VarBinding>();
 	private List<Declaration> moduleDecls = new LinkedList<Declaration>();
 	private List<DeclType> moduleDeclTypes = new LinkedList<DeclType>();
@@ -49,7 +49,7 @@ public class TopLevelContext {
 
 	public IExpr getModuleExpression() {
 		String newName = GenContext.generateName();
-		
+
 		// Determine if we need to be a resource type.
 		boolean isModule = false;
 		for (Declaration d: moduleDecls) {
@@ -59,13 +59,13 @@ public class TopLevelContext {
 				break;
 			}
 		}
-		
+
 		ValueType vt = new StructuralType(newName, moduleDeclTypes, isModule);
 		vt = adapt(vt, newName);
-		
+
 		IExpr exp = new New(moduleDecls, newName, vt, null);
 		addExpression(exp, vt);
-		
+
 		return getExpression();
 	}
 	/** Adapts the type vt to account for the names we have to
@@ -85,14 +85,14 @@ public class TopLevelContext {
 		}
 		return vt;
 	}
-	
+
 	public void addExpression(IExpr exp, ValueType type) {
 		pending.push(new VarBinding(GenContext.generateName(), type, exp));
 	}
-	
+
 	/**
 	 * Adds a binding to the sequence being generated
-	 * 
+	 *
 	 * @param name	the name of the variable being bound
 	 * @param type	the variable's type
 	 * @param iExpr	the right-hand side of the binding
@@ -116,7 +116,7 @@ public class TopLevelContext {
 	public String getReceiverName() {
 		return receiverName;
 	}
-	
+
 	public void setReceiverName(String rn) {
 		receiverName = rn;
 	}

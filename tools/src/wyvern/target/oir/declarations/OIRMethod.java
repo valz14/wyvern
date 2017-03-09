@@ -5,18 +5,18 @@ import wyvern.target.oir.OIREnvironment;
 import wyvern.target.oir.expressions.OIRExpression;
 
 public class OIRMethod extends OIRMemberDeclaration {
-	
+
 	private OIRMethodDeclaration declaration;
 	private OIRExpression body;
-	private OIREnvironment environment; 
-	
+	private OIREnvironment environment;
+
 	public OIRMethod(OIREnvironment environment,
 			OIRMethodDeclaration declaration, OIRExpression body) {
 		super();
 		this.environment = environment;
 		this.declaration = declaration;
 		this.body = body;
-		
+
 		for (OIRFormalArg formalArg : declaration.getArgs())
 		{
 			environment.addName(formalArg.getName(), formalArg.getType());

@@ -14,7 +14,7 @@ import wyvern.tools.types.Type;
 
 public class Unit extends AbstractTypeImpl {
 	public Unit() {  }
-	
+
 	@Override
 	public String toString() {
 		return "Unit";
@@ -40,14 +40,14 @@ public class Unit extends AbstractTypeImpl {
 		return new Unit();
 	}
 
-    @Override
-    @Deprecated
-    public ValueType generateILType() {
-        throw new WyvernException("Primitive type conversion unimplmented"); //TODO
-    }
+	@Override
+	@Deprecated
+	public ValueType generateILType() {
+		throw new WyvernException("Primitive type conversion unimplmented"); //TODO
+	}
 
 
-    @Override
+	@Override
 	public boolean equals(Object other) { return other instanceof Unit; }
 
 	@Override

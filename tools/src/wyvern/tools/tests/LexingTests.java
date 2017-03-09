@@ -34,22 +34,22 @@ import wyvern.tools.tests.suites.RegressionTests;
 public class LexingTests {
 	public static String kindToName(int kind) {
 		switch(kind) {
-		  case IDENTIFIER: return "IDENTIFIER";
-		  case WHITESPACE: return "WHITESPACE";
-		  case DSLLINE: return "DSLLINE";
-		  case DEDENT: return "DEDENT";
-		  case INDENT: return "INDENT";
-		  case PLUS: return "PLUS";
-		  case DASH: return "DASH";
-		  case MULT: return "MULT";
-		  case DIVIDE: return "DIVIDE";
-		  case SINGLE_LINE_COMMENT: return "SINGLE_LINE_COMMENT";
-		  case MULTI_LINE_COMMENT: return "MULTI_LINE_COMMENT";
-		  case NEWLINE: return "NEWLINE";
-		  default: return "UNKNOWN(" + kind + ")";
+		case IDENTIFIER: return "IDENTIFIER";
+		case WHITESPACE: return "WHITESPACE";
+		case DSLLINE: return "DSLLINE";
+		case DEDENT: return "DEDENT";
+		case INDENT: return "INDENT";
+		case PLUS: return "PLUS";
+		case DASH: return "DASH";
+		case MULT: return "MULT";
+		case DIVIDE: return "DIVIDE";
+		case SINGLE_LINE_COMMENT: return "SINGLE_LINE_COMMENT";
+		case MULTI_LINE_COMMENT: return "MULTI_LINE_COMMENT";
+		case NEWLINE: return "NEWLINE";
+		default: return "UNKNOWN(" + kind + ")";
 		}
 	}
-	
+
 	public static void printTokenList(List l) {
 		for (Object e : l) {
 			if (e instanceof Token) {
@@ -69,7 +69,7 @@ public class LexingTests {
 		}
 		return buf.toString();
 	}
-	
+
 	public void checkKinds(int[] kinds, List<Token> tokens) {
 		int index = 0;
 		for (Token t: tokens) {
@@ -87,87 +87,87 @@ public class LexingTests {
 	public List<Token> tryLex(String input) throws IOException, CopperParserException {
 		return new WyvernLexer().parse(new StringReader(input), "test input");
 	}
-	
+
 	public List<Token> checkLex(String input, int[] kinds) throws IOException, CopperParserException {
 		List<Token> tokens = new WyvernLexer().parse(new StringReader(input), "test input");
 		checkKinds(kinds, tokens);
 		Assert.assertEquals(input, concat(tokens));
 		return tokens;
 	}
-	
+
 	/************************ TESTS HERE *****************************/
-	
+
 	@Test
 	public void testComments1() throws IOException, CopperParserException {
 		String input =
 				"exn1\n" +
-				"\n" +
-				"// foo\n" +
-				"\n" +
-				"exn2\n";
+						"\n" +
+						"// foo\n" +
+						"\n" +
+						"exn2\n";
 		int[] expected = new int[] {
 				IDENTIFIER, WHITESPACE, NEWLINE,
 				WHITESPACE,
 				SINGLE_LINE_COMMENT, WHITESPACE,
 				WHITESPACE,
 				IDENTIFIER, WHITESPACE, NEWLINE,
-			};
+		};
 		checkLex(input, expected);
 	}
 	@Test
 	public void testDSLBlock1() throws IOException, CopperParserException {
 		String input =
 				"foo(~)\n" +
-				"  DSL here!\n" +
-				"bar()\n";
+						"  DSL here!\n" +
+						"bar()\n";
 		int[] expected = new int[] {
 				IDENTIFIER, LPAREN, TILDE, RPAREN, WHITESPACE, NEWLINE,
 				WHITESPACE, DSLLINE,
 				IDENTIFIER, LPAREN, RPAREN, WHITESPACE, NEWLINE,
-			};
+		};
 		checkLex(input, expected);
 	}
 	@Test
 	public void testDSLBlock2() throws IOException, CopperParserException {
 		String input =
 				"foo(~)\n" +
-				"  DSL here!\n" +
-				"  and here!\n" +
-				"bar()\n";
+						"  DSL here!\n" +
+						"  and here!\n" +
+						"bar()\n";
 		int[] expected = new int[] {
 				IDENTIFIER, LPAREN, TILDE, RPAREN, WHITESPACE, NEWLINE,
 				WHITESPACE, DSLLINE,
 				WHITESPACE, DSLLINE,
 				IDENTIFIER, LPAREN, RPAREN, WHITESPACE, NEWLINE,
-			};
+		};
 		checkLex(input, expected);
 	}
 	@Test
 	public void testDSLEOF() throws IOException, CopperParserException {
 		String input =
 				"foo(~)\n" +
-				"  DSL here!\n" +
-				"  and here!\n";
+						"  DSL here!\n" +
+						"  and here!\n";
 		int[] expected = new int[] {
 				IDENTIFIER, LPAREN, TILDE, RPAREN, WHITESPACE, NEWLINE,
 				WHITESPACE, DSLLINE,
 				WHITESPACE, DSLLINE,
-			};
+		};
 		checkLex(input, expected);
 	}
 	@Test
 	public void testIndentBlock() throws IOException, CopperParserException {
 		String input =
 				"foo()\n" +
-				"  baz()\n" +
-				"  bam()\n" +
-				"bar()\n";
+						"  baz()\n" +
+						"  bam()\n" +
+						"bar()\n";
 		int[] expected = new int[] {
 				IDENTIFIER, LPAREN, RPAREN, WHITESPACE, NEWLINE,
 				INDENT, WHITESPACE, IDENTIFIER, LPAREN, RPAREN, WHITESPACE, NEWLINE,
 				WHITESPACE, IDENTIFIER, LPAREN, RPAREN, WHITESPACE, NEWLINE,
 				DEDENT, IDENTIFIER, LPAREN, RPAREN, WHITESPACE, NEWLINE,
-			};
+		};
 		List<Token> tokens = checkLex(input, expected);
 		// check location information
 		Token bamToken = tokens.get(13);
@@ -182,63 +182,63 @@ public class LexingTests {
 		int[] expected = new int[] {
 				IDENTIFIER, WHITESPACE, MULTI_LINE_COMMENT,
 				WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE,
-			};
+		};
 		checkLex(input, expected);
 	}
 	@Test
 	public void testIndentComment() throws IOException, CopperParserException {
 		String input =
 				"foo\n" +
-				"  baz  /* \n" +
-				" */ bam\n" +
-				"  bag\n";
+						"  baz  /* \n" +
+						" */ bam\n" +
+						"  bag\n";
 		int[] expected = new int[] {
 				IDENTIFIER, WHITESPACE, NEWLINE,
 				INDENT, WHITESPACE, IDENTIFIER, WHITESPACE, MULTI_LINE_COMMENT,
 				WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE,
 				WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE, DEDENT,
-			};
+		};
 		checkLex(input, expected);
 	}
 	@Test
 	public void testIndentParen() throws IOException, CopperParserException {
 		String input =
 				"foo\n" +
-				"  baz  ( \n" +
-				" knarl) bam\n" +
-				"  bag\n";
+						"  baz  ( \n" +
+						" knarl) bam\n" +
+						"  bag\n";
 		int[] expected = new int[] {
 				IDENTIFIER, WHITESPACE, NEWLINE,
 				INDENT, WHITESPACE, IDENTIFIER, WHITESPACE, LPAREN, WHITESPACE, WHITESPACE,
 				WHITESPACE, IDENTIFIER, RPAREN, WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE,
 				WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE, DEDENT,
-			};
+		};
 		checkLex(input, expected);
 	}
 	@Test
 	public void testContinuationAndEOFDedent() throws IOException, CopperParserException {
 		String input =
 				"foo\\\n" +
-				"  bar\n" +
-				"  bam\n";
+						"  bar\n" +
+						"  bam\n";
 		int[] expected = new int[] {
 				IDENTIFIER, WHITESPACE,
 				WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE,
 				INDENT, WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE, DEDENT,
-			};
+		};
 		checkLex(input, expected);
 	}
 	@Test
 	public void testContinuationAndEOFDedent2() throws IOException, CopperParserException {
 		String input =
 				"foo\\\n" +
-				"  bar\n" +
-				"  bam";
+						"  bar\n" +
+						"  bam";
 		int[] expected = new int[] {
 				IDENTIFIER, WHITESPACE,
 				WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE,
 				INDENT, WHITESPACE, IDENTIFIER, NEWLINE, DEDENT,
-			};
+		};
 		checkLex(input, expected);
 	}
 	@Test
@@ -263,56 +263,56 @@ public class LexingTests {
 	public void testMissingDSL() throws IOException, CopperParserException {
 		String input =
 				" foo(~)\n" +
-				" nodsl\n";
+						" nodsl\n";
 		tryLex(input);
 	}
 	@Test(expected = CopperParserException.class)
 	public void badIndent() throws IOException, CopperParserException {
 		String input =
 				"foo\n" +
-				" bar\n" +
-				"\t baz\n";
+						" bar\n" +
+						"\t baz\n";
 		tryLex(input);
 	}
 	@Test(expected = ToolError.class)
 	public void badDedent() throws IOException, CopperParserException {
 		String input =
 				"foo\n" +
-				"  bar\n" +
-				" baz\n";
+						"  bar\n" +
+						" baz\n";
 		tryLex(input);
 	}
 	@Test
 	public void TwoDedents() throws IOException, CopperParserException {
 		String input =
 				"foo\n" +
-				" bar\n" +
-				"  bam\n" +
-				"baz\n";
+						" bar\n" +
+						"  bam\n" +
+						"baz\n";
 		int[] expected = new int[] {
 				IDENTIFIER, WHITESPACE, NEWLINE,
 				INDENT, WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE,
 				INDENT, WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE,
 				DEDENT, DEDENT, IDENTIFIER, WHITESPACE, NEWLINE,
-			};
+		};
 		checkLex(input, expected);
 	}
 	@Test(expected = CopperParserException.class)
 	public void testMissingDSL2() throws IOException, CopperParserException {
 		String input =
 				"foo(~)\n" +
-				"nodsl\n";
+						"nodsl\n";
 		tryLex(input);
 	}
 	@Test
 	public void testIndentedProgram() throws IOException, CopperParserException {
 		String input =
 				"  bar\n" +
-				"  bam";
+						"  bam";
 		int[] expected = new int[] {
 				INDENT, WHITESPACE, IDENTIFIER, WHITESPACE, NEWLINE,
 				WHITESPACE, IDENTIFIER, NEWLINE, DEDENT,
-			};
+		};
 		checkLex(input, expected);
 	}
 }

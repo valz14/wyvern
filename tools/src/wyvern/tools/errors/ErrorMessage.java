@@ -5,9 +5,9 @@ import java.util.regex.Matcher;
 public enum ErrorMessage {
 	// Type errors
 	ACTUAL_FORMAL_TYPE_MISMATCH("Actual argument type %ARG does not match formal argument type %ARG", 2),
-    CANNOT_INFER_GENERIC("Cannot infer the type of the generic argument at the call site. Please provide the type of the generic argument at the call site.", 0),
-    EXTRA_GENERICS_AT_CALL_SITE("More generic arguments were provided at the call site than in the declaration of the function.", 0),
-    MISSING_GENERICS_AT_CALL_SITE("One or more generic arguments were defined for the method %ARG but not provided at the call site, and are not inferrable.", 1),
+	CANNOT_INFER_GENERIC("Cannot infer the type of the generic argument at the call site. Please provide the type of the generic argument at the call site.", 0),
+	EXTRA_GENERICS_AT_CALL_SITE("More generic arguments were provided at the call site than in the declaration of the function.", 0),
+	MISSING_GENERICS_AT_CALL_SITE("One or more generic arguments were defined for the method %ARG but not provided at the call site, and are not inferrable.", 1),
 	TYPE_CANNOT_BE_APPLIED("Type %ARG cannot be applied to an argument", 1),
 	CANNOT_BE_ASSIGNED("Member %ARG cannot be assigned after initalization", 1),
 	TYPE_NOT_DEFINED("Type %ARG is not defined", 1),
@@ -37,7 +37,7 @@ public enum ErrorMessage {
 	WRONG_NUMBER_OF_ARGUMENTS("Wrong number of arguments, expected %ARG, but found %ARG",2),
 	SYNTAX_FOR_NO_ARG_LAMBDA("Use \"() => <expression>\" rather than \"x => <expression>\" for a zero-argument function expression",0),
 	CANNOT_AVOID_VARIABLE("Cannot avoid variable %ARG in type of this expression", 1),
-  DELEGATE_MUST_BE_VARIABLE("Expected variable in delegate declaration, got %ARG", 1),
+	DELEGATE_MUST_BE_VARIABLE("Expected variable in delegate declaration, got %ARG", 1),
 
 	// Syntax errors
 	LEXER_ERROR("Error during lexing (often caused by inconsistent whitespace for indentation)", 0),
@@ -75,7 +75,7 @@ public enum ErrorMessage {
 	// Evaluation errors
 	VALUE_CANNOT_BE_APPLIED("The value %ARG cannot be applied to an argument", 1),
 	CANNOT_INVOKE("Cannot invoke operations on the value %ARG", 1),
-    JAVA_INVOCATION_ERROR("Invocation of java method %ARG failed with message %ARG", 2),
+	JAVA_INVOCATION_ERROR("Invocation of java method %ARG failed with message %ARG", 2),
 
 	//Verification errors
 	IMPORT_CYCLE("Import cycles have been found, with cycles\n%ARG", 1),
@@ -103,15 +103,15 @@ public enum ErrorMessage {
 		this.numArgs = numArgs;
 	}
 
-    public String getErrorMessage(String... args) {
-        assert numArgs == args.length;
+	public String getErrorMessage(String... args) {
+		assert numArgs == args.length;
 
-        String str = errorMessage;
-        for (String arg : args) {
-            str = str.replaceFirst("%ARG", Matcher.quoteReplacement(arg) );
-        }
-        return str;
-    }
+		String str = errorMessage;
+		for (String arg : args) {
+			str = str.replaceFirst("%ARG", Matcher.quoteReplacement(arg) );
+		}
+		return str;
+	}
 
 	public int numberOfArguments() {
 		return numArgs;

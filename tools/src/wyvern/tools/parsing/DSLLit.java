@@ -70,7 +70,7 @@ public class DSLLit extends AbstractExpressionAST implements ExpressionAST {
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Type typecheck(Environment env, Optional<Type> expected) {
 		Type dslType = expected.orElseGet(this::getDefaultType);
 
@@ -88,7 +88,7 @@ public class DSLLit extends AbstractExpressionAST implements ExpressionAST {
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluate(EvaluationEnvironment env) {
 		return null;
 	}
@@ -118,17 +118,17 @@ public class DSLLit extends AbstractExpressionAST implements ExpressionAST {
 			if (!(metadata instanceof Invokable)) {
 				ToolError.reportError(ErrorMessage.METADATA_MUST_BE_AN_OBJECT, this, expectedType.toString());
 			}
-			ValueType metaType = metadata.getType();			
+			ValueType metaType = metadata.getType();
 			final DeclType parseTSLDecl = metaType.getStructuralType(ctx).findDecl("parseTSL", ctx);
 			if (parseTSLDecl == null) {
-				ToolError.reportError(ErrorMessage.METADATA_MUST_INCLUDE_PARSETSL, this, expectedType.toString());				
+				ToolError.reportError(ErrorMessage.METADATA_MUST_INCLUDE_PARSETSL, this, expectedType.toString());
 			}
 			// TODO: check that parseTSLDecl has the right signature
 			List<wyvern.target.corewyvernIL.expression.Value> args = new LinkedList<wyvern.target.corewyvernIL.expression.Value>();
 			args.add(new StringLiteral(dslText.get()));
 			wyvern.target.corewyvernIL.expression.Value parsedAST = ((Invokable)metadata).invoke("parseTSL", args);
 			// we get an option back, is it success?
-			ValDeclaration isDefined = (ValDeclaration)((ObjectValue)parsedAST).findDecl("isDefined");			
+			ValDeclaration isDefined = (ValDeclaration)((ObjectValue)parsedAST).findDecl("isDefined");
 			BooleanLiteral success = (BooleanLiteral)isDefined.getDefinition();
 			if (success.getValue()) {
 				ValDeclaration valueDecl = (ValDeclaration)((ObjectValue)parsedAST).findDecl("value");

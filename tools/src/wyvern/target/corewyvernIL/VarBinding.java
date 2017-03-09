@@ -9,7 +9,7 @@ public class VarBinding {
 	private String varName;
 	private ValueType type;
 	private IExpr expr;
-	
+
 	public VarBinding(String varName, ValueType type, IExpr toReplace) {
 		this.varName = varName;
 		this.type = type;
@@ -30,7 +30,7 @@ public class VarBinding {
 	public IExpr getExpression() {
 		return expr;
 	}
-	
+
 	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
 		dest.append(indent).append(getVarName()).append(" : ");
 		getType().doPrettyPrint(dest, indent);

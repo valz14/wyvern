@@ -12,13 +12,13 @@ public class OIRFieldSet extends OIRExpression {
 	@Override
 	public OIRType typeCheck(OIREnvironment oirEnv) {
 		OIRType objectType;
-		
+
 		objectType = objectExpr.typeCheck(oirEnv);
 		if (!(objectType instanceof OIRClassDeclaration)) {
 			/*TODO: Error object is not class */
 			return null;
 		}
-		
+
 		setExprType (((OIRClassDeclaration)objectType).getTypeForMember(fieldName));
 		return getExprType ();
 	}

@@ -37,12 +37,12 @@ public class New extends Expression {
 	public New(NamedDeclaration decl) {
 		this(decl, decl.getLocation());
 	}
-	
+
 	/** computes the type itself, uses a don't care selfName */
 	public New(List<NamedDeclaration> decls, FileLocation loc) {
 		this(decls, "dontcare", typeOf(decls), loc);
 	}
-	
+
 	public New(List<? extends Declaration> decls, String selfName, ValueType type, FileLocation loc) {
 		super(type, loc);
 		this.decls = decls;
@@ -151,8 +151,8 @@ public class New extends Expression {
 		// evaluate all decls
 		List<Declaration> ds = new LinkedList<Declaration>();
 		for (Declaration d : decls_ExceptDelegate()) {;
-		    Declaration newD = d.interpret(ctx);
-		    ds.add(newD);
+		Declaration newD = d.interpret(ctx);
+		ds.add(newD);
 		}
 		result = new ObjectValue(ds, selfName, getExprType().interpret(ctx),delegateDeclaration, getLocation(), ctx);
 
@@ -175,7 +175,7 @@ public class New extends Expression {
 		freeVars.remove(selfName);
 		return freeVars;
 	}
-	
+
 	private static ValueType typeOf(List<NamedDeclaration> decls2) {
 		List<DeclType> declts =	new LinkedList<DeclType>();
 		for (NamedDeclaration d : decls2) {

@@ -123,7 +123,7 @@ public class JClosure extends AbstractValue implements ApplyableValue {
 
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluateApplication(Application app, EvaluationEnvironment env) {
 		EvaluationEnvironment iEnv = evalEnv.extend(env);
 		Value[] values = vFromV(app.getArgument().evaluate(env));;
@@ -215,7 +215,7 @@ public class JClosure extends AbstractValue implements ApplyableValue {
 		return this;
 	}
 
-    @Override
+	@Override
 	public FileLocation getLocation() {
 		return null;
 	}

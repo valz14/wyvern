@@ -11,7 +11,7 @@ import wyvern.tools.typedAST.core.binding.typechecking.TypeBinding;
 public abstract class AbstractTypeImpl implements Type {
 	private final FileLocation location;
 	private Optional<TypeBinding> resolved;
-	
+
 	protected AbstractTypeImpl(FileLocation location) {
 		this.location = location;
 	}
@@ -54,7 +54,7 @@ public abstract class AbstractTypeImpl implements Type {
 		if (subtypes.contains(new SubtypeRelation(this, other))) {
 			return true;
 		}
-		
+
 		// S-Trans
 		HashSet<Type> t2s = new HashSet<Type>();
 		for (SubtypeRelation sr : subtypes) {
@@ -75,7 +75,7 @@ public abstract class AbstractTypeImpl implements Type {
 	public boolean subtype(Type other) {
 		return this.subtype(other, new HashSet<SubtypeRelation>());
 	}
-	
+
 	public boolean isSimple() {
 		return true; // default is correct for most types
 	}

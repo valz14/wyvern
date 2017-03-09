@@ -59,10 +59,10 @@ public class ClassType extends AbstractTypeImpl implements OperatableType, Recor
 	}
 
 	public ClassType(Reference<Environment> declEnv,
-					 Reference<Environment> typeEquivalentEnv,
-					 List<String> typeParams,
-					 TaggedInfo tagInfo,
-					 String name) {
+			Reference<Environment> typeEquivalentEnv,
+			List<String> typeParams,
+			TaggedInfo tagInfo,
+			String name) {
 		this.declEnv = declEnv;
 		this.typeEquivalentEnv = typeEquivalentEnv;
 		this.params = typeParams;
@@ -222,16 +222,16 @@ public class ClassType extends AbstractTypeImpl implements OperatableType, Recor
 		return new ClassType(new Reference<>(ndEnv), new Reference<>(nteEnv), params, tagInfo, getName());
 	}
 
-    @Override
-    @Deprecated
-    public wyvern.target.corewyvernIL.type.ValueType generateILType() {
-        if (getTaggedInfo() != null) {
-            return new NominalType(new Variable("this"), getName());
-        }
-        throw new WyvernException("Tagged ClassType conversion not implemented yet", this.getDecl());
-    }
+	@Override
+	@Deprecated
+	public wyvern.target.corewyvernIL.type.ValueType generateILType() {
+		if (getTaggedInfo() != null) {
+			return new NominalType(new Variable("this"), getName());
+		}
+		throw new WyvernException("Tagged ClassType conversion not implemented yet", this.getDecl());
+	}
 
-    private Environment getEnvForDict(Map<String, Type> newChildren, Environment ndEnv, ArrayList<String> list) {
+	private Environment getEnvForDict(Map<String, Type> newChildren, Environment ndEnv, ArrayList<String> list) {
 		for (String key : list) {
 			String[] kSplit = key.split(":");
 			Type nt = newChildren.get(key);
@@ -260,7 +260,7 @@ public class ClassType extends AbstractTypeImpl implements OperatableType, Recor
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	/** Added by shiyqw, for module declaration and type checking **/
 	public void setAsModule() {
 		this.moduleType = 1;

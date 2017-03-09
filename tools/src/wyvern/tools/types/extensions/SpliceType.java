@@ -65,11 +65,11 @@ public class SpliceType implements Type {
 		return cloned;
 	}
 
-    @Override
-    @Deprecated
-    public ValueType generateILType() {
-        return inner.generateILType(); // Todo: validate me - fails for bindings that are shadowed
-    }
+	@Override
+	@Deprecated
+	public ValueType generateILType() {
+		return inner.generateILType(); // Todo: validate me - fails for bindings that are shadowed
+	}
 
 	public Type getInner() {
 		return inner;

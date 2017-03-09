@@ -10,13 +10,13 @@ public class MethodGenContext extends GenContext {
 	String objectName;
 	String methodName;
 	FileLocation loc;
-	
+
 	public MethodGenContext(String methodName, String objectName, GenContext genContext, FileLocation loc) {
 		super(genContext);
 		this.objectName = objectName;
 		this.methodName = methodName;
 	}
-	
+
 	@Override
 	public boolean isPresent(String varName, boolean isValue) {
 		if (isValue && this.methodName.equals(varName)) {
@@ -30,7 +30,7 @@ public class MethodGenContext extends GenContext {
 	public String toString() {
 		return "GenContext[" + endToString();
 	}
-	
+
 	@Override
 	public String endToString() {
 		return methodName + " = " + objectName + '.' + methodName +  ", " + getNext().endToString();

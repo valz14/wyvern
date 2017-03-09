@@ -36,13 +36,13 @@ public class LazyStructuralType extends StructuralType {
 		// for each method in javaClass, attempt to convert argument types
 		// if we fail, we just leave out that method
 		nextMethod: for (Method m : javaClass.getMethods()) {
-			
+
 			ValueType retType = GenUtil.javaClassToWyvernType(m.getReturnType(), ctx);
 			if (retType == null) {
 				continue;
 			}
 			List<FormalArg> argTypes = new LinkedList<FormalArg>();
-			Class<?> argClasses[] = m.getParameterTypes(); 
+			Class<?> argClasses[] = m.getParameterTypes();
 			for (int i = 0; i < argClasses.length; ++i) {
 				ValueType t = GenUtil.javaClassToWyvernType(argClasses[i], ctx);
 				if (t == null) {
@@ -52,11 +52,11 @@ public class LazyStructuralType extends StructuralType {
 			}
 			newDeclTypes.add(new DefDeclType(m.getName(), retType, argTypes));
 		}
-		
+
 		// TODO: extend to fields
-		
+
 		// update declTypes
 		declTypes = newDeclTypes;
 	}
-	
+
 }

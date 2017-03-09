@@ -19,8 +19,6 @@ import wyvern.tools.typedAST.abs.Declaration;
 import wyvern.tools.typedAST.core.binding.compiler.MetadataInnerBinding;
 import wyvern.tools.typedAST.core.binding.typechecking.LateNameBinding;
 import wyvern.tools.typedAST.core.binding.typechecking.TypeBinding;
-import wyvern.tools.typedAST.core.declarations.DeclSequence;
-import wyvern.tools.typedAST.core.declarations.TypeDeclaration;
 import wyvern.tools.typedAST.core.expressions.TaggedInfo;
 import wyvern.tools.typedAST.core.values.Obj;
 import wyvern.tools.typedAST.core.values.UnitVal;
@@ -43,9 +41,9 @@ public class TypeVarDecl extends Declaration {
 	private final Reference<Value> metadataObj;
 	private TaggedInfo taggedInfo = null;
 	private boolean resourceFlag = false;
-    private final String defaultSelfName = "this";
-    private String activeSelfName;
-    private IExpr metadataExp = null;
+	private final String defaultSelfName = "this";
+	private String activeSelfName;
+	private IExpr metadataExp = null;
 
 	/**
 	 * Helper class to allow easy variation of bound types
@@ -79,7 +77,7 @@ public class TypeVarDecl extends Declaration {
 		}
 
 		@Override
-        @Deprecated
+		@Deprecated
 		public Value evaluate(EvaluationEnvironment env) {
 			return UnitVal.getInstance(loc);
 		}
@@ -116,7 +114,7 @@ public class TypeVarDecl extends Declaration {
 		this.fileLocation = fileLocation;
 		this.taggedInfo = taggedInfo;
 		this.resourceFlag = isResource;
-        this.activeSelfName = selfName;
+		this.activeSelfName = selfName;
 	}
 
 	public TypeVarDecl(String name, DeclSequence body, TaggedInfo taggedInfo, TypedAST metadata, FileLocation fileLocation){
@@ -126,7 +124,7 @@ public class TypeVarDecl extends Declaration {
 		this.body = new TypeDeclaration(name, body, this.metadataObj, taggedInfo, fileLocation);
 		this.fileLocation = fileLocation;
 	}
-	
+
 	private TypeVarDecl(String name, EnvironmentExtender body, Reference<Optional<TypedAST>> metadata, Reference<Value> metadataObj, FileLocation location) {
 		this.name = name;
 		this.body = body;
@@ -206,7 +204,7 @@ public class TypeVarDecl extends Declaration {
 		return body.extendName(env, against);
 	}
 
-    @Deprecated
+	@Deprecated
 	private void evalMeta(Environment evalEnv) {
 		MetadataInnerBinding extMetaEnv = evalEnv
 				.lookupBinding("metaEnv", MetadataInnerBinding.class).orElseGet(() -> MetadataInnerBinding.EMPTY);
@@ -239,7 +237,7 @@ public class TypeVarDecl extends Declaration {
 		return new TypeVarDecl(name, (EnvironmentExtender)newChildren.get("body"), metadata, metadataObj, fileLocation);
 	}
 
-    @Override
+	@Override
 	public FileLocation getLocation() {
 		return fileLocation;
 	}
@@ -249,20 +247,20 @@ public class TypeVarDecl extends Declaration {
 		return body.generateIL(ctx);
 	}*/
 
-    private String getSelfName() {
-        String s = defaultSelfName;
-        if (this.activeSelfName != null && this.activeSelfName.length() != 0) {
-            s = this.activeSelfName;
-        }
-        return s;
-    }
+	private String getSelfName() {
+		String s = defaultSelfName;
+		if (this.activeSelfName != null && this.activeSelfName.length() != 0) {
+			s = this.activeSelfName;
+		}
+		return s;
+	}
 
 	private StructuralType computeInternalILType(GenContext ctx) {
 		TypeDeclaration td = (TypeDeclaration) this.body;
 		GenContext localCtx = ctx.extend(getSelfName(), new Variable(getSelfName()), null);
 		return new StructuralType(getSelfName(), td.genDeclTypeSeq(localCtx), this.resourceFlag);
 	}
-	
+
 	@Override
 	public DeclType genILType(GenContext ctx) {
 		StructuralType type = computeInternalILType(ctx);
@@ -273,7 +271,7 @@ public class TypeVarDecl extends Declaration {
 	public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) {
 		return computeInternalDecl(thisContext);
 	}
-	
+
 	private IExpr getMetadata(GenContext ctx) {
 		if (metadata.get().isPresent()) {
 			if (metadataExp == null) {
@@ -289,7 +287,7 @@ public class TypeVarDecl extends Declaration {
 		StructuralType type = computeInternalILType(ctx);
 		return new wyvern.target.corewyvernIL.decl.TypeDeclaration(getName(), type, getMetadata(ctx), getLocation());
 	}
-	
+
 	public boolean isResource() {
 		return this.resourceFlag;
 	}
@@ -298,7 +296,7 @@ public class TypeVarDecl extends Declaration {
 	public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies) {
 		return computeInternalDecl(ctx);
 	}
-	
+
 	@Override
 	public void addModuleDecl(TopLevelContext tlc) {
 		wyvern.target.corewyvernIL.decl.Declaration decl = computeInternalDecl(tlc.getContext());

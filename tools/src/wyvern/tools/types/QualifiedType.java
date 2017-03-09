@@ -11,7 +11,7 @@ import wyvern.tools.typedAST.interfaces.TypedAST;
 public class QualifiedType extends AbstractTypeImpl {
 	private ExpressionAST base;
 	private String name;
-	
+
 	public String getName() { return name; }
 	public TypedAST getBase() { return base; }
 
@@ -20,13 +20,13 @@ public class QualifiedType extends AbstractTypeImpl {
 		this.base = (ExpressionAST) base;
 	}
 
-    public QualifiedType(ExpressionAST base, String name) {
-        this.name = name;
-        this.base = base;
-    }
+	public QualifiedType(ExpressionAST base, String name) {
+		this.name = name;
+		this.base = base;
+	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public ValueType generateILType() {
 		// TODO Auto-generated method stub
 		return null;

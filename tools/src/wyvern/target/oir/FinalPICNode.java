@@ -4,7 +4,7 @@ public class FinalPICNode
 {
 	private PICEntry picEntry;
 	private long fieldAddress;
-	
+
 	public PICEntry getPicEntry() {
 		return picEntry;
 	}

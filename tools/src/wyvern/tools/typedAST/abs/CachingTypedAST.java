@@ -11,13 +11,13 @@ import wyvern.tools.types.Type;
 public abstract class CachingTypedAST extends AbstractExpressionAST implements ExpressionAST {
 	private Type type;
 	protected abstract Type doTypecheck(Environment env, Optional<Type> expected);
-	
+
 	@Override
 	public final Type typecheck(Environment env, Optional<Type> expected) {
 		type = doTypecheck(env, expected);
 		return type;
 	}
-	
+
 	@Override
 	public final Type getType() {
 		if (type == null) {

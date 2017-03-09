@@ -46,46 +46,46 @@ public class FFI extends AbstractValue {
 		return type;
 	}
 
-    public static Pair<VarBinding, GenContext> importURI(URI uri, GenContext ctx) {
-        final String scheme = uri.getScheme();
-        if (scheme.equals("java")) {
-            return doJavaImport(uri, ctx);
-        } else if (scheme.equals("python")) {
-            return doPythonImport(uri, ctx);
-        } else {
-            // TODO: support non-Java imports too - probably separated out into various FFI subclasses
-            System.err.println("importURI called with uri=" + uri + ", ctx=" + ctx);
-            throw new RuntimeException("only Java imports should get to this code path; others not implemented yet");
-        }
-    }
+	public static Pair<VarBinding, GenContext> importURI(URI uri, GenContext ctx) {
+		final String scheme = uri.getScheme();
+		if (scheme.equals("java")) {
+			return doJavaImport(uri, ctx);
+		} else if (scheme.equals("python")) {
+			return doPythonImport(uri, ctx);
+		} else {
+			// TODO: support non-Java imports too - probably separated out into various FFI subclasses
+			System.err.println("importURI called with uri=" + uri + ", ctx=" + ctx);
+			throw new RuntimeException("only Java imports should get to this code path; others not implemented yet");
+		}
+	}
 
 	public static Pair<VarBinding, GenContext> doJavaImport(URI uri, GenContext ctx) {
 		String importName = uri.getSchemeSpecificPart();
-	    if (importName.contains(".")) {
-	        importName = importName.substring(importName.lastIndexOf(".")+1);
-	      }
-        String importPath = uri.getRawSchemeSpecificPart();
-        FObject obj = null;
-        try {
-            obj = wyvern.tools.interop.Default.importer().find(importPath);
-        } catch (ReflectiveOperationException e1) {
-            throw new RuntimeException(e1);
-        }
-	
-        ctx = GenUtil.ensureJavaTypesPresent(ctx);
-        ctx = ImportDeclaration.extendWithImportCtx(obj, ctx);
-	
-        ValueType type = GenUtil.javaClassToWyvernType(obj.getJavaClass(), ctx);
-        Expression importExp = new FFIImport(new NominalType("system", "java"), importPath, type);
-        ctx = ctx.extend(importName, new Variable(importName), type);
-        return new Pair<VarBinding, GenContext>(new VarBinding(importName, type, importExp), ctx);
+		if (importName.contains(".")) {
+			importName = importName.substring(importName.lastIndexOf(".")+1);
+		}
+		String importPath = uri.getRawSchemeSpecificPart();
+		FObject obj = null;
+		try {
+			obj = wyvern.tools.interop.Default.importer().find(importPath);
+		} catch (ReflectiveOperationException e1) {
+			throw new RuntimeException(e1);
+		}
+
+		ctx = GenUtil.ensureJavaTypesPresent(ctx);
+		ctx = ImportDeclaration.extendWithImportCtx(obj, ctx);
+
+		ValueType type = GenUtil.javaClassToWyvernType(obj.getJavaClass(), ctx);
+		Expression importExp = new FFIImport(new NominalType("system", "java"), importPath, type);
+		ctx = ctx.extend(importName, new Variable(importName), type);
+		return new Pair<VarBinding, GenContext>(new VarBinding(importName, type, importExp), ctx);
 	}
 
-    public static Pair<VarBinding, GenContext> doPythonImport(URI uri, GenContext ctx) {
-        String importName = uri.getSchemeSpecificPart();
-        ValueType type = new DynamicType();
-        Expression importExp = new FFIImport(new NominalType("system", "python"), importName, type);
-        return new Pair<VarBinding, GenContext>(new VarBinding(importName, type, importExp), ctx.extend(importName, new Variable(importName), type));
-    }
+	public static Pair<VarBinding, GenContext> doPythonImport(URI uri, GenContext ctx) {
+		String importName = uri.getSchemeSpecificPart();
+		ValueType type = new DynamicType();
+		Expression importExp = new FFIImport(new NominalType("system", "python"), importName, type);
+		return new Pair<VarBinding, GenContext>(new VarBinding(importName, type, importExp), ctx.extend(importName, new Variable(importName), type));
+	}
 
 }

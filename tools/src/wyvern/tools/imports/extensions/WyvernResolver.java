@@ -56,7 +56,7 @@ public class WyvernResolver implements ImportResolver {
 		return instance;
 	}
 	private WyvernResolver() {}
-	
+
 	private class WyvernBinder implements ImportBinder {
 
 
@@ -174,7 +174,7 @@ public class WyvernResolver implements ImportResolver {
 		savedBinders.put(name, binder);
 		return binder;
 	}
-	
+
 	ImportBinder tryOpen(String filename) {
 		if (savedBinders.containsKey(filename)) {
 			return savedBinders.get(filename);
@@ -195,7 +195,7 @@ public class WyvernResolver implements ImportResolver {
 
 	ImportBinder tryExtensions(String filename) {
 		ImportBinder result = tryOpen(filename);
-		
+
 		if (result == null && !filename.contains(".")) {
 			result = tryOpen(filename + ".wyt");
 			if (result == null) {
@@ -204,23 +204,23 @@ public class WyvernResolver implements ImportResolver {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public ImportBinder resolveImport(URI uri) {
 		String filename = uri.getSchemeSpecificPart();
 		ImportBinder result = tryExtensions(filename);
-		
+
 		if (result != null) {
 			return result;
 		}
-		
+
 		for (String p : paths) {
 			result = tryExtensions(p + filename);
 			if (result != null) {
 				return result;
 			}
 		}
-		
+
 		throw new RuntimeException("Cannot read file " + filename);
 	}
 }

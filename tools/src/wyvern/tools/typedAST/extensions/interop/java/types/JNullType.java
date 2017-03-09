@@ -37,11 +37,11 @@ public class JNullType extends AbstractTypeImpl implements Type {
 		return this;
 	}
 
-    @Override
-    @Deprecated
-    public ValueType generateILType() {
-        throw new WyvernException("Cannot generate IL for Java interop object", FileLocation.UNKNOWN);
-    }
+	@Override
+	@Deprecated
+	public ValueType generateILType() {
+		throw new WyvernException("Cannot generate IL for Java interop object", FileLocation.UNKNOWN);
+	}
 
 	@Override
 	public ValueType getILType(GenContext ctx) {

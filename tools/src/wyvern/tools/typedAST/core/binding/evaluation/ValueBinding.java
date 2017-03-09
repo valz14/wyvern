@@ -8,7 +8,7 @@ import wyvern.tools.util.EvaluationEnvironment;
 
 public class ValueBinding extends NameBindingImpl implements EvaluationBinding {
 	private Value value;
-	
+
 	public ValueBinding(String name, Value value) {
 		super(name, (value != null)?value.getType():null);
 		this.value = value;
@@ -22,17 +22,17 @@ public class ValueBinding extends NameBindingImpl implements EvaluationBinding {
 	public TypedAST getUse() {
 		return value;
 	}
-	
+
 	public Value getValue(EvaluationEnvironment env) {
 		return value;
 	}
-	
+
 	public void setValue(Value newValue) {
 		//assert value == null;
 		//assert newValue != null;
 		value = newValue;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "{" + getName() + " : " + getType() + " = " + getValue(null) + "}";

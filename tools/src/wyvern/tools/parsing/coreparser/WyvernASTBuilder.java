@@ -11,7 +11,6 @@ import wyvern.tools.errors.FileLocation;
 import wyvern.tools.errors.ToolError;
 import wyvern.tools.parsing.DSLLit;
 import wyvern.tools.typedAST.core.Sequence;
-import wyvern.tools.typedAST.core.declarations.TypeVarDecl;
 import wyvern.tools.typedAST.core.binding.NameBindingImpl;
 import wyvern.tools.typedAST.core.declarations.DeclSequence;
 import wyvern.tools.typedAST.core.declarations.DefDeclaration;
@@ -19,6 +18,7 @@ import wyvern.tools.typedAST.core.declarations.DelegateDeclaration;
 import wyvern.tools.typedAST.core.declarations.ImportDeclaration;
 import wyvern.tools.typedAST.core.declarations.ModuleDeclaration;
 import wyvern.tools.typedAST.core.declarations.TypeAbbrevDeclaration;
+import wyvern.tools.typedAST.core.declarations.TypeVarDecl;
 import wyvern.tools.typedAST.core.declarations.ValDeclaration;
 import wyvern.tools.typedAST.core.declarations.VarDeclaration;
 import wyvern.tools.typedAST.core.expressions.Application;
@@ -40,24 +40,24 @@ import wyvern.tools.typedAST.interfaces.EnvironmentExtender;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.types.QualifiedType;
 import wyvern.tools.types.Type;
-import wyvern.tools.types.extensions.Arrow;
 import wyvern.tools.types.UnresolvedType;
+import wyvern.tools.types.extensions.Arrow;
 
 public class WyvernASTBuilder implements ASTBuilder<TypedAST, Type> {
-	
-    /* Weirdness: DeclSequence typechecks everything simultaneously without
-     * extending the environment, unless it's inside a module.  So if we're
-     * not inside a module, use Sequence instead.
-     */
+
+	/* Weirdness: DeclSequence typechecks everything simultaneously without
+	 * extending the environment, unless it's inside a module.  So if we're
+	 * not inside a module, use Sequence instead.
+	 */
 	@Override
-    public TypedAST sequence(TypedAST t1, TypedAST t2, boolean inModule) {
-    	if (inModule) {
+	public TypedAST sequence(TypedAST t1, TypedAST t2, boolean inModule) {
+		if (inModule) {
 			return DeclSequence.simplify(new DeclSequence(t1,t2));
 		} else {
 			return new Sequence(t1, t2);
 		}
-    }
-    
+	}
+
 	@Override
 	public TypedAST moduleDecl(String name, TypedAST ast, FileLocation loc, boolean isResource) {
 		return  new ModuleDeclaration(name, (EnvironmentExtender)ast, loc, isResource);
@@ -83,12 +83,12 @@ public class WyvernASTBuilder implements ASTBuilder<TypedAST, Type> {
 			TypedAST body, boolean isClassDef, FileLocation loc) {
 		return new DefDeclaration(name, type, generics, args, body, isClassDef, loc);
 	}
-	
+
 	@Override
 	public TypedAST defDeclType(String name, Type type, List args, FileLocation loc) {
 		return new DefDeclaration(name, type, args, null, false, loc);
 	}
-	
+
 	@Override
 	public TypedAST valDeclType(String name, Type type, FileLocation loc) {
 		return new ValDeclaration(name, type, null, loc);
@@ -98,7 +98,7 @@ public class WyvernASTBuilder implements ASTBuilder<TypedAST, Type> {
 	public TypedAST varDeclType(String name, Type type, FileLocation loc) {
 		return new VarDeclaration(name, type, null, loc);
 	}
-	
+
 	@Override
 	public TypedAST typeDecl(String name, TypedAST body, Object tagInfo, TypedAST metadata, FileLocation loc, boolean isResource, String selfName) {
 		if (body == null) {
@@ -131,8 +131,8 @@ public class WyvernASTBuilder implements ASTBuilder<TypedAST, Type> {
 	public Type nominalType(String name, FileLocation loc) {
 		return new UnresolvedType(name, loc);
 	}
-	
-    @Override
+
+	@Override
 	public Type arrowType(Type argument, Type result) {
 		return new Arrow(argument, result);
 	}
@@ -188,8 +188,8 @@ public class WyvernASTBuilder implements ASTBuilder<TypedAST, Type> {
 	@Override
 	public TypedAST newObj(FileLocation loc, String selfName) {
 		New n = new New(new HashMap<String,TypedAST>(), loc);
-        n.setSelfName(selfName);
-        return n;
+		n.setSelfName(selfName);
+		return n;
 	}
 
 	@Override
@@ -236,7 +236,7 @@ public class WyvernASTBuilder implements ASTBuilder<TypedAST, Type> {
 
 	@Override
 	public TypedAST typeAbbrevDecl(String alias, Type reference, FileLocation loc) {
-		
+
 		return new TypeAbbrevDeclaration(alias, reference, loc);
 	}
 

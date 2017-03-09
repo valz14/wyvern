@@ -22,7 +22,7 @@ public class UnresolvedType extends AbstractTypeImpl implements Type {
 		super(loc);
 		this.typeName = typeName;
 	}
-	
+
 	public Type resolve(Environment env) {
 		if (env.lookupType(typeName) == null) {
 			if (env.lookup(this.typeName) != null) {
@@ -40,7 +40,7 @@ public class UnresolvedType extends AbstractTypeImpl implements Type {
 			return typeBinding.getUse();
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "UNRESOLVED: " + typeName;
@@ -52,13 +52,13 @@ public class UnresolvedType extends AbstractTypeImpl implements Type {
 				HasLocation.UNKNOWN, this.toString(), other.toString());
 		return false; // Unreachable.
 	}
-	
+
 	@Override
 	public boolean subtype(Type other) {
 		return this.subtype(other, new HashSet<SubtypeRelation>());
 	}
 
-    @Override
+	@Override
 	public boolean isSimple() {
 		return true;
 	}
@@ -78,13 +78,13 @@ public class UnresolvedType extends AbstractTypeImpl implements Type {
 		return Optional.empty();
 	}
 
-    @Override
-    @Deprecated
-    public ValueType generateILType() {
-        throw new WyvernException("Cannot generate IL form for unresolved type", FileLocation.UNKNOWN);
-    }
+	@Override
+	@Deprecated
+	public ValueType generateILType() {
+		throw new WyvernException("Cannot generate IL form for unresolved type", FileLocation.UNKNOWN);
+	}
 
-    public String getName() {
+	public String getName() {
 		return typeName;
 	}
 

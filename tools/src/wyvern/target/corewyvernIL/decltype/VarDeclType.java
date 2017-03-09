@@ -9,7 +9,7 @@ import wyvern.target.corewyvernIL.support.View;
 import wyvern.target.corewyvernIL.type.ValueType;
 
 public class VarDeclType extends DeclTypeWithResult implements IASTNode{
-	
+
 	public VarDeclType(String name, ValueType type) {
 		super(name, type);
 	}
@@ -38,7 +38,7 @@ public class VarDeclType extends DeclTypeWithResult implements IASTNode{
 	public DeclType adapt(View v) {
 		return new VarDeclType(getName(), this.getRawResultType().adapt(v));
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -92,7 +92,7 @@ public class VarDeclType extends DeclTypeWithResult implements IASTNode{
 			return new VarDeclType(this.getName(),t);
 		}
 	}
-	
+
 	@Override
 	public boolean isTypeDecl() {
 		return false;

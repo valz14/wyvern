@@ -45,12 +45,12 @@ public class Closure extends AbstractValue implements ApplyableValue {
 		return this;
 	}
 
-    public TypedAST getInner() {
+	public TypedAST getInner() {
 		return function.getBody();
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluateApplication(Application app, EvaluationEnvironment argEnv) {
 		Value argValue = app.getArgument().evaluate(argEnv);
 		EvaluationEnvironment bodyEnv = env;
@@ -64,7 +64,7 @@ public class Closure extends AbstractValue implements ApplyableValue {
 		} else if (bindings.size() != 0) {
 			throw new RuntimeException("Something bad happened!");
 		}
-		
+
 		/*
 		if (app.getFunction() instanceof Variable) {
 			Variable v = (Variable) app.getFunction();
@@ -74,8 +74,8 @@ public class Closure extends AbstractValue implements ApplyableValue {
 				System.out.println("argValue = " + argValue);
 			}
 		}
-		*/
-		
+		 */
+
 		return function.getBody().evaluate(bodyEnv);
 	}
 

@@ -21,33 +21,33 @@ import wyvern.target.corewyvernIL.type.ValueType;
 
 public class AST {
 	public static AST utils = new AST();
-	
+
 	public ValueType intType() {
 		return Util.intType();
 	}
-	
+
 	public Expression intLiteral(int i) {
 		return new IntegerLiteral(i);
 	}
-	
+
 	public Value stringLiteral(String s) {
 		return new StringLiteral(s);
 	}
-	
+
 	public Expression variable(String s) {
 		return new Variable(s);
 	}
-	
+
 	public Expression oneArgCall(ObjectValue receiver, String methodName, ObjectValue argument) {
 		return new MethodCall(getExpr(receiver), methodName, Arrays.asList(getExpr(argument)), null);
 	}
-	
+
 	public Expression oneDeclObject(ObjectValue decl) {
 		final JavaValue fieldValue = (JavaValue) decl.getField("decl");
 		NamedDeclaration realDecl = (NamedDeclaration) fieldValue.getWrappedValue();
 		return new New(realDecl);
 	}
-	
+
 	private Expression getExpr(ObjectValue wyvernAST) {
 		final Value ast = wyvernAST.getField("ast");
 		if (ast instanceof JavaValue) {
@@ -59,7 +59,7 @@ public class AST {
 			throw new RuntimeException("unexpected!");
 		}
 	}
-	
+
 	public DefDeclaration OneArgDefn(String name, ObjectValue resultType, ObjectValue body) {
 		final JavaValue fieldValue = (JavaValue) resultType.getField("typ");
 		ValueType realType= (ValueType) fieldValue.getWrappedValue();

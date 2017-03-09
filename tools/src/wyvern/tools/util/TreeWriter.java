@@ -5,7 +5,7 @@ import java.util.List;
 public class TreeWriter {
 	private StringBuffer buf = new StringBuffer();
 	boolean first = true;
-	
+
 	public void writeArgs() {
 		// no args needed
 	}
@@ -16,7 +16,7 @@ public class TreeWriter {
 		if (first) {
 			first = false;
 		} else {
-			buf.append(", ");				
+			buf.append(", ");
 		}
 		if (o instanceof TreeWritable) {
 			writeObject((TreeWritable)o);
@@ -54,7 +54,7 @@ public class TreeWriter {
 		writeGenericObject(o3);
 	}
 
-    // TODO delete this whole file
+	// TODO delete this whole file
 	public void writeArgs(Object o1, Object o2, Object o3, Object o4) {
 		writeGenericObject(o1);
 		writeGenericObject(o2);
@@ -62,14 +62,14 @@ public class TreeWriter {
 		writeGenericObject(o4);
 	}
 
-    // TODO delete this
+	// TODO delete this
 	public void writeArgs(Object[] objs) {
 		for (Object o : objs) {
 			writeGenericObject(o);
 		}
 	}
-	
-    // TODO delete this
+
+	// TODO delete this
 	public void writeObject(TreeWritable o) {
 		String className = o.getClass().getSimpleName();
 		buf.append(className);
@@ -78,7 +78,7 @@ public class TreeWriter {
 		first = false;
 		buf.append(')');
 	}
-	
+
 	public String getResult() {
 		return buf.toString();
 	}

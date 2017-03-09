@@ -22,22 +22,22 @@ import wyvern.tools.util.EvaluationEnvironment;
 public abstract class Declaration extends AbstractTreeWritable implements EnvironmentExtender {
 	protected Declaration nextDecl = null;
 
-	/** 
+	/**
 	 * Most declarations simply evaluate to unit without any computation
 	 */
 	@Override
-    @Deprecated
+	@Deprecated
 	public final Value evaluate(EvaluationEnvironment env) {
 		// code smell - can we eliminate this function?
 		// throw new RuntimeException("cannot evaluate a decl to a value - use evalDecls to get an updated environment");
 		return UnitVal.getInstance(this.getLocation());
 	}
-	
+
 	@Deprecated
 	public final Type typecheckSelf(Environment env) {
 		return doTypecheck(env);
 	}
-	
+
 	@Deprecated
 	public final void typecheckAll(Environment env) {
 		Environment newEnv = env;
@@ -46,7 +46,7 @@ public abstract class Declaration extends AbstractTreeWritable implements Enviro
 			newEnv = d.doExtend(newEnv, newEnv);
 		}
 	}
-	
+
 	@Override
 	@Deprecated
 	public final Type typecheck(Environment env, Optional<Type> expected) {
@@ -69,7 +69,7 @@ public abstract class Declaration extends AbstractTreeWritable implements Enviro
 		}
 		return newEnv;
 	}
-	
+
 	@Deprecated
 	public final Environment extendWithSelf(Environment old) {
 		return doExtend(old, old);
@@ -81,18 +81,18 @@ public abstract class Declaration extends AbstractTreeWritable implements Enviro
 	public abstract EvaluationEnvironment extendWithValue(EvaluationEnvironment old);
 	@Deprecated
 	public abstract void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv);
-	
+
 	@Deprecated
 	public final EvaluationEnvironment bindDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
 		evalDecl(evalEnv, declEnv);
 		return evalEnv;
 	}
-	
+
 	@Deprecated
 	public final EvaluationEnvironment bindDecl(EvaluationEnvironment evalEnv) {
 		return bindDecl(evalEnv, evalEnv);
 	}
-	
+
 	@Override
 	@Deprecated
 	public final EvaluationEnvironment evalDecl(EvaluationEnvironment env) {
@@ -115,22 +115,22 @@ public abstract class Declaration extends AbstractTreeWritable implements Enviro
 	/** Generates code for a IL Declaration.
 	 * We pass in the context with and without a "this" binding. Most cases use thisContext but for var and val
 	 * we typecheck (and evaluate) the body before "this" is in scope, so ctx is used in that case.
-	 *  
+	 *
 	 * @param ctx
 	 * @param thisContext
 	 * @return
 	 */
 	public abstract wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext);
-	
+
 	/**
 	 * Generate IL declaration for top level Module System declaration </br>
-	 * 
+	 *
 	 * The difference between topLevelGen and generateDecl is: there is no this context in top level declarations of a module.</br>
 	 * Actually I think we can combine generateDecl and topLevelGen. </br>
-	 * 
+	 *
 	 * @param ctx the context
 	 * @param dependencies TODO
-	 * @return the declaration generated 
+	 * @return the declaration generated
 	 */
 	public abstract wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies);
 

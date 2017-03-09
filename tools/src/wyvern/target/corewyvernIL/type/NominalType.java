@@ -28,9 +28,9 @@ public class NominalType extends ValueType {
 
 	public NominalType(Path path, String typeMember) {
 		super();
-        if(path.equals(null)) {
-            throw new IllegalStateException("Path cannot be null.");
-        }
+		if(path.equals(null)) {
+			throw new IllegalStateException("Path cannot be null.");
+		}
 		this.path = path;
 		this.typeMember = typeMember;
 	}
@@ -42,7 +42,7 @@ public class NominalType extends ValueType {
 	public String getTypeMember() {
 		return typeMember;
 	}
-	
+
 	@Override
 	public boolean isResource(TypeContext ctx) {
 		DeclType dt = getSourceDeclType(ctx);
@@ -69,7 +69,7 @@ public class NominalType extends ValueType {
 		return path.typeCheck(ctx).getStructuralType(ctx).findMatchingDecl(typeMember, cdt -> !(cdt instanceof ConcreteTypeMember || cdt instanceof AbstractTypeMember), ctx);
 		//return path.typeCheck(ctx).getStructuralType(ctx).findDecl(typeMember, ctx);
 	}
-	
+
 	@Override
 	public ValueType getCanonicalType(TypeContext ctx) {
 		DeclType dt = getSourceDeclType(ctx);
@@ -99,7 +99,7 @@ public class NominalType extends ValueType {
 		NominalType other = (NominalType)obj;
 		return path.equals(other.path) && typeMember.equals(other.typeMember);
 	}
-	
+
 	public boolean isSubtypeOf(ValueType t, TypeContext ctx) {
 		if (super.isSubtypeOf(t, ctx)) {
 			return true;
@@ -111,13 +111,13 @@ public class NominalType extends ValueType {
 			return vt.isSubtypeOf(ct, ctx);
 		} else {
 			ValueType ct = t.getCanonicalType(ctx);
-			return super.isSubtypeOf(ct, ctx); // check for equality with the canonical type 
+			return super.isSubtypeOf(ct, ctx); // check for equality with the canonical type
 		}
 	}
 
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor <S, T> emitILVisitor,
-                                S state) {
+			S state) {
 		return emitILVisitor.visit(state, this);
 	}
 
@@ -125,7 +125,7 @@ public class NominalType extends ValueType {
 	public ValueType adapt(View v) {
 		return new NominalType(path.adapt(v), typeMember);
 	}
-	
+
 	@Override
 	public Value getMetadata(TypeContext ctx) {
 		DeclType t = getSourceDeclType(ctx);

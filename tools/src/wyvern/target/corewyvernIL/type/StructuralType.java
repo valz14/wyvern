@@ -32,9 +32,9 @@ public class StructuralType extends ValueType {
 		super();
 		this.selfName = selfName;
 		// check a sanity condition
-//		if (declTypes != null && declTypes.size()>0)
-//			if (declTypes.get(0) == null)
-//				throw new NullPointerException("invariant: decl types should not be null");
+		//		if (declTypes != null && declTypes.size()>0)
+		//			if (declTypes.get(0) == null)
+		//				throw new NullPointerException("invariant: decl types should not be null");
 		this.declTypes = declTypes;
 		this.setResourceFlag(resourceFlag);
 		// if there is a var declaration, it's a resource type
@@ -145,7 +145,7 @@ public class StructuralType extends ValueType {
 			return ds.get(0);
 		}
 	}
-	
+
 	@Override
 	public DeclType findDecl(String declName, TypeContext ctx) {
 		DeclType theDecl = null;

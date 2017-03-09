@@ -8,6 +8,6 @@ public abstract class OIRMemberDeclaration extends OIRAST {
 	public String getName() {
 		return name;
 	}
-	
+
 	public abstract OIRType getType ();
 }

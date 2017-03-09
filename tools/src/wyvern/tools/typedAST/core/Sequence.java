@@ -21,9 +21,9 @@ import wyvern.tools.errors.ToolError;
 import wyvern.tools.typedAST.abs.AbstractExpressionAST;
 import wyvern.tools.typedAST.abs.Declaration;
 import wyvern.tools.typedAST.core.declarations.DeclSequence;
-import wyvern.tools.typedAST.core.declarations.TypeVarDecl;
 import wyvern.tools.typedAST.core.declarations.DefDeclaration;
 import wyvern.tools.typedAST.core.declarations.TypeAbbrevDeclaration;
+import wyvern.tools.typedAST.core.declarations.TypeVarDecl;
 import wyvern.tools.typedAST.core.declarations.VarDeclaration;
 import wyvern.tools.typedAST.core.expressions.Fn;
 import wyvern.tools.typedAST.core.values.UnitVal;
@@ -45,7 +45,7 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 		//	throw new RuntimeException("no null values in Sequence");
 		return e;
 	}
-	
+
 	public static interface MapCallback {
 		public void map(TypedAST elem);
 	}
@@ -121,7 +121,7 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 	public void append(TypedAST exp) {
 		this.exps.add(check(exp));
 	}
-	
+
 	@Override
 	public Type getType() {
 		if (retType == null) {
@@ -147,7 +147,7 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluate(EvaluationEnvironment env) {
 		EvaluationEnvironment iEnv = env;
 		Value lastVal = UnitVal.getInstance(this.getLocation());
@@ -196,15 +196,15 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 	public Iterator<TypedAST> iterator() {
 		return exps.iterator();
 	}
-	
+
 	public static Sequence fromAST(Sequence s) {
 		return s;
 	}
-	
+
 	public static Sequence fromAST(TypedAST s) {
 		return new Sequence(s);
 	}
-	
+
 	// FIXME: Hack. Flattens decl sequence. NEED TO REFACTOR!
 	public Iterable<Declaration> getDeclIterator() {
 
@@ -320,7 +320,7 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 
 	@Override
 	public IExpr generateIL(GenContext ctx, ValueType expectedType, List<TypedModuleSpec> dependencies) {
-	    Sequence seqWithBlocks = combine();		
+		Sequence seqWithBlocks = combine();
 		TopLevelContext tlc = new TopLevelContext(ctx);
 		seqWithBlocks.genTopLevel(tlc, expectedType);
 		if (tlc.getDependencies().size()>0) {
@@ -328,7 +328,7 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 		}
 		return tlc.getExpression();
 	}
-	
+
 	public boolean hasVarDeclaration() {
 		for (TypedAST e : exps) {
 			if (e instanceof VarDeclaration) {
@@ -341,10 +341,10 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 	/**
 	 * Generate IL expression for a top-level declaration sequence</br>
 	 * @see GenUtil.doGenModuleIL
-	 * 
+	 *
 	 * @param ctx the context
 	 * @param isModule whether is is actually a module expression:
-	 * 			true for the body of a module, false for the body of a script 
+	 * 			true for the body of a module, false for the body of a script
 	 * @return the IL expression of a module
 	 */
 	public IExpr generateModuleIL(GenContext ctx, boolean isModule) {
@@ -364,8 +364,8 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 			}
 		}
 	}
-	
-	
+
+
 	public void genTopLevel(TopLevelContext tlc, ValueType expectedType) {
 		for (int i = 0; i < exps.size()-1; i++) {
 			TypedAST ast =  exps.get(i);
@@ -374,10 +374,10 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 				((Declaration)ast).addModuleDecl(tlc);
 			}
 		}
-		
+
 		TypedAST ast = exps.getLast();
 		if (ast instanceof Fn) {
-			((Fn)ast).genTopLevel(tlc, expectedType);			
+			((Fn)ast).genTopLevel(tlc, expectedType);
 		}
 		// Add a unit value on the end, so the declaration evaluates to Unit.
 		else if (ast instanceof Declaration) {
@@ -388,7 +388,7 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 		else {
 			ast.genTopLevel(tlc);
 		}
-		
+
 		if (ast instanceof Declaration) {
 			((Declaration)ast).addModuleDecl(tlc);
 		}
@@ -404,7 +404,7 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 		Sequence normalSeq = new Sequence();
 		Sequence recSequence = new DeclSequence();
 		for (TypedAST ast : this.getIterator()) {
-			
+
 			if(ast instanceof TypeVarDecl || ast instanceof DefDeclaration || ast instanceof TypeAbbrevDeclaration) {
 				Declaration d = (Declaration) ast;
 				if(recBlock == false) {
@@ -417,29 +417,29 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 					normalSeq = Sequence.append(normalSeq, recSequence);
 				}
 				normalSeq = Sequence.append(normalSeq, ast);
-			    recBlock = false;
+				recBlock = false;
 			}
 		}
-		
+
 		if (recBlock == true) {
 			normalSeq = Sequence.append(normalSeq, recSequence);
 		}
 		return normalSeq;
 	}
 
-    public StringBuilder prettyPrint() {
-        StringBuilder sb = new StringBuilder();
-        String rtStr = "null";
-        if (retType != null) {
+	public StringBuilder prettyPrint() {
+		StringBuilder sb = new StringBuilder();
+		String rtStr = "null";
+		if (retType != null) {
 			rtStr = retType.toString();
 		}
-        sb.append("Sequence(" + rtStr + ", [");
-        String sep = "";
-        for (TypedAST ast : exps) {
-            sb.append(sep);
-            sb.append(ast.prettyPrint());
-            sep = ", ";
-        }
-        return sb;
-    }
+		sb.append("Sequence(" + rtStr + ", [");
+		String sep = "";
+		for (TypedAST ast : exps) {
+			sb.append(sep);
+			sb.append(ast.prettyPrint());
+			sep = ", ";
+		}
+		return sb;
+	}
 }

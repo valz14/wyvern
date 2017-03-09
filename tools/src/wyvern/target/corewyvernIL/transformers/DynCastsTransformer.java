@@ -2,6 +2,7 @@ package wyvern.target.corewyvernIL.transformers;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import wyvern.target.corewyvernIL.ASTNode;
 import wyvern.target.corewyvernIL.Case;
 import wyvern.target.corewyvernIL.FormalArg;
@@ -52,7 +53,7 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
 	private boolean hasDynamicType(IExpr expr, TypeContext ctx) {
 		return Util.isDynamicType(expr.typeCheck(ctx));
 	}
-	
+
 	/**
 	 * Wraps an expression in a cast.
 	 * @param expr: thing to be cast.
@@ -64,20 +65,20 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
 
 	@Override
 	public New visit(TypeContext ctx, New newExpr) {
-		
-		// Transform all declarations inside the object.
-	    List<Declaration> newDecls = new LinkedList<>();
-	    TypeContext thisCtx = ctx.extend(newExpr.getSelfName(), newExpr.getExprType());
 
-	    for (Declaration decl : newExpr.getDecls()) {
-	        Declaration newDecl = (Declaration) decl.acceptVisitor(this, thisCtx);
-	        newDecls.add(newDecl);
-	    }
-	    
-	    
-		// Don't bother recomputing the type--it will stay the same.	    
+		// Transform all declarations inside the object.
+		List<Declaration> newDecls = new LinkedList<>();
+		TypeContext thisCtx = ctx.extend(newExpr.getSelfName(), newExpr.getExprType());
+
+		for (Declaration decl : newExpr.getDecls()) {
+			Declaration newDecl = (Declaration) decl.acceptVisitor(this, thisCtx);
+			newDecls.add(newDecl);
+		}
+
+
+		// Don't bother recomputing the type--it will stay the same.
 		return new New(newDecls, newExpr.getSelfName(), newExpr.getExprType(), newExpr.getLocation());
-		
+
 	}
 
 	@Override
@@ -87,58 +88,58 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
 
 	@Override
 	public MethodCall visit(TypeContext ctx, MethodCall methCall) {
-		
+
 		// Transform the receiver.
 		IExpr receiver = (IExpr) methCall.getObjectExpr().acceptVisitor(this, ctx);
 
 		// Dynamic receiver: cast object to something with appropriate method.
 		if (hasDynamicType(receiver, ctx)) {
-		    
-		    List<? extends IExpr> actualArgs = methCall.getArgs();
-		    List<FormalArg> fargs = new LinkedList<>();
-		    
-		    // TODO: update context with a fake "this" ?
-		    for (int i = 0; i < actualArgs.size(); i++) {
-		        IExpr arg = actualArgs.get(i);
-		        arg = (IExpr) arg.acceptVisitor(this, ctx);
-		        ValueType argType = arg.typeCheck(ctx);
-		        fargs.add(new FormalArg("_arg" + i, argType));    
-		    }
-		    
-		    // Build up the type to which the receiver shall be cast.
-		    DefDeclType methodDecl = new DefDeclType(methCall.getMethodName(), Util.dynType(), fargs);
-		    List<DeclType> transformedDecls = new LinkedList<>();
-		    transformedDecls.add(methodDecl);
-		    ValueType receiverCastType = new StructuralType("this", transformedDecls);
-		    receiver = castFromDyn(receiver, receiverCastType);
-		    return new MethodCall(receiver, methCall.getMethodName(), actualArgs, methCall);
+
+			List<? extends IExpr> actualArgs = methCall.getArgs();
+			List<FormalArg> fargs = new LinkedList<>();
+
+			// TODO: update context with a fake "this" ?
+			for (int i = 0; i < actualArgs.size(); i++) {
+				IExpr arg = actualArgs.get(i);
+				arg = (IExpr) arg.acceptVisitor(this, ctx);
+				ValueType argType = arg.typeCheck(ctx);
+				fargs.add(new FormalArg("_arg" + i, argType));
+			}
+
+			// Build up the type to which the receiver shall be cast.
+			DefDeclType methodDecl = new DefDeclType(methCall.getMethodName(), Util.dynType(), fargs);
+			List<DeclType> transformedDecls = new LinkedList<>();
+			transformedDecls.add(methodDecl);
+			ValueType receiverCastType = new StructuralType("this", transformedDecls);
+			receiver = castFromDyn(receiver, receiverCastType);
+			return new MethodCall(receiver, methCall.getMethodName(), actualArgs, methCall);
 		}
-		
+
 		// Non-dynamic receiver: cast any dynamic arguments to their formal type.
 		else {
 
-	        // Get formal arguments of the method being invoked.
-	        DefDeclType formalMethCall = methCall.typeMethodDeclaration(ctx);
-	        List<FormalArg> formalArgs = formalMethCall.getFormalArgs();
-	        
-	        // Transform the actual arguments supplied to the method call.
-	        List<? extends IExpr> args = methCall.getArgs();
-	        List<IExpr> argsTransformed = new LinkedList<>();
-	        for (int i = 0; i < methCall.getArgs().size(); i++) {
-	            IExpr arg = args.get(i);
-	            IExpr argTransformed = (IExpr) arg.acceptVisitor(this, ctx);
-	            if (hasDynamicType(argTransformed, ctx)) {
-	                ValueType formalType = formalArgs.get(i).getType();
-	                argTransformed = castFromDyn(argTransformed, formalType);
-	            }
-	            argsTransformed.add(argTransformed);
-	        }
-	        
-	        // Construct and return the transformed method call.
-	        return new MethodCall(receiver, methCall.getMethodName(), argsTransformed, methCall);
+			// Get formal arguments of the method being invoked.
+			DefDeclType formalMethCall = methCall.typeMethodDeclaration(ctx);
+			List<FormalArg> formalArgs = formalMethCall.getFormalArgs();
+
+			// Transform the actual arguments supplied to the method call.
+			List<? extends IExpr> args = methCall.getArgs();
+			List<IExpr> argsTransformed = new LinkedList<>();
+			for (int i = 0; i < methCall.getArgs().size(); i++) {
+				IExpr arg = args.get(i);
+				IExpr argTransformed = (IExpr) arg.acceptVisitor(this, ctx);
+				if (hasDynamicType(argTransformed, ctx)) {
+					ValueType formalType = formalArgs.get(i).getType();
+					argTransformed = castFromDyn(argTransformed, formalType);
+				}
+				argsTransformed.add(argTransformed);
+			}
+
+			// Construct and return the transformed method call.
+			return new MethodCall(receiver, methCall.getMethodName(), argsTransformed, methCall);
 
 		}
-		
+
 	}
 
 	@Override
@@ -148,39 +149,39 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
 
 	@Override
 	public FieldGet visit(TypeContext ctx, FieldGet fieldGet) {
-	    IExpr receiver = fieldGet.getObjectExpr();
-	    ValueType receiverType = receiver.typeCheck(ctx);
+		IExpr receiver = fieldGet.getObjectExpr();
+		ValueType receiverType = receiver.typeCheck(ctx);
 
-        // If accessing field of object with Dyn type, cast it to something with that field.
-	    if (Util.isDynamicType(receiverType)) {
-	        ValDeclType fieldDecl = new ValDeclType(fieldGet.getName(), Util.dynType());
-            LinkedList<DeclType> declTypes = new LinkedList<>();
-            declTypes.add(fieldDecl);
-            ValueType newType = new StructuralType("this", declTypes);
-            return new FieldGet(castFromDyn(receiver, newType), fieldGet.getName(), fieldGet.getLocation());
-	    } else {
-            return fieldGet;
-	    }
+		// If accessing field of object with Dyn type, cast it to something with that field.
+		if (Util.isDynamicType(receiverType)) {
+			ValDeclType fieldDecl = new ValDeclType(fieldGet.getName(), Util.dynType());
+			LinkedList<DeclType> declTypes = new LinkedList<>();
+			declTypes.add(fieldDecl);
+			ValueType newType = new StructuralType("this", declTypes);
+			return new FieldGet(castFromDyn(receiver, newType), fieldGet.getName(), fieldGet.getLocation());
+		} else {
+			return fieldGet;
+		}
 	}
 
 	@Override
 	public Let visit(TypeContext ctx, Let let) {
-		
+
 		// Transform subexpressions.
-	    IExpr toReplace = let.getToReplace();
-	    toReplace = (IExpr) toReplace.acceptVisitor(this, ctx);
-	    
-        // Add a cast if binding something with Dyn type.
-        if (hasDynamicType(toReplace, ctx)) {
-            ValueType cast2this = let.getVarType();
-            toReplace = castFromDyn(toReplace, cast2this);
-        }
-        
+		IExpr toReplace = let.getToReplace();
+		toReplace = (IExpr) toReplace.acceptVisitor(this, ctx);
+
+		// Add a cast if binding something with Dyn type.
+		if (hasDynamicType(toReplace, ctx)) {
+			ValueType cast2this = let.getVarType();
+			toReplace = castFromDyn(toReplace, cast2this);
+		}
+
 		//IExpr toReplace = (IExpr) let.getToReplace().acceptVisitor(this, ctx);
 		TypeContext subCtx = ctx.extend(let.getVarName(), let.getVarType());
 		IExpr inExpr = let.getInExpr();
 		inExpr = (IExpr) inExpr.acceptVisitor(this, subCtx);
-		    
+
 		return new Let(let.getVarName(), let.getVarType(), toReplace, inExpr);
 	}
 
@@ -191,35 +192,35 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
 
 	@Override
 	public FieldSet visit(TypeContext ctx, FieldSet fieldSet) {
-		
+
 		// Transform expression being assigned. Wrap in a cast if necessary.
 		IExpr toAssign = (IExpr) fieldSet.getExprToAssign().acceptVisitor(this, ctx);
 		if (hasDynamicType(toAssign, ctx)) {
 			ValueType fieldType = fieldSet.getObjectExpr().typeCheck(ctx);
 			toAssign = castFromDyn(toAssign, fieldType);
 		}
-		
+
 		// Transform the expression on the left-hand side. If we assign to a dynamic object,
 		// we should cast the receiver to an object with the specified field.
 		System.out.println();
 		IExpr receiver = (IExpr) fieldSet.getObjectExpr().acceptVisitor(this, ctx);
 		if (hasDynamicType(receiver, ctx)) {
-		    VarDeclType varDecl = new VarDeclType(fieldSet.getFieldName(), toAssign.typeCheck(ctx));
-		    LinkedList<DeclType> newDecls = new LinkedList<>();
-		    newDecls.add(varDecl);
-		    ValueType objCastType = new StructuralType("this", newDecls);
-		    receiver = castFromDyn(receiver, objCastType);
+			VarDeclType varDecl = new VarDeclType(fieldSet.getFieldName(), toAssign.typeCheck(ctx));
+			LinkedList<DeclType> newDecls = new LinkedList<>();
+			newDecls.add(varDecl);
+			ValueType objCastType = new StructuralType("this", newDecls);
+			receiver = castFromDyn(receiver, objCastType);
 		}
-		
+
 		// If assigning to a dynamic field add a cast.
 		FieldGet fg = new FieldGet(receiver, fieldSet.getFieldName(), fieldSet.getLocation());
 		if (hasDynamicType(fg, ctx)) {
-		    
+
 		}
-		
+
 		// Construct and return the transformed FieldSet.
 		return new FieldSet(fieldSet.getExprType(), receiver, fieldSet.getFieldName(), toAssign);
-		
+
 	}
 
 	@Override
@@ -239,13 +240,13 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
 
 	@Override
 	public DefDeclaration visit(TypeContext ctx, DefDeclaration defDecl) {
-	    
-	    // Update context with the arguments.
-	    TypeContext methodCtx = ctx;
-	    for (FormalArg farg : defDecl.getFormalArgs()) {
-	        methodCtx = methodCtx.extend(farg.getName(), farg.getType());
-	    }
-	    
+
+		// Update context with the arguments.
+		TypeContext methodCtx = ctx;
+		for (FormalArg farg : defDecl.getFormalArgs()) {
+			methodCtx = methodCtx.extend(farg.getName(), farg.getType());
+		}
+
 		IExpr bodyTransformed = (IExpr) defDecl.getBody().acceptVisitor(this, methodCtx);
 		return new DefDeclaration(defDecl.getName(), defDecl.getFormalArgs(), defDecl.getType(),
 				bodyTransformed, defDecl.getLocation());
@@ -261,9 +262,9 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
 		return integerLiteral;
 	}
 
-  @Override
-  public BooleanLiteral visit(TypeContext ctx, BooleanLiteral booleanLiteral) {
-    return booleanLiteral;
+	@Override
+	public BooleanLiteral visit(TypeContext ctx, BooleanLiteral booleanLiteral) {
+		return booleanLiteral;
 	}
 
 	@Override

@@ -9,8 +9,8 @@ public class TypeApplication extends ValueType {
 	private ValueType baseType;
 	private ValueType typeArgument;
 	private String typeMember;
-	
-	
+
+
 	public TypeApplication(ValueType baseType, ValueType typeArgument,
 			String typeMember) {
 		super();
@@ -23,12 +23,12 @@ public class TypeApplication extends ValueType {
 	{
 		return baseType;
 	}
-	
+
 	public Type getTypeArgument ()
 	{
 		return typeArgument;
 	}
-	
+
 	public String getTypeMember()
 	{
 		return typeMember;
@@ -50,7 +50,7 @@ public class TypeApplication extends ValueType {
 	public void checkWellFormed(TypeContext ctx) {
 		baseType.checkWellFormed(ctx);
 		typeArgument.checkWellFormed(ctx);
-		// also check if the typeMember is part of the baseType 
+		// also check if the typeMember is part of the baseType
 		throw new RuntimeException("not implemented");
 	}
 

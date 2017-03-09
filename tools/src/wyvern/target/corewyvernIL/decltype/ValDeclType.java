@@ -28,7 +28,7 @@ public class ValDeclType extends DeclTypeWithResult implements IASTNode{
 		ValDeclType vdt = (ValDeclType) dt;
 		return vdt.getName().equals(getName()) && this.getRawResultType().isSubtypeOf(vdt.getRawResultType(), ctx);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -88,7 +88,7 @@ public class ValDeclType extends DeclTypeWithResult implements IASTNode{
 			return new ValDeclType(this.getName(),t);
 		}
 	}
-	
+
 	@Override
 	public boolean isTypeDecl() {
 		return false;

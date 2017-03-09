@@ -1,24 +1,24 @@
 package wyvern.target.corewyvernIL.decltype;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
-import wyvern.tools.typedAST.core.declarations.DefDeclaration;
 import wyvern.target.corewyvernIL.FormalArg;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
 import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.ValueType;
+import wyvern.tools.typedAST.core.declarations.DefDeclaration;
 
 
 public class DefDeclType extends DeclTypeWithResult {
 
 	private List<FormalArg> args;
-	
+
 	public DefDeclType(String method, ValueType returnType, List<FormalArg> args) {
 		super(method, returnType);
 		this.args = args;
@@ -125,7 +125,7 @@ public class DefDeclType extends DeclTypeWithResult {
 		}
 		return new DefDeclType(this.getName(), this.getRawResultType().adapt(v), newArgs);
 	}
-	
+
 	@Override
 	public void checkWellFormed(TypeContext ctx) {
 		for (FormalArg arg : args) {
@@ -155,74 +155,74 @@ public class DefDeclType extends DeclTypeWithResult {
 			return new DefDeclType(this.getName(), t, newArgs);
 		}
 	}
-	
+
 	@Override
 	public boolean isTypeDecl() {
 		return false;
 	}
 
-    /**
+	/**
         genericMapping returns a map from each generic arguments the position in the formals list where the argument is used as a type
         If the argument is used as the result type, then the position is len(formals), i.e. the position appended to the end of the list
         Note that you can't infer from the result type, because evaluating the result type depends on the actuals, which are what we are trying to infer.
-    */
-    public  Map<Integer, List<Integer>> genericMapping() {
-        Map<Integer, List<Integer>> inferenceMap = new HashMap<Integer, List<Integer>>();
-        List<FormalArg> args = this.getFormalArgs();
-        this.getRawResultType();
+	 */
+	public  Map<Integer, List<Integer>> genericMapping() {
+		Map<Integer, List<Integer>> inferenceMap = new HashMap<Integer, List<Integer>>();
+		List<FormalArg> args = this.getFormalArgs();
+		this.getRawResultType();
 
-        for(int i = 0; i < args.size(); i++) {
-            FormalArg arg = args.get(i);
-            // Break out of the loop if we're done looking at generics
-            if(!DefDeclaration.isGeneric(arg)) {
-                break;
-            }
+		for(int i = 0; i < args.size(); i++) {
+			FormalArg arg = args.get(i);
+			// Break out of the loop if we're done looking at generics
+			if(!DefDeclaration.isGeneric(arg)) {
+				break;
+			}
 
-            // Collect the symbolic identifier for this generic type
-            String identifier = arg.getName().
-                substring(DefDeclaration.GENERIC_PREFIX.length());
+			// Collect the symbolic identifier for this generic type
+			String identifier = arg.getName().
+					substring(DefDeclaration.GENERIC_PREFIX.length());
 
-            // Now, see if we can find a location in the formals list
-            // where this argument is used as a type
-            for(int j = i; j < args.size(); j++) {
-                ValueType maybeGeneric = args.get(j).getType();
-                if(matchesGeneric(maybeGeneric, identifier)) {
-                    // Then we can add this position to the inference map
-                    append(inferenceMap, i, j);
-                }
-            }
-        }
-        return inferenceMap;
-    }
+			// Now, see if we can find a location in the formals list
+			// where this argument is used as a type
+			for(int j = i; j < args.size(); j++) {
+				ValueType maybeGeneric = args.get(j).getType();
+				if(matchesGeneric(maybeGeneric, identifier)) {
+					// Then we can add this position to the inference map
+					append(inferenceMap, i, j);
+				}
+			}
+		}
+		return inferenceMap;
+	}
 
-    /**
-     * Appends the element provided to list of mapped values in the hashmap provided
-     * If the key isn't already in the map, then this function allocates the list and adds the element to it.
-     * Otherwise, the element is appended to the end of the list.
-     */
-    private static <K, E> void  append(Map<K, List<E>> map, K key, E elem) {
-        if(map.get(key) == null) {
-            List<E> singleton = new LinkedList<>();
-            singleton.add(elem);
-            map.put(key, singleton);
-        } else {
-            map.get(key).add(elem);
-        }
-    }
-    
+	/**
+	 * Appends the element provided to list of mapped values in the hashmap provided
+	 * If the key isn't already in the map, then this function allocates the list and adds the element to it.
+	 * Otherwise, the element is appended to the end of the list.
+	 */
+	private static <K, E> void  append(Map<K, List<E>> map, K key, E elem) {
+		if(map.get(key) == null) {
+			List<E> singleton = new LinkedList<>();
+			singleton.add(elem);
+			map.put(key, singleton);
+		} else {
+			map.get(key).add(elem);
+		}
+	}
 
-    /**
-    * @param maybeGeneric is the ValueType we're checking to see if it's a generic or not
-    * @param identifier is the identifier (usually a single letter) for the generic type
-    */
-    private boolean matchesGeneric(ValueType maybeGeneric, String identifier) {
-        if(maybeGeneric instanceof NominalType) {
-            NominalType t = (NominalType) maybeGeneric;
-            String mem = t.getTypeMember();
 
-            // Check if the type member's name is the same as the generic type member
-            return mem.equals(identifier);
-        }
-        return false;
-    }
+	/**
+	 * @param maybeGeneric is the ValueType we're checking to see if it's a generic or not
+	 * @param identifier is the identifier (usually a single letter) for the generic type
+	 */
+	private boolean matchesGeneric(ValueType maybeGeneric, String identifier) {
+		if(maybeGeneric instanceof NominalType) {
+			NominalType t = (NominalType) maybeGeneric;
+			String mem = t.getTypeMember();
+
+			// Check if the type member's name is the same as the generic type member
+			return mem.equals(identifier);
+		}
+		return false;
+	}
 }

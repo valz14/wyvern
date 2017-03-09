@@ -65,7 +65,7 @@ public class BoundedIntLiteral extends Literal implements Invokable {
 			S state) {
 		throw new RuntimeException("not implemented");
 	}
-	
+
 	@Override
 	public Set<String> getFreeVariables() {
 		return new HashSet<>();

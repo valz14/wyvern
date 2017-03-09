@@ -47,7 +47,7 @@ public abstract class ASTVisitor<S, T> {
 	public abstract T visit(S state, DefDeclaration defDecl);
 	public abstract T visit(S state, ValDeclaration valDecl);
 	public abstract T visit(S state, IntegerLiteral integerLiteral);
-  public abstract T visit(S state, BooleanLiteral booleanLiteral);
+	public abstract T visit(S state, BooleanLiteral booleanLiteral);
 	public abstract T visit(S state, RationalLiteral rational);
 	public abstract T visit(S state, FormalArg formalArg);
 	public abstract T visit(S state, VarDeclType varDeclType);
@@ -61,8 +61,8 @@ public abstract class ASTVisitor<S, T> {
 	public abstract T visit(S state, DelegateDeclaration delegateDecl);
 	public abstract T visit(S state, ConcreteTypeMember concreteTypeMember);
 	public abstract T visit(S state, TypeDeclaration typeDecl);
-  public abstract T visit(S state, CaseType caseType);
-  public abstract T visit(S state, ExtensibleTagType extensibleTagType);
-  public abstract T visit(S state, DataType dataType);
-  public abstract T visit(S state, FFIImport ffiImport);
+	public abstract T visit(S state, CaseType caseType);
+	public abstract T visit(S state, ExtensibleTagType extensibleTagType);
+	public abstract T visit(S state, DataType dataType);
+	public abstract T visit(S state, FFIImport ffiImport);
 }

@@ -14,15 +14,15 @@ import wyvern.tools.errors.HasLocation;
  * efficient code than calling genExpr() followed by calling
  * "apply()" in the case where genExpr() would have to do
  * eta-expansion of the method.
- * 
+ *
  * @author aldrich
  */
 public interface CallableExprGenerator {
-    public IExpr genExpr();
+	public IExpr genExpr();
 
-    public IExpr genExprWithArgs(List<? extends IExpr> args, HasLocation loc);
-    
-    /* Returns null if no argument type is expected */
-    public DefDeclType getDeclType(TypeContext ctx);
+	public IExpr genExprWithArgs(List<? extends IExpr> args, HasLocation loc);
+
+	/* Returns null if no argument type is expected */
+	public DefDeclType getDeclType(TypeContext ctx);
 
 }

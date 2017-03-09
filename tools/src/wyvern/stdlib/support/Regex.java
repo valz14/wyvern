@@ -24,7 +24,7 @@ public class Regex {
 		}
 		return (ObjectValue) call.interpret(ctx);
 	}
-	
+
 	public ObjectValue findPrefixMatchOf(String regex, String source) {
 		Matcher m = Pattern.compile(regex).matcher(source);
 		EvalContext ctx = ModuleResolver.getLocal().contextWith("wyvern.option","wyvern.util.matching.regex");

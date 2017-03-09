@@ -16,14 +16,14 @@ public class WyvernTokenManager implements TokenManager {
 	private String filename;
 	private Iterator<Token> tokens;
 	private Token specialToken;
-	
-	
+
+
 	public WyvernTokenManager(Reader input, String filename) {
 		this.input = input;
 		this.filename = filename;
 		this.tokens = null;
 	}
-	
+
 	private void readTokenList() throws CopperParserException, IOException {
 		tokens = new WyvernLexer().parse(input, filename).iterator();
 	}
@@ -50,10 +50,10 @@ public class WyvernTokenManager implements TokenManager {
 			}
 			specialToken = t;
 		}
-		
+
 		return new Token(WyvernParserConstants.EOF);
 	}
-	
+
 	public String getFilename() {
 		return filename;
 	}

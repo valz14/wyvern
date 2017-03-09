@@ -6,20 +6,20 @@ public class OIRFieldDeclaration extends OIRMemberDeclaration {
 	private String name;
 	private OIRType type;
 	private boolean isFinal = false;
-	
+
 	public OIRFieldDeclaration(String name, OIRType type) {
 		super();
 		this.name = name;
 		this.type = type;
 	}
-	
+
 	public OIRFieldDeclaration(String name, OIRType type, boolean isFinal) {
 		super();
 		this.name = name;
 		this.type = type;
 		this.isFinal = isFinal;
 	}
-	
+
 	public String getName() {
 		return name;
 	}

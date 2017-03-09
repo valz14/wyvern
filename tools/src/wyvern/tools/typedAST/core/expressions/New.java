@@ -43,415 +43,415 @@ import wyvern.tools.util.Reference;
 
 public class New extends CachingTypedAST implements CoreAST {
 
-    private static int generic_num = 0;
-    private static int uniqueCounter = 0;
-    private static Map<String, Expression> variables = new HashMap<>();
+	private static int generic_num = 0;
+	private static int uniqueCounter = 0;
+	private static Map<String, Expression> variables = new HashMap<>();
 
-    private FileLocation location = FileLocation.UNKNOWN;
-    private ClassDeclaration cls;
-    private Map<String, TypedAST> args = new HashMap<String, TypedAST>();
-    private boolean isGeneric = false;
-    private DeclSequence seq;
-    private Type ct;
-    private String selfName;
+	private FileLocation location = FileLocation.UNKNOWN;
+	private ClassDeclaration cls;
+	private Map<String, TypedAST> args = new HashMap<String, TypedAST>();
+	private boolean isGeneric = false;
+	private DeclSequence seq;
+	private Type ct;
+	private String selfName;
 
-    /**
-      * Makes a New expression with the provided mapping, file location, and self name.
-      *
-      * @param args The mapping from arg name to Expression.
-      * @param fileLocation the location in the file where the New expression occurs 
-      * @param selfName the name of the object created by this expression, like 'this' in Java
-      */
-    public New(Map<String, TypedAST> args, FileLocation fileLocation, String selfName) {
-        this.args = args;
-        this.location = fileLocation;
-        this.selfName = selfName;
-    }
+	/**
+	 * Makes a New expression with the provided mapping, file location, and self name.
+	 *
+	 * @param args The mapping from arg name to Expression.
+	 * @param fileLocation the location in the file where the New expression occurs
+	 * @param selfName the name of the object created by this expression, like 'this' in Java
+	 */
+	public New(Map<String, TypedAST> args, FileLocation fileLocation, String selfName) {
+		this.args = args;
+		this.location = fileLocation;
+		this.selfName = selfName;
+	}
 
-    /**
-      * Makes a New expression with the provided mapping and file location.
-      *
-      * @param args The mapping from arg name to Expression.
-      * @param fileLocation the location in the file where the New expression occurs 
-      */
-    public New(Map<String, TypedAST> args, FileLocation fileLocation) {
-        this.args = args;
-        this.location = fileLocation;
-        this.selfName = null;
-    }
+	/**
+	 * Makes a New expression with the provided mapping and file location.
+	 *
+	 * @param args The mapping from arg name to Expression.
+	 * @param fileLocation the location in the file where the New expression occurs
+	 */
+	public New(Map<String, TypedAST> args, FileLocation fileLocation) {
+		this.args = args;
+		this.location = fileLocation;
+		this.selfName = null;
+	}
 
-    /**
-      * This constructor makes a New expression with the provided declaration sequence.
-      *
-      * @param seq the list of declaration internal to the object created by this expression
-      * @param fileLocation the location in the file where the New expression occurs 
-      */
-    public New(DeclSequence seq, FileLocation fileLocation) {
-        this.seq = seq;
-        this.location = fileLocation;
-    }
+	/**
+	 * This constructor makes a New expression with the provided declaration sequence.
+	 *
+	 * @param seq the list of declaration internal to the object created by this expression
+	 * @param fileLocation the location in the file where the New expression occurs
+	 */
+	public New(DeclSequence seq, FileLocation fileLocation) {
+		this.seq = seq;
+		this.location = fileLocation;
+	}
 
-    public void setBody(DeclSequence seq) {
-        this.seq = seq;
-    }
+	public void setBody(DeclSequence seq) {
+		this.seq = seq;
+	}
 
-    public DeclSequence getDecls() {
-        return seq;
-    }
+	public DeclSequence getDecls() {
+		return seq;
+	}
 
-    /**
-     * Resets the count of generics.
-     */
-    public static void resetGenNum() {
-        generic_num = 0;
-    }
+	/**
+	 * Resets the count of generics.
+	 */
+	public static void resetGenNum() {
+		generic_num = 0;
+	}
 
-    private String self() {
-        return (this.selfName == null) ? "this" : this.selfName;
-    }
+	private String self() {
+		return (this.selfName == null) ? "this" : this.selfName;
+	}
 
-    @Override
-    protected Type doTypecheck(Environment env, Optional<Type> expected) {
-        // TODO check arg types
-        // Type argTypes = args.typecheck();
+	@Override
+	protected Type doTypecheck(Environment env, Optional<Type> expected) {
+		// TODO check arg types
+		// Type argTypes = args.typecheck();
 
-        ClassBinding classVarTypeBinding = env.lookupBinding(
-            "class", ClassBinding.class
-        ).orElse(null);
-
-
-        if (classVarTypeBinding != null) { //In a class method
-            Environment declEnv = classVarTypeBinding.getClassDecl()
-                .getInstanceMembersEnv();
-
-            Environment innerEnv = seq.extendName(Environment.getEmptyEnvironment(), env)
-                .extend(declEnv);
-
-            innerEnv = env.extend(new NameBindingImpl(this.self(),
-                        new ClassType(
-                            new Reference<>(innerEnv),
-                            new Reference<>(innerEnv),
-                            new LinkedList<>(),
-                            classVarTypeBinding.getClassDecl().getTaggedInfo(),
-                            classVarTypeBinding.getClassDecl().getName()
-            )));
-
-            seq.typecheck(innerEnv, Optional.empty());
+		ClassBinding classVarTypeBinding = env.lookupBinding(
+				"class", ClassBinding.class
+				).orElse(null);
 
 
-            Environment environment = seq.extendType(declEnv, declEnv.extend(env));
-            environment = seq.extendName(environment, environment.extend(env));
-            Environment nnames = environment;//seq.extend(environment, environment);
+		if (classVarTypeBinding != null) { //In a class method
+			Environment declEnv = classVarTypeBinding.getClassDecl()
+					.getInstanceMembersEnv();
 
-            Environment objTee = TypeDeclUtils.getTypeEquivalentEnvironment(
-                    nnames.extend(declEnv)
-            );
-            Type classVarType = new ClassType(
-                    new Reference<>(nnames.extend(declEnv)), 
-                    new Reference<>(objTee), 
-                    new LinkedList<>(),
-                    classVarTypeBinding.getClassDecl().getTaggedInfo(), 
-                    classVarTypeBinding.getClassDecl().getName()
-            );
-            if (!(classVarType instanceof ClassType)) {
-                ToolError.reportError(
-                        ErrorMessage.MUST_BE_LITERAL_CLASS, 
-                        this, 
-                        classVarType.toString()
-                );
-            }
+			Environment innerEnv = seq.extendName(Environment.getEmptyEnvironment(), env)
+					.extend(declEnv);
 
-            // TODO SMELL: do I really need to store this?  Can get it any time from the type
-            cls = classVarTypeBinding.getClassDecl();
-            ct = classVarType;
+			innerEnv = env.extend(new NameBindingImpl(this.self(),
+					new ClassType(
+							new Reference<>(innerEnv),
+							new Reference<>(innerEnv),
+							new LinkedList<>(),
+							classVarTypeBinding.getClassDecl().getTaggedInfo(),
+							classVarTypeBinding.getClassDecl().getName()
+							)));
 
-            return classVarType;
-        } else { // Standalone
+			seq.typecheck(innerEnv, Optional.empty());
 
-            isGeneric = true;
-            Environment innerEnv = seq.extendType(Environment.getEmptyEnvironment(), env);
-            Environment savedInner = env.extend(innerEnv);
-            innerEnv = seq.extendName(innerEnv, savedInner);
 
-            // compute tag info
-            TaggedInfo tagInfo = null;
-            if (expected.isPresent()) {
-                Type t = expected.get();
-                if (t instanceof RecordType) {
-                    tagInfo = ((RecordType)t).getTaggedInfo();
-                }
-            }
-            
-            Environment declEnv = env.extend(
-                new NameBindingImpl(
-                    this.self(), 
-                    new ClassType(
-                        new Reference<>(innerEnv), 
-                        new Reference<>(innerEnv), 
-                        new LinkedList<>(), 
-                        tagInfo, null
-                    )
-                )
-            );
-            final Environment ideclEnv = StreamSupport.stream(
-                seq.getDeclIterator().spliterator(), 
-                false
-            ).reduce(
-                declEnv, 
-                (oenv,decl) -> (decl instanceof ClassDeclaration)
-                        ? decl.extend(oenv, savedInner)
-                        : oenv,(a,b) -> a.extend(b)
-            );
-            seq.getDeclIterator().forEach(
-                decl -> decl.typecheck(
-                    ideclEnv, Optional.<Type>empty()
-                )
-            );
+			Environment environment = seq.extendType(declEnv, declEnv.extend(env));
+			environment = seq.extendName(environment, environment.extend(env));
+			Environment nnames = environment;//seq.extend(environment, environment);
 
-            Environment mockEnv = Environment.getEmptyEnvironment();
+			Environment objTee = TypeDeclUtils.getTypeEquivalentEnvironment(
+					nnames.extend(declEnv)
+					);
+			Type classVarType = new ClassType(
+					new Reference<>(nnames.extend(declEnv)),
+					new Reference<>(objTee),
+					new LinkedList<>(),
+					classVarTypeBinding.getClassDecl().getTaggedInfo(),
+					classVarTypeBinding.getClassDecl().getName()
+					);
+			if (!(classVarType instanceof ClassType)) {
+				ToolError.reportError(
+						ErrorMessage.MUST_BE_LITERAL_CLASS,
+						this,
+						classVarType.toString()
+						);
+			}
 
-            LinkedList<Declaration> decls = new LinkedList<>();
+			// TODO SMELL: do I really need to store this?  Can get it any time from the type
+			cls = classVarTypeBinding.getClassDecl();
+			ct = classVarType;
 
-            Environment nnames = (seq.extendType(mockEnv, mockEnv.extend(env)));
-            nnames = (seq.extendName(nnames,mockEnv.extend(env)));
-            //nnames = seq.extend(nnames, mockEnv.extend(env));
+			return classVarType;
+		} else { // Standalone
 
-            ClassDeclaration classDeclaration = new ClassDeclaration(
-                "generic" + generic_num++,
-                "",
-                "",
-                new DeclSequence(decls), 
-                mockEnv, 
-                new LinkedList<String>(), 
-                getLocation()
-            );
-            cls = classDeclaration;
-            Environment tee = TypeDeclUtils.getTypeEquivalentEnvironment(
-                    nnames.extend(mockEnv)
-            );
+			isGeneric = true;
+			Environment innerEnv = seq.extendType(Environment.getEmptyEnvironment(), env);
+			Environment savedInner = env.extend(innerEnv);
+			innerEnv = seq.extendName(innerEnv, savedInner);
 
-            ct = new ClassType(
-                    new Reference<>(
-                        nnames.extend(mockEnv)
-                    ), 
-                    new Reference<>(tee), 
-                    new LinkedList<String>(), 
-                    tagInfo, 
-                    null
-            );
-            return ct;
-        }
-    }
+			// compute tag info
+			TaggedInfo tagInfo = null;
+			if (expected.isPresent()) {
+				Type t = expected.get();
+				if (t instanceof RecordType) {
+					tagInfo = ((RecordType)t).getTaggedInfo();
+				}
+			}
 
-    private EvaluationEnvironment getGenericDecls(
-            EvaluationEnvironment env, 
-            EvaluationEnvironment mockEnv, 
-            LinkedList<Declaration> decls
-    ) {
-        return mockEnv;
-    }
+			Environment declEnv = env.extend(
+					new NameBindingImpl(
+							this.self(),
+							new ClassType(
+									new Reference<>(innerEnv),
+									new Reference<>(innerEnv),
+									new LinkedList<>(),
+									tagInfo, null
+									)
+							)
+					);
+			final Environment ideclEnv = StreamSupport.stream(
+					seq.getDeclIterator().spliterator(),
+					false
+					).reduce(
+							declEnv,
+							(oenv,decl) -> (decl instanceof ClassDeclaration)
+							? decl.extend(oenv, savedInner)
+									: oenv,(a,b) -> a.extend(b)
+							);
+			seq.getDeclIterator().forEach(
+					decl -> decl.typecheck(
+							ideclEnv, Optional.<Type>empty()
+							)
+					);
 
-    @Deprecated
-    @Override
-    public Value evaluate(EvaluationEnvironment env) {
-        EvaluationEnvironment argValEnv = EvaluationEnvironment.EMPTY;
-        for (Entry<String, TypedAST> elem : args.entrySet()) {
-            argValEnv = argValEnv.extend(
-                    new ValueBinding(
-                        elem.getKey(),
-                        elem.getValue().evaluate(env)
-                    )
-            );
-        }
+			Environment mockEnv = Environment.getEmptyEnvironment();
 
-        ClassBinding classVarTypeBinding = env.lookupValueBinding(
-                "class", 
-                ClassBinding.class
-        ).orElse(null);
-        ClassDeclaration classDecl;
+			LinkedList<Declaration> decls = new LinkedList<>();
 
-        if (classVarTypeBinding != null) {
-            classDecl = classVarTypeBinding.getClassDecl();
-        } else {
+			Environment nnames = (seq.extendType(mockEnv, mockEnv.extend(env)));
+			nnames = (seq.extendName(nnames,mockEnv.extend(env)));
+			//nnames = seq.extend(nnames, mockEnv.extend(env));
 
-            Environment mockEnv = Environment.getEmptyEnvironment();
+			ClassDeclaration classDeclaration = new ClassDeclaration(
+					"generic" + generic_num++,
+					"",
+					"",
+					new DeclSequence(decls),
+					mockEnv,
+					new LinkedList<String>(),
+					getLocation()
+					);
+			cls = classDeclaration;
+			Environment tee = TypeDeclUtils.getTypeEquivalentEnvironment(
+					nnames.extend(mockEnv)
+					);
 
-            classDecl = new ClassDeclaration(
-                    "generic" + generic_num++,
-                    "",
-                    "",
-                    new DeclSequence(),
-                    mockEnv,
-                    new LinkedList<String>(),
-                    getLocation()
-            );
-        }
+			ct = new ClassType(
+					new Reference<>(
+							nnames.extend(mockEnv)
+							),
+					new Reference<>(tee),
+					new LinkedList<String>(),
+					tagInfo,
+					null
+					);
+			return ct;
+		}
+	}
 
-        AtomicReference<Value> objRef = new AtomicReference<>();
-        EvaluationEnvironment evalEnv = env.extend(
-                new LateValueBinding(
-                    this.self(),
-                    objRef,
-                    ct)
-        );
-        classDecl.evalDecl(
-                evalEnv,
-                classDecl.extendWithValue(EvaluationEnvironment.EMPTY)
-        );
-        final EvaluationEnvironment ideclEnv = StreamSupport.stream(
-            seq.getDeclIterator().spliterator(), false)
-            .reduce(evalEnv,
-                    ((oenv,decl) -> 
-                        (decl instanceof ClassDeclaration)
-                        ? decl.evalDecl(oenv)
-                        : oenv),
-                    EvaluationEnvironment::extend
-            );
-        EvaluationEnvironment objenv = seq.bindDecls(
-                ideclEnv,
-                seq.extendWithDecls(classDecl.getFilledBody(objRef))
-        );
+	private EvaluationEnvironment getGenericDecls(
+			EvaluationEnvironment env,
+			EvaluationEnvironment mockEnv,
+			LinkedList<Declaration> decls
+			) {
+		return mockEnv;
+	}
 
-        TaggedInfo goodTI = env.lookupBinding(
-                this.self(),
-                HackForArtifactTaggedInfoBinding.class
-        )
-            .map(binding -> binding.getTaggedInfo())
-            .orElse(classDecl.getTaggedInfo());
+	@Deprecated
+	@Override
+	public Value evaluate(EvaluationEnvironment env) {
+		EvaluationEnvironment argValEnv = EvaluationEnvironment.EMPTY;
+		for (Entry<String, TypedAST> elem : args.entrySet()) {
+			argValEnv = argValEnv.extend(
+					new ValueBinding(
+							elem.getKey(),
+							elem.getValue().evaluate(env)
+							)
+					);
+		}
 
-        Obj obj = new Obj(objenv.extend(argValEnv), goodTI);
+		ClassBinding classVarTypeBinding = env.lookupValueBinding(
+				"class",
+				ClassBinding.class
+				).orElse(null);
+		ClassDeclaration classDecl;
 
-        //FIXME: Record new tag!
-        if (classDecl.isTagged()) {
-            TaggedInfo ti = classDecl.getTaggedInfo();
-            // System.out.println("Processing ti = " + ti);
-            // System.out.println("obj.getType = " + obj.getType());
-            ti.associateWithObject(obj);
-        }
+		if (classVarTypeBinding != null) {
+			classDecl = classVarTypeBinding.getClassDecl();
+		} else {
 
-        objRef.set(obj);
+			Environment mockEnv = Environment.getEmptyEnvironment();
 
-        // System.out.println("Finished evaluating new: " + this);
+			classDecl = new ClassDeclaration(
+					"generic" + generic_num++,
+					"",
+					"",
+					new DeclSequence(),
+					mockEnv,
+					new LinkedList<String>(),
+					getLocation()
+					);
+		}
 
-        return objRef.get();
-    }
+		AtomicReference<Value> objRef = new AtomicReference<>();
+		EvaluationEnvironment evalEnv = env.extend(
+				new LateValueBinding(
+						this.self(),
+						objRef,
+						ct)
+				);
+		classDecl.evalDecl(
+				evalEnv,
+				classDecl.extendWithValue(EvaluationEnvironment.EMPTY)
+				);
+		final EvaluationEnvironment ideclEnv = StreamSupport.stream(
+				seq.getDeclIterator().spliterator(), false)
+				.reduce(evalEnv,
+						((oenv,decl) ->
+						(decl instanceof ClassDeclaration)
+						? decl.evalDecl(oenv)
+								: oenv),
+						EvaluationEnvironment::extend
+						);
+		EvaluationEnvironment objenv = seq.bindDecls(
+				ideclEnv,
+				seq.extendWithDecls(classDecl.getFilledBody(objRef))
+				);
 
-    @Override
-    public Map<String, TypedAST> getChildren() {
-        HashMap<String,TypedAST> outMap = new HashMap<>();
-        outMap.put(
-                "seq",
-                (seq == null) ? new DeclSequence(Arrays.asList()) : seq
-        );
-        return outMap;
-    }
+		TaggedInfo goodTI = env.lookupBinding(
+				this.self(),
+				HackForArtifactTaggedInfoBinding.class
+				)
+				.map(binding -> binding.getTaggedInfo())
+				.orElse(classDecl.getTaggedInfo());
 
-    /**
-      * addNewFile evaluates the expression and adds that expression 
-      * to the field generated by this New expression
-      *
-      * @param value the Expression which should be evaluated as a new field.
-      */
-    public static String addNewField(Expression value) {
-        String name = "field " + uniqueCounter++;
-        variables.put(name, value);
-        return name;
-    }
+		Obj obj = new Obj(objenv.extend(argValEnv), goodTI);
 
-    @Override
-    public ExpressionAST doClone(Map<String, TypedAST> newChildren) {
+		//FIXME: Record new tag!
+		if (classDecl.isTagged()) {
+			TaggedInfo ti = classDecl.getTaggedInfo();
+			// System.out.println("Processing ti = " + ti);
+			// System.out.println("obj.getType = " + obj.getType());
+			ti.associateWithObject(obj);
+		}
 
-        New aNew = new New(new HashMap<>(), location);
-        aNew.setBody((DeclSequence) newChildren.get("seq"));
-        aNew.cls = cls;
-        return aNew;
-    }
+		objRef.set(obj);
 
-    public ClassDeclaration getClassDecl() {
-        return cls;
-    }
+		// System.out.println("Finished evaluating new: " + this);
 
-    public Map<String, TypedAST> getArgs() {
-        return args;
-    }
+		return objRef.get();
+	}
 
-    @Override
-    public FileLocation getLocation() {
-        return location;
-    }
+	@Override
+	public Map<String, TypedAST> getChildren() {
+		HashMap<String,TypedAST> outMap = new HashMap<>();
+		outMap.put(
+				"seq",
+				(seq == null) ? new DeclSequence(Arrays.asList()) : seq
+				);
+		return outMap;
+	}
 
-    public boolean isGeneric() {
-        return isGeneric;
-    }
+	/**
+	 * addNewFile evaluates the expression and adds that expression
+	 * to the field generated by this New expression
+	 *
+	 * @param value the Expression which should be evaluated as a new field.
+	 */
+	public static String addNewField(Expression value) {
+		String name = "field " + uniqueCounter++;
+		variables.put(name, value);
+		return name;
+	}
 
-    @Override
-    public Expression generateIL(
-            GenContext ctx,
-            ValueType expectedType,
-            List<TypedModuleSpec> dependencies
-    ) {
+	@Override
+	public ExpressionAST doClone(Map<String, TypedAST> newChildren) {
 
-        ValueType type = seq.inferStructuralType(ctx, this.self());
-        
-        // Translate the declarations.
-        GenContext thisContext = ctx.extend(
-                this.self(),
-                new wyvern.target.corewyvernIL.expression.Variable(this.self()),
-                type
-        );
-        List<wyvern.target.corewyvernIL.decl.Declaration> decls = 
-            new LinkedList<wyvern.target.corewyvernIL.decl.Declaration>();
+		New aNew = new New(new HashMap<>(), location);
+		aNew.setBody((DeclSequence) newChildren.get("seq"));
+		aNew.cls = cls;
+		return aNew;
+	}
 
-        for (TypedAST d : seq) {            
-            wyvern.target.corewyvernIL.decl.Declaration decl = ((Declaration) d)
-                .generateDecl(ctx, thisContext);
-            if (decl == null) {
-                throw new NullPointerException();
-            }
-            decls.add(decl);
-            
-            // A VarDeclaration also generates declarations for 
-            // the getter and setter to the var field.
-            // TODO: is the best place for this to happen?
-            if (d instanceof VarDeclaration) {
-                VarDeclaration varDecl = (VarDeclaration) d;
-                String varName = varDecl.getName();
-                Type varType = varDecl.getType();
-                
-                // Create references to "this" for the generated methods.
-                wyvern.tools.typedAST.core.expressions.Variable receiver1;
-                wyvern.tools.typedAST.core.expressions.Variable receiver2;
+	public ClassDeclaration getClassDecl() {
+		return cls;
+	}
 
-                receiver1 = new wyvern.tools.typedAST.core.expressions.Variable(
-                        new NameBindingImpl(this.self(), null),
-                        null
-                );
-                receiver2 = new wyvern.tools.typedAST.core.expressions.Variable(
-                        new NameBindingImpl(this.self(), null),
-                        null
-                );
-                
-                // Generate getter and setter; add to the declarations.
-                wyvern.target.corewyvernIL.decl.Declaration getter;
-                wyvern.target.corewyvernIL.decl.Declaration setter;
-                getter = DefDeclaration.generateGetter(ctx, receiver1, varName, varType)
-                    .generateDecl(thisContext, thisContext);
-                setter = DefDeclaration.generateSetter(ctx, receiver2, varName, varType)
-                    .generateDecl(thisContext, thisContext);
-                decls.add(getter);
-                decls.add(setter);  
-            }
-        }
-        // if type is not specified, infer
-        return new wyvern.target.corewyvernIL.expression.New(
-                decls,
-                this.self(),
-                type,
-                getLocation()
-        );
-    }
-    
-    public void setSelfName(String n) {
-        this.selfName = n;
-    }
+	public Map<String, TypedAST> getArgs() {
+		return args;
+	}
+
+	@Override
+	public FileLocation getLocation() {
+		return location;
+	}
+
+	public boolean isGeneric() {
+		return isGeneric;
+	}
+
+	@Override
+	public Expression generateIL(
+			GenContext ctx,
+			ValueType expectedType,
+			List<TypedModuleSpec> dependencies
+			) {
+
+		ValueType type = seq.inferStructuralType(ctx, this.self());
+
+		// Translate the declarations.
+		GenContext thisContext = ctx.extend(
+				this.self(),
+				new wyvern.target.corewyvernIL.expression.Variable(this.self()),
+				type
+				);
+		List<wyvern.target.corewyvernIL.decl.Declaration> decls =
+				new LinkedList<wyvern.target.corewyvernIL.decl.Declaration>();
+
+		for (TypedAST d : seq) {
+			wyvern.target.corewyvernIL.decl.Declaration decl = ((Declaration) d)
+					.generateDecl(ctx, thisContext);
+			if (decl == null) {
+				throw new NullPointerException();
+			}
+			decls.add(decl);
+
+			// A VarDeclaration also generates declarations for
+			// the getter and setter to the var field.
+			// TODO: is the best place for this to happen?
+			if (d instanceof VarDeclaration) {
+				VarDeclaration varDecl = (VarDeclaration) d;
+				String varName = varDecl.getName();
+				Type varType = varDecl.getType();
+
+				// Create references to "this" for the generated methods.
+				wyvern.tools.typedAST.core.expressions.Variable receiver1;
+				wyvern.tools.typedAST.core.expressions.Variable receiver2;
+
+				receiver1 = new wyvern.tools.typedAST.core.expressions.Variable(
+						new NameBindingImpl(this.self(), null),
+						null
+						);
+				receiver2 = new wyvern.tools.typedAST.core.expressions.Variable(
+						new NameBindingImpl(this.self(), null),
+						null
+						);
+
+				// Generate getter and setter; add to the declarations.
+				wyvern.target.corewyvernIL.decl.Declaration getter;
+				wyvern.target.corewyvernIL.decl.Declaration setter;
+				getter = DefDeclaration.generateGetter(ctx, receiver1, varName, varType)
+						.generateDecl(thisContext, thisContext);
+				setter = DefDeclaration.generateSetter(ctx, receiver2, varName, varType)
+						.generateDecl(thisContext, thisContext);
+				decls.add(getter);
+				decls.add(setter);
+			}
+		}
+		// if type is not specified, infer
+		return new wyvern.target.corewyvernIL.expression.New(
+				decls,
+				this.self(),
+				type,
+				getLocation()
+				);
+	}
+
+	public void setSelfName(String n) {
+		this.selfName = n;
+	}
 }

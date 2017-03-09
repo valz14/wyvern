@@ -6,6 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
+
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.GenContext;
@@ -70,15 +71,15 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 	}
 
 	public ClassDeclaration(String name,
-							String implementsName,
-							String implementsClassName,
-							DeclSequence decls,
-							Environment declEnv,
-							List<String> typeParams,
-							FileLocation location) {
-        this(name, implementsName, implementsClassName, decls, typeParams, location);
+			String implementsName,
+			String implementsClassName,
+			DeclSequence decls,
+			Environment declEnv,
+			List<String> typeParams,
+			FileLocation location) {
+		this(name, implementsName, implementsClassName, decls, typeParams, location);
 		classMembersEnv.set(declEnv);
-    }
+	}
 
 	public ClassDeclaration(String name,
 			TaggedInfo taggedInfo,
@@ -97,24 +98,24 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 	}
 
 	public ClassDeclaration(String name,
-							String implementsName,
-							String implementsClassName,
-							DeclSequence decls,
-							FileLocation location) {
+			String implementsName,
+			String implementsClassName,
+			DeclSequence decls,
+			FileLocation location) {
 		this(name, implementsName, implementsClassName, decls, new LinkedList<String>(), location);
 
 	}
 
-    public ClassDeclaration(String name,
-							String implementsName,
-							String implementsClassName,
-							DeclSequence decls,
-							List<String> typeParams,
-							FileLocation location) {
+	public ClassDeclaration(String name,
+			String implementsName,
+			String implementsClassName,
+			DeclSequence decls,
+			List<String> typeParams,
+			FileLocation location) {
 
-    	//System.out.println("Made class: " + name);
+		//System.out.println("Made class: " + name);
 
-    	this.decls = decls;
+		this.decls = decls;
 		this.typeParams = typeParams;
 		typeEquivalentEnvironmentRef = new Reference<>();
 		classMembersEnv = new Reference<>();
@@ -183,13 +184,13 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 			}
 
 			this.nameBinding.getType();
-            TypeType implementsTT = (TypeType)nameImplements.getType();
+			TypeType implementsTT = (TypeType)nameImplements.getType();
 
 			if (!getEquivalentType().subtype(implementsTT)) {
 				ToolError.reportError(ErrorMessage.NOT_SUBTYPE,
 						this,
-                        this.nameBinding.getName(),
-                        nameImplements.getName());
+						this.nameBinding.getName(),
+						nameImplements.getName());
 			}
 		}
 
@@ -200,16 +201,16 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 			}
 
 			this.nameBinding.getType();
-            TypeType implementsCT = (TypeType) (
+			TypeType implementsCT = (TypeType) (
 					((ClassType)nameImplementsClass.getType())
-							.getEnv()
-							.lookupBinding("type", TypeDeclBinding.class)).get().getType();
+					.getEnv()
+					.lookupBinding("type", TypeDeclBinding.class)).get().getType();
 
 			if (!getEquivalentClassType().subtype(implementsCT)) {
 				ToolError.reportError(ErrorMessage.NOT_SUBTYPE,
 						this,
-                        this.nameBinding.getName(),
-                        nameImplementsClass.getName());
+						this.nameBinding.getName(),
+						nameImplementsClass.getName());
 			}
 		}
 
@@ -368,24 +369,24 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 
 	public Type getEquivalentClassType() {
 		if (equivalentClassType == null) {
-            List<Declaration> declsi = new LinkedList<>();
-            for (Declaration d : decls.getDeclIterator()) {
-                if (d.isClassMember()) {
+			List<Declaration> declsi = new LinkedList<>();
+			for (Declaration d : decls.getDeclIterator()) {
+				if (d.isClassMember()) {
 					declsi.add(d);
 				}
-                if (d.isClassMember()) {
+				if (d.isClassMember()) {
 					declsi.add(d);
 				}
-            }
+			}
 			equivalentClassType = new TypeType(TypeDeclUtils.getTypeEquivalentEnvironment(new DeclSequence(declsi), true));
-        }
+		}
 		return equivalentClassType;
 	}
 
 	public EvaluationEnvironment getFilledBody(AtomicReference<Value> objRef) {
 		return evaluateDeclarations(
 				EvaluationEnvironment.EMPTY
-						.extend(new LateValueBinding("this", objRef, getType())));
+				.extend(new LateValueBinding("this", objRef, getType())));
 	}
 
 
@@ -419,7 +420,7 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 		return classDeclaration;
 	}
 
-    public List<String> getTypeParams() {
+	public List<String> getTypeParams() {
 		return typeParams;
 	}
 

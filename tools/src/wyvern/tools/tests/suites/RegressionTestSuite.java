@@ -11,7 +11,7 @@ import wyvern.tools.tests.FileTestRunner;
 /**
  * This test suite includes all working tests (as of this writing).  It
  * adds to the Ant test suites those that work in Eclipse.
- * 
+ *
  * @author aldrich
  *
  */
@@ -19,8 +19,8 @@ import wyvern.tools.tests.FileTestRunner;
 @IncludeCategory(RegressionTests.class)
 @ExcludeCategory(CurrentlyBroken.class)
 @SuiteClasses( { AntRegressionTestSuite.class,
-				FileTestRunner.class,	// uses the old parser
-				})
+	FileTestRunner.class,	// uses the old parser
+})
 public class RegressionTestSuite {
 
 }

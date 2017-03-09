@@ -29,7 +29,7 @@ public class ReceiverView extends View {
 		this.from = from;
 		this.to = to;
 	}
-	
+
 	@Override
 	public Path adapt(Variable v) {
 		if (from == null) {

@@ -7,7 +7,7 @@ public class ViewExtension extends View {
 	private Variable from;
 	private Path to;
 	private View previous;
-	
+
 	public ViewExtension(Variable from, Path to, View previous) {
 		this.from = from;
 		this.to = to;

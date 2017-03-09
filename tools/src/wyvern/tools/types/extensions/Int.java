@@ -25,7 +25,7 @@ import wyvern.tools.types.Type;
 
 public class Int extends AbstractTypeImpl implements OperatableType {
 	public Int() { }
-	
+
 	private static final Set<String> legalOperators = new HashSet<String>(Arrays.asList(new String[] {
 			"+",
 			"-",
@@ -38,20 +38,20 @@ public class Int extends AbstractTypeImpl implements OperatableType {
 			"==",
 			"!=",
 	}));
-	
+
 	@Override
 	public Type checkOperator(Invocation opExp, Environment env) {
 		Type type2 = opExp.getArgument().typecheck(env, Optional.empty());
 		String operatorName = opExp.getOperationName();
-		
+
 		if (!(legalOperators.contains(operatorName))) {
 			reportError(OPERATOR_DOES_NOT_APPLY, opExp, operatorName, this.toString());
 		}
-		
+
 		if (!((type2 instanceof Int) || ((operatorName.equals("+")) && (type2 instanceof Str)))) {
 			reportError(OPERATOR_DOES_NOT_APPLY2, opExp, operatorName, this.toString(), type2.toString());
 		}
-		
+
 		if (isRelationalOperator(operatorName)) {
 			return new Bool(); //relational operations
 		} else if ((operatorName.equals("+")) && (type2 instanceof Str)) {
@@ -60,7 +60,7 @@ public class Int extends AbstractTypeImpl implements OperatableType {
 			return this; //arithmetic operations
 		}
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Int";
@@ -68,8 +68,8 @@ public class Int extends AbstractTypeImpl implements OperatableType {
 
 	private boolean isRelationalOperator(String operatorName) {
 		return operatorName.equals(">") || operatorName.equals("<") || operatorName.equals("!=")
-			|| operatorName.equals(">=") || operatorName.equals("<=") || operatorName.equals("==")	
-			|| operatorName.equals("!=");
+				|| operatorName.equals(">=") || operatorName.equals("<=") || operatorName.equals("==")
+				|| operatorName.equals("!=");
 	}
 
 	@Override
@@ -94,13 +94,13 @@ public class Int extends AbstractTypeImpl implements OperatableType {
 		return this;
 	}
 
-    @Override
-    @Deprecated
-    public ValueType generateILType() {
-        return wyvern.target.corewyvernIL.support.Util.intType();
-    }
+	@Override
+	@Deprecated
+	public ValueType generateILType() {
+		return wyvern.target.corewyvernIL.support.Util.intType();
+	}
 
-    @Override
+	@Override
 	public boolean equals(Object other) { return other instanceof Int; }
 
 	@Override

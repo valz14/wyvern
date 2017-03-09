@@ -20,7 +20,7 @@ public class TypeBinding extends AbstractBinding {
 	}
 
 	public Type getUse() {
-		return getType(); 
+		return getType();
 	}
 	public Optional<Reference<Value>> getMetadata() { return Optional.ofNullable(metadata); }
 }

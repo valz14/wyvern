@@ -22,7 +22,7 @@ import wyvern.tools.util.EvaluationEnvironment;
 
 public class BooleanConstant extends AbstractValue implements InvokableValue, CoreAST {
 	private boolean value;
-	
+
 	public BooleanConstant(boolean b) {
 		this.value = b;
 	}
@@ -37,14 +37,14 @@ public class BooleanConstant extends AbstractValue implements InvokableValue, Co
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluateInvocation(Invocation exp, EvaluationEnvironment env) {
 		BooleanConstant argValue = (BooleanConstant) exp.getArgument().evaluate(env);
 		String operator = exp.getOperationName();
 		switch(operator) {
-			case "&&": return new BooleanConstant(value && argValue.value);
-			case "||": return new BooleanConstant(value || argValue.value);
-			default: throw new RuntimeException("forgot to typecheck!");
+		case "&&": return new BooleanConstant(value && argValue.value);
+		case "||": return new BooleanConstant(value || argValue.value);
+		default: throw new RuntimeException("forgot to typecheck!");
 		}
 	}
 
@@ -59,7 +59,7 @@ public class BooleanConstant extends AbstractValue implements InvokableValue, Co
 		return new BooleanConstant(value);
 	}
 
-    private FileLocation location = FileLocation.UNKNOWN;
+	private FileLocation location = FileLocation.UNKNOWN;
 	public FileLocation getLocation() {
 		return this.location;
 	}

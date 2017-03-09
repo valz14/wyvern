@@ -21,7 +21,7 @@ public class VarBindingContext extends TypeContext {
 			return super.isPresent(varName, isValue);
 		}
 	}
-	
+
 	@Override
 	public ValueType lookupTypeOf(String varName) {
 		if (varName.equals(this.varName)) {
@@ -35,12 +35,12 @@ public class VarBindingContext extends TypeContext {
 	protected TypeContext getNext() {
 		return previous;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "VarBindingContext[" + endToString();
 	}
-	
+
 	@Override
 	protected String endToString() {
 		return varName + " : " + type + ", " + getNext().endToString();

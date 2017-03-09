@@ -18,116 +18,116 @@ import wyvern.tools.util.EvaluationEnvironment;
 
 public class Instantiation extends Declaration implements CoreAST {
 
-    private URI uri;
-    private TypedAST arg;
-    private FileLocation location;
-    private String name;
+	private URI uri;
+	private TypedAST arg;
+	private FileLocation location;
+	private String name;
 
-    /**
-      * Makes a new Instantiation.
-      *
-      * @param uri the URI at which to instantiate
-      * @param arg the argument to the instantiation
-      * @param loc the location in the source where the instantiation is to occur
-      */
-    public Instantiation(URI uri, TypedAST arg, String image, FileLocation loc) {
-        this.uri = uri;
-        this.arg = arg;
-        this.location = loc;
-        this.name = image;
-    }
+	/**
+	 * Makes a new Instantiation.
+	 *
+	 * @param uri the URI at which to instantiate
+	 * @param arg the argument to the instantiation
+	 * @param loc the location in the source where the instantiation is to occur
+	 */
+	public Instantiation(URI uri, TypedAST arg, String image, FileLocation loc) {
+		this.uri = uri;
+		this.arg = arg;
+		this.location = loc;
+		this.name = image;
+	}
 
-    @Override
-    public FileLocation getLocation() {
-        return location;
-    }
+	@Override
+	public FileLocation getLocation() {
+		return location;
+	}
 
-    @Override
-    public Map<String, TypedAST> getChildren() {
-        Hashtable<String, TypedAST> children = new Hashtable<>();
-        children.put("arg", arg);
-        return children;
-    }
+	@Override
+	public Map<String, TypedAST> getChildren() {
+		Hashtable<String, TypedAST> children = new Hashtable<>();
+		children.put("arg", arg);
+		return children;
+	}
 
-    public URI getUri() {
-        return this.uri;
-    }
+	public URI getUri() {
+		return this.uri;
+	}
 
-    public TypedAST getArgs() {
-        return this.arg;
-    }
+	public TypedAST getArgs() {
+		return this.arg;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public Type getType() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Type getType() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public TypedAST cloneWithChildren(Map<String, TypedAST> newChildren) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public TypedAST cloneWithChildren(Map<String, TypedAST> newChildren) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Environment extendType(Environment env, Environment against) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Environment extendType(Environment env, Environment against) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Environment extendName(Environment env, Environment against) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public Environment extendName(Environment env, Environment against) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    protected Type doTypecheck(Environment env) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	protected Type doTypecheck(Environment env) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    protected Environment doExtend(Environment old, Environment against) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	protected Environment doExtend(Environment old, Environment against) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
-        // TODO Auto-generated method stub
-    }
+	@Override
+	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
+		// TODO Auto-generated method stub
+	}
 
-    @Override
-    public DeclType genILType(GenContext ctx) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public DeclType genILType(GenContext ctx) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public wyvern.target.corewyvernIL.decl.Declaration generateDecl(
-            GenContext ctx,
-            GenContext thisContext) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public wyvern.target.corewyvernIL.decl.Declaration generateDecl(
+			GenContext ctx,
+			GenContext thisContext) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(
-            GenContext ctx,
-            List<TypedModuleSpec> dependencies) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(
+			GenContext ctx,
+			List<TypedModuleSpec> dependencies) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

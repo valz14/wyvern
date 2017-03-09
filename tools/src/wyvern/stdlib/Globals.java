@@ -55,10 +55,10 @@ import wyvern.tools.util.EvaluationEnvironment;
 
 public class Globals {
 	public static final NominalType JAVA_IMPORT_TYPE = new NominalType("system", "Java");
-    public static final NominalType PYTHON_IMPORT_TYPE = new NominalType("system", "Python");
+	public static final NominalType PYTHON_IMPORT_TYPE = new NominalType("system", "Python");
 	public static final boolean checkRuntimeTypes = false;
 	private static final Set<String> javaWhiteList = new HashSet<String>();
-	
+
 	static {
 		// the whitelist that anyone can import without requiring java or becoming a resource module
 		// WARNING: do NOT add anything to this list that is a resource we might conceivably want to limit!
@@ -68,7 +68,7 @@ public class Globals {
 		javaWhiteList.add("wyvern.stdlib.support.Regex.utils");
 		javaWhiteList.add("wyvern.stdlib.support.Stdio.debug");
 	}
-	
+
 	public static boolean checkSafeJavaImport(String packageName) {
 		return javaWhiteList.contains(packageName);
 	}
@@ -108,7 +108,7 @@ public class Globals {
 	}
 
 	public static GenContext getStandardGenContext() {
-      return Globals.getGenContext(new InterpreterState(InterpreterState.PLATFORM_JAVA, new File(TestUtil.BASE_PATH), new File(TestUtil.LIB_PATH)));
+		return Globals.getGenContext(new InterpreterState(InterpreterState.PLATFORM_JAVA, new File(TestUtil.BASE_PATH), new File(TestUtil.LIB_PATH)));
 	}
 
 	public static GenContext getGenContext(InterpreterState state) {
@@ -131,10 +131,10 @@ public class Globals {
 		List<FormalArg> ifTrueArgs = Arrays.asList(
 				new FormalArg("trueBranch", Util.unitToDynType()),
 				new FormalArg("falseBranch", Util.unitToDynType()));
-    List<DeclType> boolDeclTypes = new LinkedList<DeclType>();
-    boolDeclTypes.add(new DefDeclType("ifTrue", new DynamicType(), ifTrueArgs));
-    boolDeclTypes.add(new DefDeclType("&&", Util.booleanType(), Arrays.asList(new FormalArg("other", Util.booleanType()))));
-    boolDeclTypes.add(new DefDeclType("||", Util.booleanType(), Arrays.asList(new FormalArg("other", Util.booleanType()))));
+		List<DeclType> boolDeclTypes = new LinkedList<DeclType>();
+		boolDeclTypes.add(new DefDeclType("ifTrue", new DynamicType(), ifTrueArgs));
+		boolDeclTypes.add(new DefDeclType("&&", Util.booleanType(), Arrays.asList(new FormalArg("other", Util.booleanType()))));
+		boolDeclTypes.add(new DefDeclType("||", Util.booleanType(), Arrays.asList(new FormalArg("other", Util.booleanType()))));
 		// construct a type for the system object
 		List<DeclType> declTypes = new LinkedList<DeclType>();
 		List<DeclType> intDeclTypes = new LinkedList<DeclType>();
@@ -146,7 +146,7 @@ public class Globals {
 		intDeclTypes.add(new DefDeclType("<", Util.booleanType(), Arrays.asList(new FormalArg("other", Util.intType()))));
 		intDeclTypes.add(new DefDeclType(">", Util.booleanType(), Arrays.asList(new FormalArg("other", Util.intType()))));
 		intDeclTypes.add(new DefDeclType("==", Util.booleanType(), Arrays.asList(new FormalArg("other", Util.intType()))));
-    intDeclTypes.add(new DefDeclType("negate", Util.intType(), Arrays.asList()));
+		intDeclTypes.add(new DefDeclType("negate", Util.intType(), Arrays.asList()));
 		ValueType intType = new StructuralType("intSelf", intDeclTypes);
 		ValueType boolType = new StructuralType("boolean", boolDeclTypes);
 		declTypes.add(new ConcreteTypeMember("Int", intType));

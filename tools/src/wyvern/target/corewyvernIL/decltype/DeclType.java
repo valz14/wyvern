@@ -9,11 +9,11 @@ import wyvern.target.corewyvernIL.support.View;
 
 public abstract class DeclType extends ASTNode implements IASTNode {
 	private String name;
-	
+
 	DeclType(String name) {
 		this.name = name;
 	}
-	
+
 	public String getName() {
 		return name;
 	}
@@ -23,12 +23,12 @@ public abstract class DeclType extends ASTNode implements IASTNode {
 	public abstract DeclType adapt(View v);
 
 	/**
-	 * Evaluates any metadata that might be present in this type to a value  
+	 * Evaluates any metadata that might be present in this type to a value
 	 */
 	public DeclType interpret(EvalContext ctx) {
 		return this;
 	}
-	
+
 	/**
 	 * Gets the metadata, if any, for this DeclType.
 	 * Returns null if no metadata is associated with this DeclType.

@@ -53,18 +53,18 @@ public class WhileStatement extends AbstractExpressionAST implements CoreAST, Ex
 		if (!(conditional.typecheck(env, Optional.empty()) instanceof Bool)) {
 			ToolError.reportError(ErrorMessage.TYPE_CANNOT_BE_APPLIED, conditional);
 		}
-		
+
 		body.typecheck(env, Optional.empty());
 		return new Unit();
 	}
-	
-    @Deprecated
+
+	@Deprecated
 	private boolean evaluateConditional(EvaluationEnvironment env) {
 		return ((BooleanConstant)conditional.evaluate(env)).getValue();
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluate(EvaluationEnvironment env) {
 		while (evaluateConditional(env)) {
 			body.evaluate(env);
@@ -75,7 +75,7 @@ public class WhileStatement extends AbstractExpressionAST implements CoreAST, Ex
 	public TypedAST getConditional() {
 		return conditional;
 	}
-	
+
 	public TypedAST getBody() {
 		return body;
 	}

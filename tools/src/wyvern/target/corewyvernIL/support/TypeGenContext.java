@@ -6,50 +6,50 @@ import wyvern.target.corewyvernIL.type.ValueType;
 
 public class TypeGenContext extends GenContext {
 
-    String typeName;
-    Path objName;
+	String typeName;
+	Path objName;
 
-    public TypeGenContext(String typeName, Path objName, GenContext genContext) {
-        super(genContext);
-        this.typeName = typeName;
-        this.objName = objName;
-    }
+	public TypeGenContext(String typeName, Path objName, GenContext genContext) {
+		super(genContext);
+		this.typeName = typeName;
+		this.objName = objName;
+	}
 
-    public TypeGenContext(String typeName, String newName, GenContext genContext) {
-        super(genContext);
-        this.typeName = typeName;
-        this.objName = new Variable(newName);
-    }
+	public TypeGenContext(String typeName, String newName, GenContext genContext) {
+		super(genContext);
+		this.typeName = typeName;
+		this.objName = new Variable(newName);
+	}
 
-    @Override
-    public Path getContainerForTypeAbbrev(String typeName) {
-        if(this.typeName.equals(typeName)) {
+	@Override
+	public Path getContainerForTypeAbbrev(String typeName) {
+		if(this.typeName.equals(typeName)) {
 			return objName;
 		} else {
 			return getNext().getContainerForTypeAbbrev(typeName);
 		}
-    }
+	}
 
-    @Override
-    public String toString() {
-        return "GenContext[" + endToString();
-    }
+	@Override
+	public String toString() {
+		return "GenContext[" + endToString();
+	}
 
-    @Override
-    public String endToString() {
-        return typeName + " : " + objName  + ", " + getNext().endToString();
-    }
+	@Override
+	public String endToString() {
+		return typeName + " : " + objName  + ", " + getNext().endToString();
+	}
 
-    @Override
-    public ValueType lookupTypeOf(String varName) {
-        return getNext().lookupTypeOf(varName);
-    }
+	@Override
+	public ValueType lookupTypeOf(String varName) {
+		return getNext().lookupTypeOf(varName);
+	}
 
-    @Override
-    public CallableExprGenerator getCallableExprRec(String varName, GenContext origCtx) {
-        return getNext().getCallableExprRec(varName, origCtx);
-    }
-    
+	@Override
+	public CallableExprGenerator getCallableExprRec(String varName, GenContext origCtx) {
+		return getNext().getCallableExprRec(varName, origCtx);
+	}
+
 	@Override
 	public boolean isPresent(String varName, boolean isValue) {
 		if (!isValue && this.typeName.equals(varName)) {

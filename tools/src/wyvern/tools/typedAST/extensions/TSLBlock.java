@@ -83,7 +83,7 @@ public class TSLBlock extends AbstractExpressionAST implements ExpressionAST {
 	}
 
 	@Override
-    @Deprecated
+	@Deprecated
 	public Value evaluate(EvaluationEnvironment env) {
 		return inner.evaluate(EvaluationEnvironment.EMPTY.extend(new OuterEnviromentBinding(env)));
 	}
@@ -100,7 +100,7 @@ public class TSLBlock extends AbstractExpressionAST implements ExpressionAST {
 		return new TSLBlock(newChildren.get("inner"));
 	}
 
-    @Override
+	@Override
 	public FileLocation getLocation() {
 		return null;
 	}

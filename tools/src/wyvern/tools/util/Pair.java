@@ -5,10 +5,10 @@ public class Pair<T1, T2> {
 		first = f;
 		second = s;
 	}
-	
+
 	public T1 first;
 	public T2 second;
-	
+
 	public String toString() {
 		return "<" + first + "," + second + ">";
 	}

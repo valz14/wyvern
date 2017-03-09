@@ -27,7 +27,7 @@ import wyvern.tools.types.TypeResolver;
 public class Arrow extends AbstractTypeImpl implements ApplyableType {
 	private Type result;
 	private Type argument;
-	
+
 	public Arrow(Type argument, Type result) {
 		this.argument = argument;
 		this.result = result;
@@ -36,24 +36,24 @@ public class Arrow extends AbstractTypeImpl implements ApplyableType {
 	public Type getResult() {
 		return result;
 	}
-	
+
 	public Type getArgument() {
 		return argument;
 	}
-	
+
 	@Override
 	public Type checkApplication(Application application, Environment env) {
 		Type actualType = application.getArgument().typecheck(env, Optional.of(argument));
 		argument = TypeResolver.resolve(argument, env);
-		
+
 		// System.out.println(argument); //FIXME:
-		
+
 		if (!actualType.subtype(argument)) {
 			reportError(ACTUAL_FORMAL_TYPE_MISMATCH, application,actualType.toString(),argument.toString());
 		}
 		return result;
 	}
-	
+
 	@Override
 	public String toString() {
 		String argString = (argument == null)?null:argument.toString();
@@ -62,30 +62,30 @@ public class Arrow extends AbstractTypeImpl implements ApplyableType {
 		}
 		return argString + " -> " + result;
 	}
-	
+
 	@Override
 	public boolean equals(Object otherT) {
 		if (!(otherT instanceof Arrow)) {
 			return false;
 		}
-		Arrow otherAT = (Arrow) otherT; 
+		Arrow otherAT = (Arrow) otherT;
 		return argument.equals(otherAT.argument) && result.equals(otherAT.result);
 	}
-	
+
 	@Override
 	public int hashCode() {
 		return 37*argument.hashCode()+result.hashCode();
-	}	
+	}
 
 	@Override
 	public boolean subtype(Type other, HashSet<SubtypeRelation> subtypes) {
 		if (super.subtype(other, subtypes)) {
 			return true;
 		}
-		
+
 		if (other instanceof Arrow) {
 			Arrow oa = (Arrow) other;
-			
+
 			return 	oa.argument.subtype(this.argument, subtypes) &&
 					this.result.subtype(oa.result, subtypes);
 		} else {
@@ -114,11 +114,11 @@ public class Arrow extends AbstractTypeImpl implements ApplyableType {
 		return null;
 	}
 
-    @Override
-    @Deprecated
-    public ValueType generateILType() {
-        return new StructuralType("this", Arrays.asList(new DefDeclType(Util.APPLY_NAME, result.generateILType(), Arrays.asList(new FormalArg("arg1", argument.generateILType())))));
-    }
+	@Override
+	@Deprecated
+	public ValueType generateILType() {
+		return new StructuralType("this", Arrays.asList(new DefDeclType(Util.APPLY_NAME, result.generateILType(), Arrays.asList(new FormalArg("arg1", argument.generateILType())))));
+	}
 
 	@Override
 	public ValueType getILType(GenContext ctx) {

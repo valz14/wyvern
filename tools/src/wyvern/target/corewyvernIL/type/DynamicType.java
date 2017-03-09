@@ -30,7 +30,7 @@ public class DynamicType extends ValueType {
 	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
 		dest.append("Dyn");
 	}
-	
+
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
 		// TODO Auto-generated method stub

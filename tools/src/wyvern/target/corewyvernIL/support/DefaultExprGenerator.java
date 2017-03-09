@@ -11,11 +11,11 @@ import wyvern.tools.errors.HasLocation;
 public class DefaultExprGenerator implements CallableExprGenerator {
 
 	private IExpr expr;
-	
+
 	public DefaultExprGenerator(IExpr iExpr) {
 		expr = iExpr;
 	}
-	
+
 	@Override
 	public IExpr genExpr() {
 		return expr;
