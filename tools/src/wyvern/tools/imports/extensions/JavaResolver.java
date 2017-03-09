@@ -36,6 +36,7 @@ public class JavaResolver implements ImportResolver {
 		}
 
 		@Override
+		@Deprecated
 		public Environment extendNames(Environment in) {
 			Optional<MetadataInnerBinding> innerBinding = in.lookupBinding("metaEnv", MetadataInnerBinding.class);
 			Environment oldMetaEnv = innerBinding.map(MetadataInnerBinding::getInnerEnv).orElse(Environment.getEmptyEnvironment());
@@ -45,6 +46,7 @@ public class JavaResolver implements ImportResolver {
 		}
 
 		@Override
+		@Deprecated
 		public Environment extend(Environment in) {
 			Optional<MetadataInnerBinding> innerBinding = in.lookupBinding("metaEnv", MetadataInnerBinding.class);
 			Environment oldMetaEnv = innerBinding.map(MetadataInnerBinding::getInnerEnv).orElse(Environment.getEmptyEnvironment());
@@ -54,11 +56,13 @@ public class JavaResolver implements ImportResolver {
 		}
 
 		@Override
+		@Deprecated
 		public Type typecheck(Environment env) {
 			return resolved.typecheck(env, Optional.<Type>empty());
 		}
 
 		@Override
+		@Deprecated
 		public EvaluationEnvironment extendVal(EvaluationEnvironment env) {
 			return resolved.extendWithValue(env);
 		}

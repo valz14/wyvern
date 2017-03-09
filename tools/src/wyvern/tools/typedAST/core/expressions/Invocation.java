@@ -38,189 +38,189 @@ import wyvern.tools.util.EvaluationEnvironment;
 
 public class Invocation extends CachingTypedAST implements CoreAST, Assignable {
 
-	private String operationName;
-	private ExpressionAST receiver;
-	private ExpressionAST argument;
-	private FileLocation location = FileLocation.UNKNOWN;
+    private String operationName;
+    private ExpressionAST receiver;
+    private ExpressionAST argument;
+    private FileLocation location = FileLocation.UNKNOWN;
 
-	/**
-	 * Invocation of an operation on two operands.
-	 *
-	 * @param op1 the first operand
-	 * @param op2 the second operand
-	 * @param operatorName the operator invoked.
-	 * @param fileLocation the location in the source where the operation occurs
-	 */
-	public Invocation(TypedAST op1, String operatorName, TypedAST op2, FileLocation fileLocation) {
-		this.receiver = (ExpressionAST) op1;
-		this.argument = (ExpressionAST) op2;
-		this.operationName = operatorName;
-		this.location = fileLocation;
-	}
+    /**
+     * Invocation of an operation on two operands.
+     *
+     * @param op1 the first operand
+     * @param op2 the second operand
+     * @param operatorName the operator invoked.
+     * @param fileLocation the location in the source where the operation occurs
+     */
+    public Invocation(TypedAST op1, String operatorName, TypedAST op2, FileLocation fileLocation) {
+        this.receiver = (ExpressionAST) op1;
+        this.argument = (ExpressionAST) op2;
+        this.operationName = operatorName;
+        this.location = fileLocation;
+    }
 
-	@Override
-	protected Type doTypecheck(Environment env, Optional<Type> expected) {
+    @Override
+    protected Type doTypecheck(Environment env, Optional<Type> expected) {
 
-		Type receiverType = receiver.typecheck(env, Optional.empty());
+        Type receiverType = receiver.typecheck(env, Optional.empty());
 
-		if (argument != null) {
-			argument.typecheck(env, Optional.empty());
-		}
+        if (argument != null) {
+            argument.typecheck(env, Optional.empty());
+        }
 
-		if (receiverType instanceof OperatableType) {
-			return ((OperatableType)receiverType).checkOperator(this,env);
-		} else {
-			ToolError.reportError(
-					ErrorMessage.OPERATOR_DOES_NOT_APPLY,
-					this,
-					"Trying to call a function on non OperatableType!",
-					receiverType.toString()
-					);
-			return null;
-		}
-	}
+        if (receiverType instanceof OperatableType) {
+            return ((OperatableType)receiverType).checkOperator(this,env);
+        } else {
+            ToolError.reportError(
+                    ErrorMessage.OPERATOR_DOES_NOT_APPLY,
+                    this,
+                    "Trying to call a function on non OperatableType!",
+                    receiverType.toString()
+                    );
+            return null;
+        }
+    }
 
-	public TypedAST getArgument() {
-		return argument;
-	}
+    public TypedAST getArgument() {
+        return argument;
+    }
 
-	public ExpressionAST getReceiver() {
-		return receiver;
-	}
+    public ExpressionAST getReceiver() {
+        return receiver;
+    }
 
-	public String getOperationName() {
-		return operationName;
-	}
+    public String getOperationName() {
+        return operationName;
+    }
 
-	@Override
-	@Deprecated
-	public Value evaluate(EvaluationEnvironment env) {
+    @Override
+    @Deprecated
+    public Value evaluate(EvaluationEnvironment env) {
 
-		Value lhs = receiver.evaluate(env);
-		if (Globals.checkRuntimeTypes && !(lhs instanceof InvokableValue)) {
-			reportEvalError(CANNOT_INVOKE, lhs.toString(), this);
-		}
-		InvokableValue receiverValue = (InvokableValue) lhs;
-		Value out = receiverValue.evaluateInvocation(this, env);
+        Value lhs = receiver.evaluate(env);
+        if (Globals.checkRuntimeTypes && !(lhs instanceof InvokableValue)) {
+            reportEvalError(CANNOT_INVOKE, lhs.toString(), this);
+        }
+        InvokableValue receiverValue = (InvokableValue) lhs;
+        Value out = receiverValue.evaluateInvocation(this, env);
 
-		//TODO: bit of a hack
-		if (out instanceof VarValue) {
-			out = ((VarValue)out).getValue();
-		}
-		return out;
-	}
+        //TODO: bit of a hack
+        if (out instanceof VarValue) {
+            out = ((VarValue)out).getValue();
+        }
+        return out;
+    }
 
-	@Override
-	public void checkAssignment(Assignment ass, Environment env) {
-		Type recType = receiver.typecheck(env, Optional.empty());
-		if (!(recType instanceof ClassType)) { //TODO: Hack
-			throw new RuntimeException(
-					"Cannot assign to a field on a type without fields!"
-					);
-		}
-		((ClassType) recType)
-		.getEnv()
-		.lookupBinding(operationName, AssignableNameBinding.class)
-		.get();
-	}
+    @Override
+    public void checkAssignment(Assignment ass, Environment env) {
+        Type recType = receiver.typecheck(env, Optional.empty());
+        if (!(recType instanceof ClassType)) { //TODO: Hack
+            throw new RuntimeException(
+                    "Cannot assign to a field on a type without fields!"
+                    );
+        }
+        ((ClassType) recType)
+        .getEnv()
+        .lookupBinding(operationName, AssignableNameBinding.class)
+        .get();
+    }
 
-	@Override
-	@Deprecated
-	public Value evaluateAssignment(Assignment ass, EvaluationEnvironment env) {
-		Value lhs = receiver.evaluate(env);
-		if (!(lhs instanceof Assignable)) {
-			reportEvalError(CANNOT_INVOKE, lhs.toString(), this);
-		}
+    @Override
+    @Deprecated
+    public Value evaluateAssignment(Assignment ass, EvaluationEnvironment env) {
+        Value lhs = receiver.evaluate(env);
+        if (!(lhs instanceof Assignable)) {
+            reportEvalError(CANNOT_INVOKE, lhs.toString(), this);
+        }
 
-		return ((Assignable)lhs).evaluateAssignment(ass, env);
-	}
+        return ((Assignable)lhs).evaluateAssignment(ass, env);
+    }
 
-	@Override
-	public Map<String, TypedAST> getChildren() {
-		Hashtable<String, TypedAST> children = new Hashtable<>();
-		if (receiver != null) {
-			children.put("receiver", receiver);
-		}
-		if (argument != null) {
-			children.put("argument", argument);
-		}
-		return children;
-	}
+    @Override
+    public Map<String, TypedAST> getChildren() {
+        Hashtable<String, TypedAST> children = new Hashtable<>();
+        if (receiver != null) {
+            children.put("receiver", receiver);
+        }
+        if (argument != null) {
+            children.put("argument", argument);
+        }
+        return children;
+    }
 
-	@Override
-	public ExpressionAST doClone(Map<String, TypedAST> nc) {
-		return new Invocation(
-				nc.get("receiver"),
-				operationName,
-				nc.get("argument"),
-				location
-				);
-	}
+    @Override
+    public ExpressionAST doClone(Map<String, TypedAST> nc) {
+        return new Invocation(
+                nc.get("receiver"),
+                operationName,
+                nc.get("argument"),
+                location
+                );
+    }
 
-	public FileLocation getLocation() {
-		return this.location;
-	}
+    public FileLocation getLocation() {
+        return this.location;
+    }
 
-	@Override
-	public IExpr generateIL(
-			GenContext ctx,
-			ValueType expectedType,
-			List<TypedModuleSpec> dependencies) {
+    @Override
+    public IExpr generateIL(
+            GenContext ctx,
+            ValueType expectedType,
+            List<TypedModuleSpec> dependencies) {
 
-		CallableExprGenerator generator = getCallableExpr(ctx);
+        CallableExprGenerator generator = getCallableExpr(ctx);
 
-		// Invoking property of a dynamic object; don't bother validating things.
-		if (generator.getDeclType(ctx) == null) {
-			return new FieldGet(
-					receiver.generateIL(ctx, null, null),
-					operationName,
-					location);
-		}
+        // Invoking property of a dynamic object; don't bother validating things.
+        if (generator.getDeclType(ctx) == null) {
+            return new FieldGet(
+                    receiver.generateIL(ctx, null, null),
+                    operationName,
+                    location);
+        }
 
-		if (argument != null) {
-			IExpr arg  = argument
-					.generateIL(ctx, null, dependencies);
+        if (argument != null) {
+            IExpr arg  = argument
+                    .generateIL(ctx, null, dependencies);
 
-			List<IExpr> args = new ArrayList<IExpr>();
-			if (!(argument instanceof UnitVal)) { // TODO: This is hacky. Refactor me to avoid
-				args.add(arg);
-			}
+            List<IExpr> args = new ArrayList<IExpr>();
+            if (!(argument instanceof UnitVal)) { // TODO: This is hacky. Refactor me to avoid
+                args.add(arg);
+            }
 
-			return generator.genExprWithArgs(args, this);
-		} else {
-			return generator.genExpr();
-		}
-	}
+            return generator.genExprWithArgs(args, this);
+        } else {
+            return generator.genExpr();
+        }
+    }
 
-	@Override
-	public CallableExprGenerator getCallableExpr(GenContext genCtx) {
-		return new InvocationExprGenerator(
-				receiver.generateIL(genCtx, null, null),
-				operationName,
-				genCtx,
-				getLocation()
-				);
-	}
+    @Override
+    public CallableExprGenerator getCallableExpr(GenContext genCtx) {
+        return new InvocationExprGenerator(
+                receiver.generateIL(genCtx, null, null),
+                operationName,
+                genCtx,
+                getLocation()
+                );
+    }
 
-	@Override
-	public StringBuilder prettyPrint() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Invocation(operationName=");
-		sb.append(operationName);
-		sb.append(", receiver=");
-		if (receiver != null) {
-			sb.append(receiver.prettyPrint());
-		} else {
-			sb.append("null");
-		}
-		sb.append(", argument=");
-		if (argument != null) {
-			sb.append(argument.prettyPrint());
-		} else {
-			sb.append("null");
-		}
-		sb.append(")");
-		return sb;
-	}
+    @Override
+    public StringBuilder prettyPrint() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Invocation(operationName=");
+        sb.append(operationName);
+        sb.append(", receiver=");
+        if (receiver != null) {
+            sb.append(receiver.prettyPrint());
+        } else {
+            sb.append("null");
+        }
+        sb.append(", argument=");
+        if (argument != null) {
+            sb.append(argument.prettyPrint());
+        } else {
+            sb.append("null");
+        }
+        sb.append(")");
+        return sb;
+    }
 }
 

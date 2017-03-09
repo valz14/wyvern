@@ -118,6 +118,7 @@ public class WyvernResolver implements ImportResolver {
 
 		boolean extending = false;
 		@Override
+		@Deprecated
 		public Environment extend(Environment in) {
 			if (extending) {
 				throw new RuntimeException("Cyclic dependency");

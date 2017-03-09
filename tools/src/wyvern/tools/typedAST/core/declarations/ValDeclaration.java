@@ -82,6 +82,7 @@ public class ValDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
+	@Deprecated
 	protected Type doTypecheck(Environment env) {
 		Type resolved = null;
 		if (binding.getType() != null) {
@@ -145,6 +146,7 @@ public class ValDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
+	@Deprecated
 	protected Environment doExtend(Environment old, Environment against) {
 		Environment env = extendName(old, against);
 		if (variableName != null)
@@ -155,6 +157,7 @@ public class ValDeclaration extends Declaration implements CoreAST {
 		return env;
 	}
 
+	@Deprecated
 	@Override
 	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
 		EvaluationEnvironment newEnv = old.extend(new ValueBinding(binding.getName(), binding.getType()));
@@ -200,6 +203,7 @@ public class ValDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
+	@Deprecated
 	public Environment extendName(Environment env, Environment against) {
 		// System.out.println("Resolving ValDeclaration using extendName: " + this.getName());
 

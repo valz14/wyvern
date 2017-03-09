@@ -83,6 +83,7 @@ public class DelegateDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
+	@Deprecated
 	protected Type doTypecheck(Environment env) {
 		boolean targetType = this.target.typecheck(env, Optional.of(type)).subtype(type);
 		if (!targetType) {
@@ -92,17 +93,22 @@ public class DelegateDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
+	@Deprecated
 	protected Environment doExtend(Environment old, Environment against) {
 		return extendName(old, against);
 	}
 
+
 	@Override
+	@Deprecated
 	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
 		// TODO Auto-generated method stub
 		return old;
 	}
 
+
 	@Override
+	@Deprecated
 	public void evalDecl(EvaluationEnvironment evalEnv,
 			EvaluationEnvironment declEnv) {
 		// TODO Auto-generated method stub

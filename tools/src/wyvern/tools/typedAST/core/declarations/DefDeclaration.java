@@ -132,6 +132,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 	}
 
 	@Override
+	@Deprecated
 	protected Type doTypecheck(Environment env) {
 		Environment extEnv = env;
 		for (NameBinding bind : argNames) {
@@ -150,6 +151,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 	}
 
 	@Override
+	@Deprecated
 	protected Environment doExtend(Environment old, Environment against) {
 		return extendName(old, against);
 	}
@@ -164,13 +166,17 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		return body;
 	}
 
+
 	@Override
+	@Deprecated
 	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
 		EvaluationEnvironment newEnv = old.extend(new ValueBinding(name, type));
 		return newEnv;
 	}
 
+
 	@Override
+	@Deprecated
 	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
 		Closure closure = new Closure(this, evalEnv);
 		ValueBinding vb = declEnv.lookup(name).get();

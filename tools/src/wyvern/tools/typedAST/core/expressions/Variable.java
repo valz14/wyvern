@@ -32,117 +32,117 @@ import wyvern.tools.util.EvaluationEnvironment;
 
 public class Variable extends AbstractExpressionAST implements CoreAST, Assignable {
 
-	private NameBinding binding;
-	private FileLocation location = FileLocation.UNKNOWN;
+    private NameBinding binding;
+    private FileLocation location = FileLocation.UNKNOWN;
 
-	public Variable(NameBinding binding, FileLocation location) {
-		this.binding = binding;
-		this.location = location;
-	}
+    public Variable(NameBinding binding, FileLocation location) {
+        this.binding = binding;
+        this.location = location;
+    }
 
-	public String getName() {
-		return this.binding.getName();
-	}
+    public String getName() {
+        return this.binding.getName();
+    }
 
-	@Override
-	public Type getType() {
-		return binding.getType();
-	}
+    @Override
+    public Type getType() {
+        return binding.getType();
+    }
 
-	@Override
-	public Type typecheck(Environment env, Optional<Type> expected) {
-		// System.out.println("In variable: " + binding.getName() + ":" + getType());
+    @Override
+    public Type typecheck(Environment env, Optional<Type> expected) {
+        // System.out.println("In variable: " + binding.getName() + ":" + getType());
 
-		Type type = getType();
+        Type type = getType();
 
-		if (type == null) {
-			String name = binding.getName();
-			binding = env.lookup(name);
-			if (binding == null) {
-				reportError(VARIABLE_NOT_DECLARED, this, name);
-			} else {
-				type = binding.getType();
-			}
-		}
-		return TypeResolver.resolve(type,env);
-	}
+        if (type == null) {
+            String name = binding.getName();
+            binding = env.lookup(name);
+            if (binding == null) {
+                reportError(VARIABLE_NOT_DECLARED, this, name);
+            } else {
+                type = binding.getType();
+            }
+        }
+        return TypeResolver.resolve(type,env);
+    }
 
-	@Override
-	@Deprecated
-	public Value evaluate(EvaluationEnvironment env) {
-		//Value value = binding.getValue(env);
-		Value value = env.lookup(binding.getName())
-				.orElseThrow(() -> new RuntimeException("Invalid variable name "))
-				.getValue(env);
+    @Override
+    @Deprecated
+    public Value evaluate(EvaluationEnvironment env) {
+        //Value value = binding.getValue(env);
+        Value value = env.lookup(binding.getName())
+                .orElseThrow(() -> new RuntimeException("Invalid variable name "))
+                .getValue(env);
 
-		if (value instanceof VarValue) {
-			return ((VarValue)value).getValue();
-		}
-		return value;
-	}
+        if (value instanceof VarValue) {
+            return ((VarValue)value).getValue();
+        }
+        return value;
+    }
 
-	@Override
-	public void checkAssignment(Assignment ass, Environment env) {
-		env.lookupBinding(binding.getName(), AssignableNameBinding.class)
-		.orElseThrow(() -> new RuntimeException(
-				"Cannot set a non-existent or immutable var"));
-	}
+    @Override
+    public void checkAssignment(Assignment ass, Environment env) {
+        env.lookupBinding(binding.getName(), AssignableNameBinding.class)
+            .orElseThrow(() -> new RuntimeException(
+                "Cannot set a non-existent or immutable var"));
+    }
 
-	@Override
-	@Deprecated
-	public Value evaluateAssignment(Assignment ass, EvaluationEnvironment env) {
-		Value value = ass.getValue().evaluate(env);
-		env.lookupValueBinding(binding.getName(), AssignableValueBinding.class)
-		.orElseThrow(() -> new RuntimeException("Invalid assignment"))
-		.assign(value);
+    @Override
+    @Deprecated
+    public Value evaluateAssignment(Assignment ass, EvaluationEnvironment env) {
+        Value value = ass.getValue().evaluate(env);
+        env.lookupValueBinding(binding.getName(), AssignableValueBinding.class)
+            .orElseThrow(() -> new RuntimeException("Invalid assignment"))
+            .assign(value);
 
-		return value;
-	}
+        return value;
+    }
 
-	@Override
-	public Map<String, TypedAST> getChildren() {
-		return new Hashtable<>();
-	}
+    @Override
+    public Map<String, TypedAST> getChildren() {
+        return new Hashtable<>();
+    }
 
-	@Override
-	public TypedAST cloneWithChildren(Map<String, TypedAST> nc) {
-		return new Variable(binding, location);
-	}
+    @Override
+    public TypedAST cloneWithChildren(Map<String, TypedAST> nc) {
+        return new Variable(binding, location);
+    }
 
-	public FileLocation getLocation() {
-		return this.location;
-	}
+    public FileLocation getLocation() {
+        return this.location;
+    }
 
-	@Override
-	public IExpr generateIL(
-			GenContext ctx,
-			ValueType expectedType,
-			List<TypedModuleSpec> dependencies) {
-		return ctx.lookupExp(getName(), location);
-	}
+    @Override
+    public IExpr generateIL(
+            GenContext ctx,
+            ValueType expectedType,
+            List<TypedModuleSpec> dependencies) {
+        return ctx.lookupExp(getName(), location);
+    }
 
-	@Override
-	public CallableExprGenerator getCallableExpr(GenContext ctx) {
-		try {
-			return ctx.getCallableExpr(getName());
-		} catch (RuntimeException e) {
-			ToolError.reportError(VARIABLE_NOT_DECLARED, location, getName());
-			throw new RuntimeException("impossible");
-		}
-	}
+    @Override
+    public CallableExprGenerator getCallableExpr(GenContext ctx) {
+        try {
+            return ctx.getCallableExpr(getName());
+        } catch (RuntimeException e) {
+            ToolError.reportError(VARIABLE_NOT_DECLARED, location, getName());
+            throw new RuntimeException("impossible");
+        }
+    }
 
-	@Override
-	public StringBuilder prettyPrint() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("Variable(\"");
-		sb.append(binding.getName());
-		sb.append("\" : ");
-		if (binding.getType() != null) {
-			sb.append(binding.getType().toString());
-		} else {
-			sb.append("null");
-		}
-		sb.append(")");
-		return sb;
-	}
+    @Override
+    public StringBuilder prettyPrint() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Variable(\"");
+        sb.append(binding.getName());
+        sb.append("\" : ");
+        if (binding.getType() != null) {
+            sb.append(binding.getType().toString());
+        } else {
+            sb.append("null");
+        }
+        sb.append(")");
+        return sb;
+    }
 }

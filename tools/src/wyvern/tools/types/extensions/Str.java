@@ -30,6 +30,7 @@ public class Str extends AbstractTypeImpl implements OperatableType {
 	private static final Set<String> legalOperators = new HashSet<String>(Arrays.asList(new String[] {"+", "=="}));
 
 	@Override
+	@Deprecated
 	public Type checkOperator(Invocation opExp, Environment env) {
 		String operatorName = opExp.getOperationName();
 
@@ -68,6 +69,7 @@ public class Str extends AbstractTypeImpl implements OperatableType {
 	}
 
 	@Override
+	@Deprecated
 	public boolean subtype(Type other, HashSet<SubtypeRelation> subtypes) {
 		if (other instanceof JavaClassType) {
 			return (((JavaClassType) other).getInnerClass().isAssignableFrom(String.class));

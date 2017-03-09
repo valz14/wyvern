@@ -104,6 +104,7 @@ public class ImportDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
+	@Deprecated
 	protected Type doTypecheck(Environment env) {
 		if(uri.getScheme().equals("wyv")) {
 			String schemeSpecificPart = uri.getSchemeSpecificPart();
@@ -148,16 +149,20 @@ public class ImportDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
+	@Deprecated
 	protected Environment doExtend(Environment old, Environment against) {
 		return binder.extend(old);
 	}
 
 	@Override
+	@Deprecated
 	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
 		return binder.extendVal(old);
 	}
 
+
 	@Override
+	@Deprecated
 	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
 		binder.bindVal(evalEnv);
 	}

@@ -226,6 +226,7 @@ public class Util {
 		}
 	}
 
+	@Deprecated
 	public static Class wyvToJavaType(Type type) {
 		if (type instanceof Int) {
 			return int.class;

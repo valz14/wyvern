@@ -87,6 +87,7 @@ public class TypeAbbrevDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
+	@Deprecated
 	protected Type doTypecheck(Environment env) {
 		if (resolveReferenceType(env) != null) {
 			return new Unit();
@@ -104,17 +105,20 @@ public class TypeAbbrevDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
+	@Deprecated
 	protected Environment doExtend(Environment old, Environment against) {
 		return old.extend(new TypeBinding(alias, resolveReferenceType(old)));
 	}
 
 	@Override
+	@Deprecated
 	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
 		// TODO Auto-generated method stub
 		return old;
 	}
 
 	@Override
+	@Deprecated
 	public void evalDecl(EvaluationEnvironment evalEnv,
 			EvaluationEnvironment declEnv) {
 		// TODO Auto-generated method stub

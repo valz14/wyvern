@@ -85,6 +85,7 @@ public class JavaMeth extends DefDeclaration {
 	}
 
 	@Override
+	@Deprecated
 	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
 		JClosure closure = new JClosure(methods, evalEnv);
 		ValueBinding vb = declEnv.lookup(getName()).get();

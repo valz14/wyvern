@@ -172,12 +172,14 @@ public class TypeVarDecl extends Declaration {
 	}
 
 	@Override
+	@Deprecated
 	protected Type doTypecheck(Environment env) {
 		evalMeta(env);
 		return body.typecheck(env, Optional.<Type>empty());
 	}
 
 	@Override
+	@Deprecated
 	protected Environment doExtend(Environment old, Environment against) {
 		return body.extend(old, against);
 	}

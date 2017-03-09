@@ -112,6 +112,7 @@ public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST 
 	}
 
 	@Override
+	@Deprecated
 	public Type doTypecheck(Environment env) {
 		Environment eenv = decls.extend(env, env);
 
@@ -127,6 +128,7 @@ public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST 
 	}
 
 	@Override
+	@Deprecated
 	protected Environment doExtend(Environment old, Environment against) {
 		Environment newEnv = old.extend(nameBinding).extend(typeBinding);
 		// newEnv = newEnv.extend(new NameBindingImpl("this", nameBinding.getType())); // Why is there "this" in a type (not class)?
@@ -135,6 +137,7 @@ public class TypeDeclaration extends AbstractTypeDeclaration implements CoreAST 
 	}
 
 	@Override
+	@Deprecated
 	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
 		EvaluationEnvironment newEnv = old.extend(new ValueBinding(nameBinding.getName(), nameBinding.getType()));
 		return newEnv;

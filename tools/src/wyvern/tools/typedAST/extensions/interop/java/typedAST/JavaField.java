@@ -50,11 +50,13 @@ public class JavaField extends Declaration {
 	}
 
 	@Override
+	@Deprecated
 	protected Type doTypecheck(Environment env) {
 		return Util.javaToWyvType(src.getType());
 	}
 
 	@Override
+	@Deprecated
 	protected Environment doExtend(Environment old, Environment against) {
 		Environment newEnv = old;
 		return newEnv;
@@ -85,6 +87,7 @@ public class JavaField extends Declaration {
 	}
 
 	@Override
+	@Deprecated
 	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
 		EvaluationEnvironment newEnv = old.extend(new JavaFieldValueBinding(nameBinding.getName(), nameBinding.getType()));
 		return newEnv;
@@ -93,6 +96,7 @@ public class JavaField extends Declaration {
 
 	private boolean binding = false;
 	@Override
+	@Deprecated
 	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
 		//Not actually needed.
 	}

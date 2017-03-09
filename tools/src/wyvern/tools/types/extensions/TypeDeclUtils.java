@@ -83,6 +83,7 @@ public class TypeDeclUtils {
 		return tev;
 	}
 
+	@Deprecated
 	public static Environment getTypeEquivalentEnvironment(DeclSequence decls, boolean useClassMembers) {
 		new LinkedList<>();
 

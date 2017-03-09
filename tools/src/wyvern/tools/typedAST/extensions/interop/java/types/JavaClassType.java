@@ -31,6 +31,7 @@ public class JavaClassType extends ClassType implements MetaType {
 	public JavaClassType(JavaClassDecl cd) {
 		super(new Reference<Environment>() {
 			@Override
+			@Deprecated
 			public Environment get() {
 				cd.initalize();
 				return cd.getInstanceMembersEnv();
@@ -40,10 +41,12 @@ public class JavaClassType extends ClassType implements MetaType {
 		decl = cd;
 	}
 
+	@Deprecated
 	public void initalize() {
 		(decl).initalize();
 	}
 
+	@Deprecated
 	public Class getInnerClass() {
 		decl.initalize();
 		return decl.getClazz();
@@ -70,6 +73,7 @@ public class JavaClassType extends ClassType implements MetaType {
 	}
 
 	@Override
+	@Deprecated
 	public boolean subtype(Type other) {
 		decl.initalize();
 		if (other instanceof JavaClassType

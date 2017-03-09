@@ -132,12 +132,12 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 		return objType;
 	}
 
-
-
+	@Deprecated
 	protected void updateEnv() {
 		typeEquivalentEnvironmentRef.set(TypeDeclUtils.getTypeEquivalentEnvironment(getDecls(), false));
 	}
 
+	@Deprecated
 	public TypeType getEquivalentType() {
 		if (equivalentType == null) {
 			equivalentType = new TypeType(TypeDeclUtils.getTypeEquivalentEnvironment(getDecls(), false));
@@ -155,6 +155,7 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 	}
 
 	@Override
+	@Deprecated
 	public Type doTypecheck(Environment env) {
 		// FIXME: Currently allow this and class in both class and object methods. :(
 
@@ -238,6 +239,7 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 	}
 
 	@Override
+	@Deprecated
 	protected Environment doExtend(Environment old, Environment against) {
 		Environment newEnv = old.extend(nameBinding).extend(typeBinding);
 
@@ -245,6 +247,7 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 	}
 
 	@Override
+	@Deprecated
 	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
 		EvaluationEnvironment newEnv = old
 				.extend(new ValueBinding(nameBinding.getName(), nameBinding.getType()))
@@ -299,6 +302,7 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 		vb.setValue(classObj);
 	}
 
+	@Deprecated
 	public EvaluationEnvironment evaluateDeclarations(EvaluationEnvironment addtlEnv) {
 		EvaluationEnvironment thisEnv = decls.extendWithDecls(EvaluationEnvironment.EMPTY);
 		decls.bindDecls(declEvalEnv.extend(addtlEnv), thisEnv);
@@ -367,6 +371,7 @@ public class ClassDeclaration extends AbstractTypeDeclaration implements CoreAST
 		return classMembersEnv;
 	}
 
+	@Deprecated
 	public Type getEquivalentClassType() {
 		if (equivalentClassType == null) {
 			List<Declaration> declsi = new LinkedList<>();

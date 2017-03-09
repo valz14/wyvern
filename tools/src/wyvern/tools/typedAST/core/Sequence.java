@@ -131,6 +131,7 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 	}
 
 	@Override
+	@Deprecated
 	public Type typecheck(Environment env, Optional<Type> expected) {
 		Type lastType = new Unit();
 		for (TypedAST t : exps) {

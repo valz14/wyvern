@@ -190,12 +190,14 @@ public class JavaClassDecl extends ClassDeclaration {
 	}
 
 	@Override
+	@Deprecated
 	public Type doTypecheck(Environment env) {
 		updateEnv();
 		return new Unit();
 	}
 
 	@Override
+	@Deprecated
 	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
 		initalize();
 		super.evalDecl(evalEnv, declEnv);
@@ -214,6 +216,7 @@ public class JavaClassDecl extends ClassDeclaration {
 	}
 
 	boolean initalized = false;
+	@Deprecated
 	public void initalize() {
 		if (initalized) {
 			return;
@@ -228,6 +231,7 @@ public class JavaClassDecl extends ClassDeclaration {
 
 	private boolean envDone = false;
 	@Override
+	@Deprecated
 	public void updateEnv() {
 		if (envDone) {
 			return;
@@ -303,6 +307,7 @@ public class JavaClassDecl extends ClassDeclaration {
 	}
 
 	@Override
+	@Deprecated
 	public EvaluationEnvironment evaluateDeclarations(EvaluationEnvironment addtlEnv) {
 		initalize();
 		return super.evaluateDeclarations(addtlEnv);

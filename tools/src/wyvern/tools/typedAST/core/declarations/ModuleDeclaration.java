@@ -82,6 +82,7 @@ public class ModuleDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
+	@Deprecated
 	protected Type doTypecheck(Environment env) {
 		inner.typecheck(env, Optional.empty());
 
@@ -113,6 +114,7 @@ public class ModuleDeclaration extends Declaration implements CoreAST {
 
 	boolean extGuard = false;
 	@Override
+	@Deprecated
 	protected Environment doExtend(Environment old, Environment against) {
 		if (!extGuard) {
 			dclEnv.set(inner.extend(dclEnv.get(), old.extend(dclEnv.get())));
@@ -158,6 +160,7 @@ public class ModuleDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
+	@Deprecated
 	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
 		return old.extend(new ValueBinding(name, selfType));
 	}

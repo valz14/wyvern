@@ -27,22 +27,22 @@ import wyvern.tools.tests.StdlibTests;
 @IncludeCategory(RegressionTests.class)
 @ExcludeCategory(CurrentlyBroken.class)
 @SuiteClasses(
-		{
-			// CURRENTLY IMPORTANT TESTS HERE
-			LexingTests.class,      // tests the new lexer
-			CoreParserTests.class,  // tests the new parser
-			ILTests.class,          // tests the new IL
-			RossettaCodeTests.class,// a few of these are out of date, but some use new everything
-			FFITests.class,
-			OIRTests.class,
-			Illustrations.class,        // tests the new IL
-			StdlibTests.class,      // tests the standard library with the new IL
+        {
+            // CURRENTLY IMPORTANT TESTS HERE
+            LexingTests.class,      // tests the new lexer
+            CoreParserTests.class,  // tests the new parser
+            ILTests.class,          // tests the new IL
+            RossettaCodeTests.class,// a few of these are out of date, but some use new everything
+            FFITests.class,
+            OIRTests.class,
+            Illustrations.class,        // tests the new IL
+            StdlibTests.class,      // tests the standard library with the new IL
 
-			// ModuleSystemTests exclusively uses the old evaluation method
-			// and is thus out of date. Before enabling the tests,
-			// convert the tests to generate the corewyvernIL before
-			// typechecking and interpreting that.
-			// ModuleSystemTests.class,        // tests the new IL
-		}
-		)
+            // ModuleSystemTests exclusively uses the old evaluation method
+            // and is thus out of date. Before enabling the tests,
+            // convert the tests to generate the corewyvernIL before
+            // typechecking and interpreting that.
+            // ModuleSystemTests.class,        // tests the new IL
+        }
+        )
 public class AntRegressionTestSuite {}

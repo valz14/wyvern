@@ -148,6 +148,7 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 	}
 
 	@Override
+	@Deprecated
 	public Type typecheck(Environment env, Optional<Type> expected) {
 		Environment ienv = env;
 		Environment wtypes = extendType(env, env);
@@ -178,6 +179,7 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 		return null;
 	}
 
+	@Deprecated
 	public final EvaluationEnvironment extendWithDecls(EvaluationEnvironment env) {
 		EvaluationEnvironment newEnv = env;
 		for (Declaration d : this.getDeclIterator()) {
@@ -227,6 +229,7 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 		return nenv;
 	}
 
+	@Deprecated
 	public final Environment extend(Environment old, Environment against) {
 		Environment wtypes = extendType(old, against);
 		Environment newEnv = extendName(wtypes, against);

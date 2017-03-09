@@ -56,6 +56,7 @@ public class VarDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
+	@Deprecated
 	protected Type doTypecheck(Environment env) {
 		if (this.definition != null) {
 			Type varType = definitionType;
@@ -86,10 +87,12 @@ public class VarDeclaration extends Declaration implements CoreAST {
 	}
 
 	@Override
+	@Deprecated
 	protected Environment doExtend(Environment old, Environment against) {
 		return old.extend(binding);
 	}
 
+	@Deprecated
 	@Override
 	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
 		return old.extend(new VarValueBinding(binding.getName(), binding.getType(), null));
