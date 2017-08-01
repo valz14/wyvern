@@ -3,6 +3,7 @@ package wyvern.target.corewyvernIL.decltype;
 import java.io.IOException;
 
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
+import wyvern.target.corewyvernIL.expression.EffectAccumulator;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
 import wyvern.target.corewyvernIL.type.TagType;
@@ -70,6 +71,12 @@ public class TaggedTypeMember extends DeclType implements DefinedTypeMember {
 	@Override
 	public ValueType getResultType(View from) {
 		return typeDefn.getValueType().adapt(from);
+	}
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

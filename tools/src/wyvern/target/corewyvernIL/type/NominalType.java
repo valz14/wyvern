@@ -9,6 +9,7 @@ import wyvern.target.corewyvernIL.decltype.ConcreteTypeMember;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.DefinedTypeMember;
 import wyvern.target.corewyvernIL.decltype.TaggedTypeMember;
+import wyvern.target.corewyvernIL.expression.EffectAccumulator;
 import wyvern.target.corewyvernIL.expression.Path;
 import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.expression.Variable;
@@ -212,6 +213,12 @@ public class NominalType extends ValueType {
 		} else {
 			return this;
 		}
+	}
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -1,0 +1,14 @@
+module def network0F(stdout : Stdout) : effects.NetworkType0F
+effect send = {}
+effect receive = {}
+effect genN = {}
+def genNum() : { genN } Int
+    3
+def sendData(data : String) : {} Unit
+    val n : Int = genNum()
+    stdout.print("data sent: ")
+    stdout.print(data)
+    stdout.print("\n")
+def sendAndReceiveData() : {send,receive} Unit
+    sendData("sending data in sendAndReceiveData()")
+    stdout.print("data sent and received\n")

@@ -5,9 +5,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import wyvern.target.corewyvernIL.expression.EffectAccumulator;
 import wyvern.target.corewyvernIL.metadata.HasMetadata;
 import wyvern.target.corewyvernIL.metadata.Metadata;
-
+import wyvern.target.corewyvernIL.support.TypeContext;
+import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.FileLocation;
 import wyvern.tools.errors.HasLocation;
 
@@ -69,4 +71,6 @@ public abstract class ASTNode implements HasLocation, IASTNode, HasMetadata {
             addMetadata(m);
         }
     }
+
+	public abstract ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator);
 }

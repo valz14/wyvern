@@ -7,6 +7,7 @@ import java.util.Set;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.VarDeclType;
+import wyvern.target.corewyvernIL.expression.EffectAccumulator;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.support.EvalContext;
@@ -69,6 +70,12 @@ public class VarDeclaration extends DeclarationWithRHS {
 		Set<String> freeVars = new HashSet<>();
 		freeVars.addAll(getDefinition().getFreeVariables());
 		return freeVars;
+	}
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

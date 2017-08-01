@@ -1,6 +1,7 @@
 package wyvern.target.corewyvernIL.decl;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -8,8 +9,11 @@ import wyvern.target.corewyvernIL.FormalArg;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.DefDeclType;
+import wyvern.target.corewyvernIL.decltype.EffectDeclType;
 import wyvern.target.corewyvernIL.expression.Effect;
+import wyvern.target.corewyvernIL.expression.EffectAccumulator;
 import wyvern.target.corewyvernIL.expression.IExpr;
+import wyvern.target.corewyvernIL.expression.MethodCall;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -105,7 +109,17 @@ public class DefDeclaration extends NamedDeclaration {
 				}
 			}
 		}
-		ValueType bodyType = body.typeCheck(methodCtx);
+		
+		// There are problems with passing a simple Set to collect the effects
+		// because Java passes arguments by values
+		EffectAccumulator methodCallsEffects = new EffectAccumulator(null);
+		ValueType bodyType = null;
+		if (body instanceof MethodCall) {
+			bodyType = ((MethodCall) body).typeCheck(methodCtx, methodCallsEffects);
+		} else {
+			bodyType = body.typeCheck(methodCtx);
+		}
+		
 		if (!bodyType.isSubtypeOf(getType(), methodCtx)) {
 			// for debugging
 			ValueType resultType = getType();
@@ -113,11 +127,7 @@ public class DefDeclaration extends NamedDeclaration {
 			ToolError.reportError(ErrorMessage.NOT_SUBTYPE, this, "method body's type", "declared type");;
 			
 		}
-//		if (effects != null) {
-//			EffectDeclaration methodEffects = new EffectDeclaration(getName(), effects, getLocation()); // translate earlier?
-//			methodEffects.effectsCheck(ctx, thisCtx);
-//		}
-		return new DefDeclType(getName(), type, formalArgs);
+		return new DefDeclType(getName(), type, formalArgs, methodCallsEffects.getEffectSet());
 	}
 
 	@Override
@@ -135,5 +145,11 @@ public class DefDeclaration extends NamedDeclaration {
 	@Override
 	public DeclType getDeclType() {
 		return new DefDeclType(getName(), type, formalArgs);
+	}
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

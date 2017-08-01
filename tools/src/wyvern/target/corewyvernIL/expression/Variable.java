@@ -80,4 +80,10 @@ public class Variable extends Expression implements Path {
 		freeVars.add(this.getName());
 		return freeVars;
 	}
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

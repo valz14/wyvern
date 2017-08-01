@@ -58,6 +58,12 @@ public class Cast extends Expression{
 	    toCastExpr.doPrettyPrint(dest, "");
 	    dest.append(")"); 
     }
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 	
 }

@@ -3,6 +3,7 @@ package wyvern.target.corewyvernIL.type;
 import java.io.IOException;
 
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
+import wyvern.target.corewyvernIL.expression.EffectAccumulator;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
 
@@ -50,5 +51,11 @@ public class DynamicType extends ValueType {
 	@Override
 	public ValueType doAvoid(String varName, TypeContext ctx, int count) {
 		return this;
+	}
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

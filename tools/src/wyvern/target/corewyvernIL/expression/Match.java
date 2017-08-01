@@ -69,4 +69,10 @@ public class Match extends Expression {
 		freeVars.addAll(elseExpr.getFreeVariables());
 		return freeVars;
 	}
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

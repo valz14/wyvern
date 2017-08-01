@@ -5,8 +5,10 @@ import wyvern.target.corewyvernIL.IASTNode;
 import java.io.IOException;
 
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
+import wyvern.target.corewyvernIL.expression.EffectAccumulator;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
+import wyvern.target.corewyvernIL.type.ValueType;
 
 
 public class AbstractTypeMember extends DeclType implements IASTNode {
@@ -60,5 +62,11 @@ public class AbstractTypeMember extends DeclType implements IASTNode {
 	@Override
 	public boolean isTypeDecl() {
 		return true;
+	}
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -3,6 +3,7 @@
  */
 package wyvern.target.corewyvernIL.expression;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,6 +40,11 @@ public class Effect {
 	
 	public FileLocation getLocation() {
 		return loc;
+	}
+	
+	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
+		dest.append(indent).append(getPath().getName()).append(".").append(getName());
+		dest.append('\n');
 	}
 	
 	public DeclType getDeclType(Set<Effect> effects) {

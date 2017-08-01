@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.HashMap;
 
 import wyvern.tools.typedAST.core.declarations.DefDeclaration;
 import wyvern.target.corewyvernIL.FormalArg;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
+import wyvern.target.corewyvernIL.expression.Effect;
+import wyvern.target.corewyvernIL.expression.EffectAccumulator;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.support.ReceiverView;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -21,10 +24,16 @@ import wyvern.target.corewyvernIL.type.ValueType;
 public class DefDeclType extends DeclTypeWithResult {
 
 	private List<FormalArg> args;
+	private Set<Effect> effects;
 	
 	public DefDeclType(String method, ValueType returnType, List<FormalArg> args) {
+		this(method, returnType, args, null);
+	}
+	
+	public DefDeclType(String method, ValueType returnType, List<FormalArg> args, Set<Effect> effects) {
 		super(method, returnType);
 		this.args = args;
+		this.effects = effects;
 	}
 
 	public List<FormalArg> getFormalArgs ()
@@ -32,6 +41,14 @@ public class DefDeclType extends DeclTypeWithResult {
 		return args;
 	}
 
+	public Set<Effect> getEffects() {
+		return effects;
+	}
+	
+	public void setEffects(Set<Effect> e) {
+		if (!e.equals(effects)) { effects = e;}
+	}
+	
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor <S, T> emitILVisitor,
 			S state) {
@@ -234,4 +251,10 @@ public class DefDeclType extends DeclTypeWithResult {
         }
         return false;
     }
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -103,4 +103,10 @@ public class Bind extends Expression {
 		}
 		return freeVars;
 	}
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

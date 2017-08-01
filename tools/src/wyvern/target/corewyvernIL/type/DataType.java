@@ -4,6 +4,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
+import wyvern.target.corewyvernIL.expression.EffectAccumulator;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
 
@@ -52,5 +53,11 @@ public class DataType extends TagType {
 			newCases.add((NominalType)t.doAvoid(varName, ctx, depth));
 		}
 		return new DataType(newCT, getValueType().doAvoid(varName, ctx, depth), newCases);
+	}
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

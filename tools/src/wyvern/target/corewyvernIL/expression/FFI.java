@@ -93,4 +93,10 @@ public class FFI extends AbstractValue {
         return new Pair<VarBinding, GenContext>(new VarBinding(importName, type, importExp), ctx.extend(importName, new Variable(importName), type));
     }
 
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

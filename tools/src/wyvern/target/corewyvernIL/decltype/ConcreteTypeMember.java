@@ -3,6 +3,7 @@ package wyvern.target.corewyvernIL.decltype;
 import java.io.IOException;
 
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
+import wyvern.target.corewyvernIL.expression.EffectAccumulator;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.Value;
 import wyvern.target.corewyvernIL.support.EvalContext;
@@ -132,5 +133,10 @@ public class ConcreteTypeMember extends DeclTypeWithResult implements DefinedTyp
 	@Override
 	public boolean isTypeDecl() {
 		return true;
+	}
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

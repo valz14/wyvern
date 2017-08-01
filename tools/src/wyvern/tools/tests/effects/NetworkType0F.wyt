@@ -1,0 +1,7 @@
+resource type NetworkType0F
+  effect send
+  effect receive
+  effect genN
+  def genNum() : { genN } Int
+  def sendData(data : String) : {} Unit
+  def sendAndReceiveData() : {send, receive} Unit

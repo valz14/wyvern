@@ -12,8 +12,10 @@ import java.util.stream.Collectors;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decl.Declaration;
 import wyvern.target.corewyvernIL.decl.DelegateDeclaration;
+import wyvern.target.corewyvernIL.decl.EffectDeclaration;
 import wyvern.target.corewyvernIL.decl.NamedDeclaration;
 import wyvern.target.corewyvernIL.decltype.DeclType;
+import wyvern.target.corewyvernIL.decltype.DefDeclType;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -105,17 +107,34 @@ public class New extends Expression {
 	@Override
 	public ValueType typeCheck(TypeContext ctx) {
 		List<DeclType> dts = new LinkedList<DeclType>();
+//		Set<Effect> effects = null;
 
 		TypeContext thisCtx = ctx.extend(selfName, getExprType());
 
 		boolean isResource = false;
 		for (Declaration d : decls_ExceptDelegate()) {
-			DeclType dt = d.typeCheck(ctx, thisCtx);
+			DeclType dt = d.typeCheck(ctx, thisCtx); // creates a new DeclType (which may be DefDeclType), assuming this belongs to the declaration... 
+			
+			if (dt instanceof DefDeclType) {
+				DefDeclType ddt = (DefDeclType) dt;
+//				ValueType vt = ctx.lookupTypeOf(ddt.getName());
+//				if (((DefDeclType) dt).getEffects() != null){
+////				if (effects==null) { effects = new HashSet<Effect>(); }
+////				effects.addAll(((DefDeclType) dt).getEffects()); // wait not necessary --> this is module-level collection of effects
+////			}
+//					EffectDeclaration effectsIL = new EffectDeclaration(dt.getName(), ddt.getEffects(), getLocation()); // need to change
+//					// I think a separate method is needed here to compare the collected set of effects against the annotation in method header
+////					effectsIL.typeCheck(ctx, ctx); // this is not the answer, nor is it necessary
+			}		
+			
+			
 			dts.add(dt);
 			if (d.containsResource(thisCtx)) {
 				isResource = true;
 			}
 		}
+		
+//		if (effects != null) throw new RuntimeException(effects.toString()); // for testing		
 
 		ValueType type = getExprType();
 		if (hasDelegate) {
@@ -188,5 +207,10 @@ public class New extends Expression {
 		}
 		ValueType type = new StructuralType("dontcare", declts);
 		return type;
+	}
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

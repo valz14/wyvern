@@ -150,4 +150,10 @@ public class JavaValue extends AbstractValue implements Invokable {
 	public Object getWrappedValue() {
 		return this.foreignObject.getWrappedValue();
 	}
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

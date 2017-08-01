@@ -90,4 +90,10 @@ public class BoundedIntLiteral extends Literal implements Invokable {
 	public Value getField(String fieldName) {
 		throw new RuntimeException("no fields");
 	}
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -16,6 +16,7 @@ import wyvern.target.corewyvernIL.decltype.AbstractTypeMember;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.DefDeclType;
 import wyvern.target.corewyvernIL.expression.Expression;
+import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.Effect;
 import wyvern.target.corewyvernIL.expression.MethodCall;
 import wyvern.target.corewyvernIL.expression.Variable;
@@ -245,7 +246,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 
         ctx = this.serializeArguments(args, ctx);
 
-		DefDeclType ret = new DefDeclType(getName(), getResultILType(ctx), args);
+		DefDeclType ret = new DefDeclType(getName(), getResultILType(ctx), args, effects);
 		return ret;
 	}
 
@@ -304,7 +305,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		}
 
 		for (NameBinding b : argNames) {
-;			ValueType argType = b.getType().getILType(thisContext);
+			ValueType argType = b.getType().getILType(thisContext);
 			args.add(new FormalArg(b.getName(), argType));
 			methodContext = methodContext.extend(b.getName(), new Variable(b.getName()), argType);
 			thisContext = thisContext.extend(b.getName(), new Variable(b.getName()), argType);
@@ -314,8 +315,9 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		
 //		wyvern.target.corewyvernIL.decl.Declaration effectIL = effects==null ? null : effects.generateDecl(ctx, thisContext);
 		
+		IExpr bodyIL = body.generateIL(methodContext, this.returnILType, null);
 		return new wyvern.target.corewyvernIL.decl.DefDeclaration(
-				        getName(), args, getResultILType(thisContext), body.generateIL(methodContext, this.returnILType, null), getLocation(), effects);
+				        getName(), args, getResultILType(thisContext), bodyIL, getLocation(), effects);
 	}
 
 
@@ -338,7 +340,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		if (argILTypes == null)
 			throw new NullPointerException("need to call topLevelGen/generateDecl before addModuleDecl");
 		wyvern.target.corewyvernIL.decl.DefDeclaration decl =
-			new wyvern.target.corewyvernIL.decl.DefDeclaration(name, getArgILTypes(), getReturnILType(), body, getLocation());
+			new wyvern.target.corewyvernIL.decl.DefDeclaration(name, getArgILTypes(), getReturnILType(), body, getLocation(), effects);
 		
 		DeclType dt = genILType(tlc.getContext());
 		tlc.addModuleDecl(decl,dt);

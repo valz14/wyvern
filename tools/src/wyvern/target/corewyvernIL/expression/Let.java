@@ -93,4 +93,10 @@ public class Let extends Expression {
 		freeVars.addAll(getToReplace().getFreeVariables());
 		return freeVars;
 	}
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

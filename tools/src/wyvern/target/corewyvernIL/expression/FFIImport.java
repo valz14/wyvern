@@ -72,4 +72,10 @@ public class FFIImport extends Expression {
     return new HashSet<>();
   }
 
+@Override
+public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+	// TODO Auto-generated method stub
+	return null;
+}
+
 }

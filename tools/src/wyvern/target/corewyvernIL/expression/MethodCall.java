@@ -2,6 +2,7 @@ package wyvern.target.corewyvernIL.expression;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +12,7 @@ import wyvern.target.corewyvernIL.FormalArg;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.DefDeclType;
+import wyvern.target.corewyvernIL.decltype.EffectDeclType;
 import wyvern.target.corewyvernIL.metadata.IsTailCall;
 import wyvern.target.corewyvernIL.metadata.Metadata;
 import wyvern.target.corewyvernIL.support.EvalContext;
@@ -79,9 +81,14 @@ public class MethodCall extends Expression {
 		}
 		return receiverType;
 	}
-
+	
 	@Override
 	public ValueType typeCheck(TypeContext ctx) {
+		return typeCheck(ctx, null);
+	}
+	
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator methodCallsEffects) {
 	    // If calling on a dynamic receiver, it types to Dyn (provided the args typecheck)
 		if (Util.isDynamicType(getReceiverType(ctx))) {
 		    for (IExpr arg : args) {
@@ -89,7 +96,7 @@ public class MethodCall extends Expression {
 		    }
 		    return Util.dynType();
 		}
-		typeMethodDeclaration(ctx);
+		typeMethodDeclaration(ctx, methodCallsEffects);
 		return getExprType();
 	}
 
@@ -113,6 +120,12 @@ public class MethodCall extends Expression {
 				@Override
 				public Value interpret(EvalContext ignored) {
 					return receiver.invoke(methodName, argValues);
+				}
+
+				@Override
+				public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+					// TODO Auto-generated method stub
+					return null;
 				}
 				
 			};
@@ -156,6 +169,10 @@ public class MethodCall extends Expression {
 	 * @return the declaration of the method.
 	 */
 	public DefDeclType typeMethodDeclaration(TypeContext ctx) {
+		return typeMethodDeclaration(ctx, null);
+	}
+	
+	public DefDeclType typeMethodDeclaration(TypeContext ctx, EffectAccumulator methodCallsEffects) {
 
 		// Typecheck receiver.
 		ValueType receiver = getReceiverType(ctx);
@@ -173,6 +190,7 @@ public class MethodCall extends Expression {
 		
 		// ...use this context to do that.
 		TypeContext newCtx = null;
+				
 		for (DeclType declType : declarationTypes) {
 		    formalArgTypes = new LinkedList<ValueType>();
 		    
@@ -217,6 +235,16 @@ public class MethodCall extends Expression {
 
 			// We were able to typecheck; figure out the return type, and set the method declaration.
 			if (argsTypechecked) {
+				// Add effects to the collection methodCallsEffects
+				Set<Effect> methodCallE = defDeclType.getEffects();
+				
+				if (methodCallE != null) {
+					if (methodCallsEffects == null) { 
+						methodCallsEffects= new EffectAccumulator(new HashSet<Effect>()); 
+					}
+					methodCallsEffects.addEffects(methodCallE); 
+				}
+				
 				ctx = newCtx;
 				ValueType resultType = defDeclType.getResultType(v);
 				resultType = resultType.adapt(v);

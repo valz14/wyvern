@@ -40,146 +40,152 @@ public class EffectSystemTests {
         WyvernResolver.getInstance().addPath(PATH);
     }
     
-    @Test
-    public void testEffectNetwork00() throws ParseException {
-    	/* Type & module def with no annotations. */
-    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork00", Util.unitType(), Util.unitValue());
-    }
-
-    @Test
-     public void testEffectNetwork01() throws ParseException {
-    	/* Declared in type + module def;
-    	 * Defined in module def;
-    	 * Method annotations in both. */ 
-    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork01", Util.unitType(), Util.unitValue());
-	}
-    
-    @Test
-    public void testEffectNetwork02() throws ParseException {
-    	/* No declarations. Method annotations in type & module def. */
-    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork02", Util.unitType(), Util.unitValue());
-	}
-  
-    @Test
-    public void testEffectNetwork03() throws ParseException {
-    	/* In addition to declarations (not defined) & method annotations in type, additional declaration &
-    	 * definition in module def. */
-    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork03", Util.unitType(), Util.unitValue());
-	}
-    
-    @Test
-    @Category(CurrentlyBroken.class) // Parse error
-    public void testEffectNetwork04() throws ParseException {
-    	/* "gibberish" where "{}" should be in type's method header annotation. */
-    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork04", Util.unitType(), Util.unitValue());
-	}
-    
-    @Test
-    @Category(CurrentlyBroken.class) // Parse error
-    public void testEffectNetwork05() throws ParseException {
-    	/* "gibberish" where "{}" should be in module def's method header annotation. */
-    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork05", Util.unitType(), Util.unitValue());
-	}
-    
-    @Test
-    @Category(CurrentlyBroken.class) // Parse error
-    public void testEffectNetwork06() throws ParseException {
-    	/* Bogus declaration ("effect send = stdout") in module def. */ 
-    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork06", Util.unitType(), Util.unitValue());
-	}
-    
-    @Test
-    public void testEffectNetwork07() throws ParseException {
-    	/* Declarations + 1 defined in type;
-    	 * Declarations + definitions in module def;
-    	 * Method annotations in both.
-    	 */
-    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork07", Util.unitType(), Util.unitValue());
-	}
-    
-    @Test
-    @Category(CurrentlyBroken.class) // Invalid effect (actually DSL block instead)
-    public void testEffectNetwork08() throws ParseException {
-    	/* Like network07, but "effect receive = {{}}" */
-    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork08", Util.unitType(), Util.unitValue());
-	}
-    
-    @Test
-    public void testEffectNetwork09() throws ParseException {
-    	/* No method annotations despite declarations in type + module def. */
-    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork09", Util.unitType(), Util.unitValue());
-    }
-    
-    @Test
-    @Category(CurrentlyBroken.class) // Parse error (undefined effects in module def are taken care of by the parser)
-    public void testEffectNetwork0A() throws ParseException {
-    	/* Effect undefined in module def. */
-    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork0A", Util.unitType(), Util.unitValue());
-    }
-    
-    @Test
-    @Category(CurrentlyBroken.class) // **Work-in-progress: passes but shouldn't**
-    public void testEffectNetwork0B() throws ParseException { // dependent on incorporating EffectDeclaration into DefDeclaration
-    	/* Nonexistent effect in method annotation in type (not in module def, but error should be reported before module def is evaluated). */
-    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork0B", Util.unitType(), Util.unitValue());
-    }
-    
-    @Test
-    @Category(CurrentlyBroken.class) // **Work-in-progress: passes but shouldn't**
-    public void testEffectNetwork0C() throws ParseException { // dependent on incorporating EffectDeclaration into DefDeclaration
-    	/* Int included as effect in module annotation of type (not in module def, but error should be reported before module def is evaluated). */
-    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork0C", Util.unitType(), Util.unitValue());
-    }
-    
-    @Test
-    @Category(CurrentlyBroken.class) 
-    public void testEffectNetwork0D() throws ParseException {
-    	/* Bogus declaration ("effect send = {something.hi}") in module def (something being not an object defined)
-    	 * for an effect that was left undefined in the type and not actually used 
-    	 * in a method (so that we can be sure that the checking is happening upon declaration). */ 
-    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork0D", Util.unitType(), Util.unitValue());
-	}
-    
-    @Test
-    @Category(CurrentlyBroken.class) 
-    public void testEffectNetwork0E() throws ParseException {
-    	/* Bad declaration ("effect send = {stdout.hi}") in module def (stdout being an actual object that does
-    	 * not have the effect "hi" defined) for an effect that was left undefined in the type and not actually used 
-    	 * in a method (so that we can be sure that the checking is happening upon declaration). */ 
-    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork0E", Util.unitType(), Util.unitValue());
-	}
-    
 //    @Test
-//    public void testEffectNetwork11() throws ParseException {
-//    	/* Same as network01 but without type ascription (for testing DataProcessor). */
-//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork11", Util.unitType(), Util.unitValue());
+//    public void testEffectNetwork00() throws ParseException {
+//    	/* Type & module def with no annotations. */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork00", Util.unitType(), Util.unitValue());
 //    }
+//
+//    @Test
+//     public void testEffectNetwork01() throws ParseException {
+//    	/* Declared in type + module def;
+//    	 * Defined in module def;
+//    	 * Method annotations in both. */ 
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork01", Util.unitType(), Util.unitValue());
+//	}
+//    
+//    @Test
+//    public void testEffectNetwork02() throws ParseException {
+//    	/* No declarations. Method annotations in type & module def. */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork02", Util.unitType(), Util.unitValue());
+//	}
+//  
+//    @Test
+//    public void testEffectNetwork03() throws ParseException {
+//    	/* In addition to declarations (not defined) & method annotations in type, additional declaration &
+//    	 * definition in module def. */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork03", Util.unitType(), Util.unitValue());
+//	}
+//    
+//    @Test
+//    @Category(CurrentlyBroken.class) // Parse error
+//    public void testEffectNetwork04() throws ParseException {
+//    	/* "gibberish" where "{}" should be in type's method header annotation. */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork04", Util.unitType(), Util.unitValue());
+//	}
+//    
+//    @Test
+//    @Category(CurrentlyBroken.class) // Parse error
+//    public void testEffectNetwork05() throws ParseException {
+//    	/* "gibberish" where "{}" should be in module def's method header annotation. */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork05", Util.unitType(), Util.unitValue());
+//	}
+//    
+//    @Test
+//    @Category(CurrentlyBroken.class) // Parse error
+//    public void testEffectNetwork06() throws ParseException {
+//    	/* Bogus declaration ("effect send = stdout") in module def. */ 
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork06", Util.unitType(), Util.unitValue());
+//	}
+//    
+//    @Test
+//    public void testEffectNetwork07() throws ParseException {
+//    	/* Declarations + 1 defined in type;
+//    	 * Declarations + definitions in module def;
+//    	 * Method annotations in both.
+//    	 */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork07", Util.unitType(), Util.unitValue());
+//	}
+//    
+//    @Test
+//    @Category(CurrentlyBroken.class) // Invalid effect (actually DSL block instead)
+//    public void testEffectNetwork08() throws ParseException {
+//    	/* Like network07, but "effect receive = {{}}" */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork08", Util.unitType(), Util.unitValue());
+//	}
+//    
+//    @Test
+//    public void testEffectNetwork09() throws ParseException {
+//    	/* No method annotations despite declarations in type + module def. */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork09", Util.unitType(), Util.unitValue());
+//    }
+//    
+//    @Test
+//    @Category(CurrentlyBroken.class) // Parse error (undefined effects in module def are taken care of by the parser)
+//    public void testEffectNetwork0A() throws ParseException {
+//    	/* Effect undefined in module def. */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork0A", Util.unitType(), Util.unitValue());
+//    }
+//    
+//    @Test
+//    @Category(CurrentlyBroken.class) // **Work-in-progress: passes but shouldn't**
+//    public void testEffectNetwork0B() throws ParseException { // dependent on incorporating EffectDeclaration into DefDeclaration
+//    	/* Nonexistent effect in method annotation in type (not in module def, but error should be reported before module def is evaluated). */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork0B", Util.unitType(), Util.unitValue());
+//    }
+//    
+//    @Test
+//    @Category(CurrentlyBroken.class) // **Work-in-progress: passes but shouldn't**
+//    public void testEffectNetwork0C() throws ParseException { // dependent on incorporating EffectDeclaration into DefDeclaration
+//    	/* Int included as effect in module annotation of type (not in module def, but error should be reported before module def is evaluated). */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork0C", Util.unitType(), Util.unitValue());
+//    }
+//    
+//    @Test
+//    @Category(CurrentlyBroken.class) 
+//    public void testEffectNetwork0D() throws ParseException {
+//    	/* Bogus declaration ("effect send = {something.hi}") in module def (something being not an object defined)
+//    	 * for an effect that was left undefined in the type and not actually used 
+//    	 * in a method (so that we can be sure that the checking is happening upon declaration). */ 
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork0D", Util.unitType(), Util.unitValue());
+//	}
+//    
+//    @Test
+//    @Category(CurrentlyBroken.class) 
+//    public void testEffectNetwork0E() throws ParseException {
+//    	/* Bad declaration ("effect send = {stdout.hi}") in module def (stdout being an actual object that does
+//    	 * not have the effect "hi" defined) for an effect that was left undefined in the type and not actually used 
+//    	 * in a method (so that we can be sure that the checking is happening upon declaration). */ 
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork0E", Util.unitType(), Util.unitValue());
+//	}
     
-    @Test
-    public void testDataProcessor() throws ParseException {
-    	/* Involve real effect abstraction ("effect process = {net.receive}"). */
-    	TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor", Util.unitType(), Util.unitValue());
-    }
-    
-    @Test
-    public void testDataProcessor2() throws ParseException {
-    	/* Involve even more effect abstractions ("effect send = {net.send}, effect process = {net.receive, send}"). */
-    	TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor2", Util.unitType(), Util.unitValue());
-    }
-    
-    @Test
-    @Category(CurrentlyBroken.class) 
-    public void testDataProcessor3() throws ParseException {
-    	/* Like dataProcessor2, but has "effect process = {net.receive, gibberish}" instead. */
-    	TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor3", Util.unitType(), Util.unitValue());
-    }
-    
-    @Test
-    @Category(CurrentlyBroken.class) 
-    public void testDataProcessor4() throws ParseException {
-    	/* Like dataProcessor2, but has "effect process = {net.gibberish, process}" instead (i.e. recursive). */
-    	TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor4", Util.unitType(), Util.unitValue());
-    }
+		  @Test 
+		  public void testEffectNetwork0F() throws ParseException {
+			  /* Multiple effects in a method header annotation. */
+			  TestUtil.doTestScriptModularly(PATH, "effects.testNetwork0F", Util.unitType(), Util.unitValue());
+		  }
+
+////    @Test
+////    public void testEffectNetwork11() throws ParseException {
+////    	/* Same as network01 but without type ascription (for testing DataProcessor). */
+////    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork11", Util.unitType(), Util.unitValue());
+////    }
+//    
+//    @Test
+//    public void testDataProcessor() throws ParseException {
+//    	/* Involve real effect abstraction ("effect process = {net.receive}"). */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor", Util.unitType(), Util.unitValue());
+//    }
+//    
+//    @Test
+//    public void testDataProcessor2() throws ParseException {
+//    	/* Involve even more effect abstractions ("effect send = {net.send}, effect process = {net.receive, send}"). */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor2", Util.unitType(), Util.unitValue());
+//    }
+//    
+//    @Test
+//    @Category(CurrentlyBroken.class) 
+//    public void testDataProcessor3() throws ParseException {
+//    	/* Like dataProcessor2, but has "effect process = {net.receive, gibberish}" instead. */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor3", Util.unitType(), Util.unitValue());
+//    }
+//    
+//    @Test
+//    @Category(CurrentlyBroken.class) 
+//    public void testDataProcessor4() throws ParseException {
+//    	/* Like dataProcessor2, but has "effect process = {net.gibberish, process}" instead (i.e. recursive). */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor4", Util.unitType(), Util.unitValue());
+//    }
     
     // another test in which a third module takes in a data processor which takes in a network, so that the there's multiple (external) layers of effect abstraction?
     

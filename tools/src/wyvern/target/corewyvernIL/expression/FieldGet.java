@@ -112,4 +112,10 @@ public class FieldGet extends Expression implements Path {
 			return false;
 		return true;
 	}
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

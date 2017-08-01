@@ -81,11 +81,23 @@ public class BooleanLiteral extends Literal implements Invokable {
 						@Override public Value interpret(EvalContext ignored) {
 							return ((ObjectValue) args.get(0)).invoke("apply", new ArrayList<>());
 						}
+
+						@Override
+						public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+							// TODO Auto-generated method stub
+							return null;
+						}
 					};
 				}
 				return new SuspendedTailCall(this.getExprType(), this.getLocation()) {
 					@Override public Value interpret(EvalContext ignored) {
 						return ((ObjectValue) args.get(1)).invoke("apply", new ArrayList<>());
+					}
+
+					@Override
+					public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+						// TODO Auto-generated method stub
+						return null;
 					}
 				};
       case "&&":
@@ -99,6 +111,12 @@ public class BooleanLiteral extends Literal implements Invokable {
 	@Override
 	public Value getField(String fieldName) {
 		throw new RuntimeException("no fields");
+	}
+
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
 
