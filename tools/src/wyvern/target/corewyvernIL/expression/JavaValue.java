@@ -153,7 +153,6 @@ public class JavaValue extends AbstractValue implements Invokable {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
-		return null;
+		return typeCheck(ctx);
 	}
 }

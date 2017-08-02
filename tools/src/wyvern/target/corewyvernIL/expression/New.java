@@ -11,11 +11,13 @@ import java.util.stream.Collectors;
 
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decl.Declaration;
+import wyvern.target.corewyvernIL.decl.DefDeclaration;
 import wyvern.target.corewyvernIL.decl.DelegateDeclaration;
 import wyvern.target.corewyvernIL.decl.EffectDeclaration;
 import wyvern.target.corewyvernIL.decl.NamedDeclaration;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.DefDeclType;
+import wyvern.target.corewyvernIL.decltype.EffectDeclType;
 import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -114,9 +116,11 @@ public class New extends Expression {
 		boolean isResource = false;
 		for (Declaration d : decls_ExceptDelegate()) {
 			DeclType dt = d.typeCheck(ctx, thisCtx); // creates a new DeclType (which may be DefDeclType), assuming this belongs to the declaration... 
-			
+			// d.getEffectSet() == thing to check against
 			if (dt instanceof DefDeclType) {
-				DefDeclType ddt = (DefDeclType) dt;
+				DefDeclType ddt = (DefDeclType) dt; // check its effects (which end up being the collection of the method calls) against d.getEffectSet();
+//				if (!(((DefDeclaration) d).getEffectSet().isEmpty() && ddt.getEffects()==null) && 
+//				!(((DefDeclaration) d).getEffectSet() == ddt.getEffects())) { throw new RuntimeException("nope"); }
 //				ValueType vt = ctx.lookupTypeOf(ddt.getName());
 //				if (((DefDeclType) dt).getEffects() != null){
 ////				if (effects==null) { effects = new HashSet<Effect>(); }
@@ -210,7 +214,48 @@ public class New extends Expression {
 	}
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
-		return null;
+		List<DeclType> dts = new LinkedList<DeclType>();
+
+		TypeContext thisCtx = ctx.extend(selfName, getExprType());
+
+		boolean isResource = false;
+		for (Declaration d : decls_ExceptDelegate()) {
+			DeclType dt = d.typeCheck(ctx, thisCtx); // creates a new DeclType (which may be DefDeclType), assuming this belongs to the declaration... 		
+			dts.add(dt);
+			if (d.containsResource(thisCtx)) {
+				isResource = true;
+			}
+		}	
+
+		ValueType type = getExprType();
+		if (hasDelegate) {
+			ValueType delegateObjectType = ctx.lookupTypeOf(delegateDeclaration.getFieldName());
+			StructuralType delegateStructuralType = delegateObjectType.getStructuralType(thisCtx);
+			// new defined declaration will override delegate object's method definition if they had subType relationship
+			for (DeclType declType : delegateStructuralType.getDeclTypes()) {
+				if (!dts.stream().anyMatch(newDefDeclType-> newDefDeclType.isSubtypeOf(declType, thisCtx))) {
+					dts.add(declType);
+				}
+			}
+		}
+
+		// check that everything in the claimed structural type was accounted for
+		StructuralType requiredT = type.getStructuralType(ctx);
+		StructuralType actualT = new StructuralType(selfName, dts);
+		if (!actualT.isSubtypeOf(requiredT, ctx)) {
+			ToolError.reportError(ErrorMessage.NOT_SUBTYPE, this, actualT.getSelfName(), requiredT.getSelfName());
+		}
+
+		if (isResource && !requiredT.isResource(GenContext.empty())) {
+			if (type instanceof StructuralType) {
+				type = new StructuralType(selfName, dts, isResource);
+				this.setExprType(type);
+			} else {
+				// can't update the type
+				ToolError.reportError(ErrorMessage.MUST_BE_ASSIGNED_TO_RESOURCE_TYPE, this);
+			}
+		}
+
+		return type;
 	}
 }

@@ -124,8 +124,15 @@ public class MethodCall extends Expression {
 
 				@Override
 				public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-					// TODO Auto-generated method stub
-					return null;
+					// If calling on a dynamic receiver, it types to Dyn (provided the args typecheck)
+					if (Util.isDynamicType(getReceiverType(ctx))) {
+					    for (IExpr arg : args) {
+					        arg.typeCheck(ctx);
+					    }
+					    return Util.dynType();
+					}
+					typeMethodDeclaration(ctx, effectAccumulator);
+					return getExprType();
 				}
 				
 			};
@@ -236,13 +243,10 @@ public class MethodCall extends Expression {
 			// We were able to typecheck; figure out the return type, and set the method declaration.
 			if (argsTypechecked) {
 				// Add effects to the collection methodCallsEffects
-				Set<Effect> methodCallE = defDeclType.getEffects();
+				Set<Effect> methodCallE = defDeclType.getEffectSet();
 				
-				if (methodCallE != null) {
-					if (methodCallsEffects == null) { 
-						methodCallsEffects= new EffectAccumulator(new HashSet<Effect>()); 
-					}
-					methodCallsEffects.addEffects(methodCallE); 
+				if (methodCallE != null) { // specified
+					methodCallsEffects.addEffects(methodCallE); // handles the case of if methodCallsEffects.effectSet was originally null and need to be initialized 
 				}
 				
 				ctx = newCtx;

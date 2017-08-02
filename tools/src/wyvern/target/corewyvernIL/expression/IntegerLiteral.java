@@ -110,7 +110,6 @@ public class IntegerLiteral extends Literal implements Invokable {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
-		return null;
+		return typeCheck(ctx);
 	}
 }

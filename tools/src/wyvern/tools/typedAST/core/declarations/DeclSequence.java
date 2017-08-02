@@ -1,6 +1,9 @@
 package wyvern.tools.typedAST.core.declarations;
 
 import wyvern.target.corewyvernIL.decltype.DeclType;
+import wyvern.target.corewyvernIL.decltype.DefDeclType;
+import wyvern.target.corewyvernIL.decltype.EffectDeclType;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +15,8 @@ import java.util.Optional;
 import java.util.Stack;
 
 //import wyvern.targets.java.annotations.Val;
+import wyvern.target.corewyvernIL.decl.DefDeclaration;
+import wyvern.target.corewyvernIL.decl.EffectDeclaration;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.New;
 import wyvern.target.corewyvernIL.expression.Variable;
@@ -358,7 +363,21 @@ public class DeclSequence extends Sequence implements EnvironmentExtender {
 	
 		// determine if we need to be a resource type
 		for (wyvern.target.corewyvernIL.decl.Declaration d: decls) {
-			d.typeCheck(tlc.getContext(), tlc.getContext());
+			DeclType dt = d.typeCheck(tlc.getContext(), tlc.getContext());
+			// possibly where method call effects vs. method header effects are compared
+			if (dt instanceof EffectDeclType) {
+				EffectDeclType edt = (EffectDeclType) dt;
+				System.out.println(((EffectDeclaration) d).getEffectSet()+"..."+edt.getEffectSet());
+				
+			}
+			if (dt instanceof DefDeclType) {
+				DefDeclType ddt = (DefDeclType) dt;
+				if (ddt.getName().equals("processData")) {
+					System.out.println(((DefDeclaration) d).getEffectSet()+"..."+ddt.getEffectSet());
+				}
+			}
+			//
+			
 			if (d.containsResource(tlc.getContext())) {
 				type = new StructuralType(newName, declts, true);
 				break;

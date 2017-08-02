@@ -96,7 +96,18 @@ public class Let extends Expression {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
-		return null;
+		ValueType t = getToReplace().typeCheck(ctx, effectAccumulator);
+		if (t==null) throw new RuntimeException(getToReplace().getClass().toString()); // for testing
+		if (!t.isSubtypeOf(binding.getType(), ctx)) {
+			ValueType q = binding.getType();
+			t.isSubtypeOf(q, ctx);
+			reportError(ErrorMessage.NOT_SUBTYPE, this, t.toString(), binding.getType().toString());
+		}
+		final TypeContext extendedCtx = ctx.extend(getVarName(), binding.getType());
+		final ValueType exprType = inExpr.typeCheck(extendedCtx, effectAccumulator);
+		final ValueType cleanExprType = exprType.avoid(binding.getVarName(), extendedCtx);
+		//cleanExprType.checkWellFormed(ctx);
+		this.setExprType(cleanExprType);
+		return getExprType();
 	}
 }

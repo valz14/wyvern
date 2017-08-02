@@ -41,7 +41,7 @@ public class DefDeclType extends DeclTypeWithResult {
 		return args;
 	}
 
-	public Set<Effect> getEffects() {
+	public Set<Effect> getEffectSet() {
 		return effects;
 	}
 	

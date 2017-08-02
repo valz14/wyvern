@@ -109,8 +109,14 @@ public class EffectDeclType extends DeclType implements IASTNode {
 	@Override
 	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
 		dest.append(indent).append("effect ").append(getName()).append(" = ");
-		if (effectSet != null)
-			dest.append(effectSet.toString());
+		if (effectSet != null) {
+			String result = "{";
+			for (Effect e : effectSet) {
+				result += e.toString();
+			}
+			result += "}";
+			dest.append(result);
+		}
 		dest.append('\n');
 	}
 
@@ -130,7 +136,7 @@ public class EffectDeclType extends DeclType implements IASTNode {
 //		}
 		return new EffectDeclType(getName(), getEffectSet(), getLocation());
 	}
-
+	
 	@Override
 	public boolean isTypeDecl() {
 		return false;

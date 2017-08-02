@@ -148,13 +148,13 @@ public class EffectSystemTests {
 //    	 * in a method (so that we can be sure that the checking is happening upon declaration). */ 
 //    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork0E", Util.unitType(), Util.unitValue());
 //	}
-    
-		  @Test 
-		  public void testEffectNetwork0F() throws ParseException {
-			  /* Multiple effects in a method header annotation. */
-			  TestUtil.doTestScriptModularly(PATH, "effects.testNetwork0F", Util.unitType(), Util.unitValue());
-		  }
-
+//    
+//		  @Test 
+//		  public void testEffectNetwork0F() throws ParseException {
+//			  /* Multiple effects in a method header annotation, and uses val declarations from effectful methods. */
+//			  TestUtil.doTestScriptModularly(PATH, "effects.testNetwork0F", Util.unitType(), Util.unitValue());
+//		  }
+//
 ////    @Test
 ////    public void testEffectNetwork11() throws ParseException {
 ////    	/* Same as network01 but without type ascription (for testing DataProcessor). */
@@ -166,13 +166,13 @@ public class EffectSystemTests {
 //    	/* Involve real effect abstraction ("effect process = {net.receive}"). */
 //    	TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor", Util.unitType(), Util.unitValue());
 //    }
-//    
-//    @Test
-//    public void testDataProcessor2() throws ParseException {
-//    	/* Involve even more effect abstractions ("effect send = {net.send}, effect process = {net.receive, send}"). */
-//    	TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor2", Util.unitType(), Util.unitValue());
-//    }
-//    
+    
+    @Test
+    public void testDataProcessor2() throws ParseException {
+    	/* Involve even more effect abstractions ("effect send = {net.send}, effect process = {net.receive, send}") and Int method + call. */
+    	TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor2", Util.unitType(), Util.unitValue());
+    }
+    
 //    @Test
 //    @Category(CurrentlyBroken.class) 
 //    public void testDataProcessor3() throws ParseException {
@@ -186,20 +186,20 @@ public class EffectSystemTests {
 //    	/* Like dataProcessor2, but has "effect process = {net.gibberish, process}" instead (i.e. recursive). */
 //    	TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor4", Util.unitType(), Util.unitValue());
 //    }
-    
-    // another test in which a third module takes in a data processor which takes in a network, so that the there's multiple (external) layers of effect abstraction?
-    
-	 // Need test case where the object's effect is same as another defined in the sig (and are valid?)
-    
-    @Test
-    public void testEffectObjNetwork00() throws ParseException {
-    	/* Object notation with no effect annotations. */
-    	TestUtil.doTestScriptModularly(PATH, "effects.objNetwork00", Util.unitType(), Util.unitValue());
-	}
-
-    @Test
-    public void testEffectObjNetwork01() throws ParseException {
-    	/* Except for the "new" notation, should otherwise use the same a parser code as modules. */
-    		TestUtil.doTestScriptModularly(PATH, "effects.objNetwork01", Util.unitType(), Util.unitValue());
-	}
+//    
+//    // another test in which a third module takes in a data processor which takes in a network, so that the there's multiple (external) layers of effect abstraction?
+//    
+//	 // Need test case where the object's effect is same as another defined in the sig (and are valid?)
+//    
+//    @Test
+//    public void testEffectObjNetwork00() throws ParseException {
+//    	/* Object notation with no effect annotations. */
+//    	TestUtil.doTestScriptModularly(PATH, "effects.objNetwork00", Util.unitType(), Util.unitValue());
+//	}
+//
+//    @Test
+//    public void testEffectObjNetwork01() throws ParseException {
+//    	/* Except for the "new" notation, should otherwise use the same a parser code as modules. */
+//    		TestUtil.doTestScriptModularly(PATH, "effects.objNetwork01", Util.unitType(), Util.unitValue());
+//	}
 }

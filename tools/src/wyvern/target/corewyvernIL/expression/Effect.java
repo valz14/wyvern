@@ -47,6 +47,11 @@ public class Effect {
 		dest.append('\n');
 	}
 	
+	@Override
+	public String toString() {
+		return (path==null? "" : getPath().getName() + ".") + getName(); 
+	}
+	
 	public DeclType getDeclType(Set<Effect> effects) {
 		return new EffectDeclType(getName(), effects, getLocation());
 	}

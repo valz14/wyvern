@@ -13,4 +13,5 @@ public interface IExpr extends IASTNode {
 	public abstract Value interpret(EvalContext ctx);
 	void doPrettyPrint(Appendable dest, String indent) throws IOException;
 	public abstract Set<String> getFreeVariables();
+	public ValueType typeCheck(TypeContext methodCtx, EffectAccumulator methodCallsEffects);
 }

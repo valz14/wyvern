@@ -89,8 +89,14 @@ public class EffectDeclaration extends NamedDeclaration {
 	@Override
 	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
 		dest.append(indent).append("effect ").append(getName()).append(" = ");
-		if (effectSet != null)
-			dest.append(effectSet.toString());
+		if (effectSet != null) {
+			String result = "{";
+			for (Effect e : effectSet) {
+				result += e.toString();
+			}
+			result += "}";
+			dest.append(result);
+		}
 		dest.append('\n');
 	}
 	
