@@ -56,10 +56,10 @@ public class StringLiteral extends Literal implements Invokable {
         }
     }
 
-	@Override
-	public ValueType typeCheck(TypeContext env) {
-        return Util.stringType();
-	}
+//	@Override
+//	public ValueType typeCheck(TypeContext env) {
+//        return Util.stringType();
+//	}
 
 	@Override
 	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
@@ -104,8 +104,7 @@ public class StringLiteral extends Literal implements Invokable {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
-		return null;
+		return Util.stringType();
 	}
 
 }

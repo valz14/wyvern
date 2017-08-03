@@ -32,10 +32,10 @@ public class FFI extends AbstractValue {
       return emitILVisitor.visit(state, this);
 	}
 
-	@Override
-	public ValueType typeCheck(TypeContext ctx) {
-		return type;
-	}
+//	@Override
+//	public ValueType typeCheck(TypeContext ctx) {
+//		return type;
+//	}
 
 	@Override
 	public Set<String> getFreeVariables() {
@@ -95,8 +95,7 @@ public class FFI extends AbstractValue {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
-		return null;
+		return type; // start collecting effects here?
 	}
 
 }

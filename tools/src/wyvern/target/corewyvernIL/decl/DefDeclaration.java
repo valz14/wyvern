@@ -26,7 +26,7 @@ public class DefDeclaration extends NamedDeclaration {
 	private ValueType type;
 	private IExpr body;
 	private boolean hasResource = false;
-	private Set<Effect> effects;
+	private Set<Effect> effectSet;
 
 	public DefDeclaration(String methodName, List<FormalArg> formalArgs,
 			ValueType type, IExpr iExpr, FileLocation loc) {
@@ -40,7 +40,7 @@ public class DefDeclaration extends NamedDeclaration {
 		if (type == null) throw new RuntimeException();
 		this.type = type;
 		this.body = iExpr;
-		this.effects = effects;
+		this.effectSet = effects;
 	}
 
 	@Override
@@ -87,6 +87,10 @@ public class DefDeclaration extends NamedDeclaration {
 	public IExpr getBody() {
 		return body;
 	}
+	
+	public Set<Effect> getEffectSet() {
+		return effectSet;
+	}
 
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor <S, T> emitILVisitor,
@@ -100,9 +104,12 @@ public class DefDeclaration extends NamedDeclaration {
 		for (FormalArg arg : formalArgs) {
 			methodCtx = methodCtx.extend(arg.getName(), arg.getType());
 		}
+		
+//		if (getName().equals("var_17")) 
+//			System.out.println("here");
 		if (!this.containsResource(methodCtx)) {
 			for (String freeVar : this.getFreeVariables()) {
-				ValueType t = (new Variable(freeVar)).typeCheck(methodCtx);
+				ValueType t = (new Variable(freeVar)).typeCheck(methodCtx, null);
 				if (t != null && t.isResource(methodCtx)) {
 					this.setHasResource(true);
 					break;
@@ -110,21 +117,22 @@ public class DefDeclaration extends NamedDeclaration {
 			}
 		}
 		
+//		if (getName().equals("processData")) 
+//			System.out.println("processData");
 		// There are problems with passing a simple Set to collect the effects
 		// because Java passes arguments by values
 		EffectAccumulator methodCallsEffects = new EffectAccumulator(null);
-		ValueType bodyType = null;
-		if (body instanceof MethodCall) {
-			bodyType = ((MethodCall) body).typeCheck(methodCtx, methodCallsEffects);
-		} else {
-			bodyType = body.typeCheck(methodCtx);
-		}
+//		ValueType bodyType = body.typeCheck(methodCtx);
+		ValueType bodyType = body.typeCheck(methodCtx, methodCallsEffects);
+
+		if (getName().equals("processData") && methodCallsEffects.getEffectSet().size() != 0)
+			System.out.println(methodCallsEffects.getEffectSet()+" vs. "+effectSet); // for testing accumulator
 		
 		if (!bodyType.isSubtypeOf(getType(), methodCtx)) {
 			// for debugging
 			ValueType resultType = getType();
 			bodyType.isSubtypeOf(resultType, methodCtx);
-			ToolError.reportError(ErrorMessage.NOT_SUBTYPE, this, "method body's type", "declared type");;
+			ToolError.reportError(ErrorMessage.NOT_SUBTYPE, this, "method body's type", "declared type");
 			
 		}
 		return new DefDeclType(getName(), type, formalArgs, methodCallsEffects.getEffectSet());
@@ -144,7 +152,7 @@ public class DefDeclaration extends NamedDeclaration {
 	
 	@Override
 	public DeclType getDeclType() {
-		return new DefDeclType(getName(), type, formalArgs);
+		return new DefDeclType(getName(), type, formalArgs, effectSet);
 	}
 
 	@Override

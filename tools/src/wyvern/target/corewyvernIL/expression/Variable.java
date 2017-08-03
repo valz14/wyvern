@@ -53,10 +53,10 @@ public class Variable extends Expression implements Path {
 		return name;
 	}
 
-	@Override
-	public ValueType typeCheck(TypeContext env) {
-		return env.lookupTypeOf(name);
-	}
+//	@Override
+//	public ValueType typeCheck(TypeContext env) {
+//		return env.lookupTypeOf(name);
+//	}
 
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor <S, T> emitILVisitor,
@@ -83,7 +83,6 @@ public class Variable extends Expression implements Path {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
-		return null;
+		return ctx.lookupTypeOf(name);
 	}
 }

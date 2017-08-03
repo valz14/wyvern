@@ -1,5 +1,6 @@
 package wyvern.tools.typedAST.interfaces;
 
+import wyvern.target.corewyvernIL.expression.EffectAccumulator;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
@@ -25,8 +26,9 @@ public interface ExpressionAST extends TypedAST {
 	
 	@Override
 	public default void genTopLevel(TopLevelContext topLevelContext) {
+		EffectAccumulator effects = new EffectAccumulator(null);
 		final IExpr exp = generateIL(topLevelContext.getContext(), null, topLevelContext.getDependencies());
-		ValueType type = exp.typeCheck(topLevelContext.getContext());
+		ValueType type = exp.typeCheck(topLevelContext.getContext(), effects);
 		topLevelContext.addExpression(exp, type);
 		Expression e;
 	}

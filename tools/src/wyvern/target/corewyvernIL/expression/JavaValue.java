@@ -132,10 +132,10 @@ public class JavaValue extends AbstractValue implements Invokable {
 		throw new RuntimeException("visiting a JavaValue is not defined");
 	}
 
-	@Override
-	public ValueType typeCheck(TypeContext ctx) {
-		return this.getExprType();
-	}
+//	@Override
+//	public ValueType typeCheck(TypeContext ctx) {
+//		return this.getExprType();
+//	}
 
 	@Override
 	public Set<String> getFreeVariables() {
@@ -153,7 +153,6 @@ public class JavaValue extends AbstractValue implements Invokable {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
-		return null;
+		return this.getExprType();
 	}
 }

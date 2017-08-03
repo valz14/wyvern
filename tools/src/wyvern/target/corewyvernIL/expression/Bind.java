@@ -50,19 +50,19 @@ public class Bind extends Expression {
         return inExpr;
     }
 
-	@Override
-	public ValueType typeCheck(TypeContext ctx) {
-		TypeContext bodyCtx = EmptyTypeContext.empty();
-		for (VarBinding vb : bindings) {
-			ValueType t = vb.getExpression().typeCheck(ctx);
-			if (!t.isSubtypeOf(vb.getType(), ctx)) {
-				reportError(ErrorMessage.NOT_SUBTYPE, this, t.toString(), vb.getType().toString());
-			}
-			bodyCtx = bodyCtx.extend(vb.getVarName(), vb.getType());
-		}
-		this.setExprType(inExpr.typeCheck(bodyCtx));
-		return getExprType();
-	}
+//	@Override
+//	public ValueType typeCheck(TypeContext ctx) {
+//		TypeContext bodyCtx = EmptyTypeContext.empty();
+//		for (VarBinding vb : bindings) {
+//			ValueType t = vb.getExpression().typeCheck(ctx, null);
+//			if (!t.isSubtypeOf(vb.getType(), ctx)) {
+//				reportError(ErrorMessage.NOT_SUBTYPE, this, t.toString(), vb.getType().toString());
+//			}
+//			bodyCtx = bodyCtx.extend(vb.getVarName(), vb.getType());
+//		}
+//		this.setExprType(inExpr.typeCheck(bodyCtx, null));
+//		return getExprType();
+//	}
 
 	@Override
 	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
@@ -106,7 +106,15 @@ public class Bind extends Expression {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
-		return null;
+		TypeContext bodyCtx = EmptyTypeContext.empty();
+		for (VarBinding vb : bindings) {
+			ValueType t = vb.getExpression().typeCheck(ctx, null);
+			if (!t.isSubtypeOf(vb.getType(), ctx)) {
+				reportError(ErrorMessage.NOT_SUBTYPE, this, t.toString(), vb.getType().toString());
+			}
+			bodyCtx = bodyCtx.extend(vb.getVarName(), vb.getType());
+		}
+		this.setExprType(inExpr.typeCheck(bodyCtx, null));
+		return getExprType();
 	}
 }

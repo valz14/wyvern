@@ -45,21 +45,21 @@ public class Let extends Expression {
 		return (Expression) inExpr;
 	}
 
-	@Override
-	public ValueType typeCheck(TypeContext ctx) {
-		ValueType t = getToReplace().typeCheck(ctx);
-		if (!t.isSubtypeOf(binding.getType(), ctx)) {
-			ValueType q = binding.getType();
-			t.isSubtypeOf(q, ctx);
-			reportError(ErrorMessage.NOT_SUBTYPE, this, t.toString(), binding.getType().toString());
-		}
-		final TypeContext extendedCtx = ctx.extend(getVarName(), binding.getType());
-		final ValueType exprType = inExpr.typeCheck(extendedCtx);
-		final ValueType cleanExprType = exprType.avoid(binding.getVarName(), extendedCtx);
-		//cleanExprType.checkWellFormed(ctx);
-		this.setExprType(cleanExprType);
-		return getExprType();
-	}
+//	@Override
+//	public ValueType typeCheck(TypeContext ctx) {
+//		ValueType t = getToReplace().typeCheck(ctx);
+//		if (!t.isSubtypeOf(binding.getType(), ctx)) {
+//			ValueType q = binding.getType();
+//			t.isSubtypeOf(q, ctx);
+//			reportError(ErrorMessage.NOT_SUBTYPE, this, t.toString(), binding.getType().toString());
+//		}
+//		final TypeContext extendedCtx = ctx.extend(getVarName(), binding.getType());
+//		final ValueType exprType = inExpr.typeCheck(extendedCtx);
+//		final ValueType cleanExprType = exprType.avoid(binding.getVarName(), extendedCtx);
+//		//cleanExprType.checkWellFormed(ctx);
+//		this.setExprType(cleanExprType);
+//		return getExprType();
+//	}
 
 	@Override
 	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
@@ -96,7 +96,17 @@ public class Let extends Expression {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
-		return null;
+		ValueType t = getToReplace().typeCheck(ctx, effectAccumulator);
+		if (!t.isSubtypeOf(binding.getType(), ctx)) {
+			ValueType q = binding.getType();
+			t.isSubtypeOf(q, ctx);
+			reportError(ErrorMessage.NOT_SUBTYPE, this, t.toString(), binding.getType().toString());
+		}
+		final TypeContext extendedCtx = ctx.extend(getVarName(), binding.getType());
+		final ValueType exprType = inExpr.typeCheck(extendedCtx, effectAccumulator);
+		final ValueType cleanExprType = exprType.avoid(binding.getVarName(), extendedCtx);
+		//cleanExprType.checkWellFormed(ctx);
+		this.setExprType(cleanExprType);
+		return getExprType();
 	}
 }

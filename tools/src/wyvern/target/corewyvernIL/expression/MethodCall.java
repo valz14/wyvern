@@ -75,28 +75,36 @@ public class MethodCall extends Expression {
 		return args;
 	}
 	
-	private ValueType getReceiverType(TypeContext ctx) {
+	private ValueType getReceiverType(TypeContext ctx, EffectAccumulator effectAccumulator) {
 		if (receiverType == null) {
-			receiverType = objectExpr.typeCheck(ctx);
+			receiverType = objectExpr.typeCheck(ctx, effectAccumulator); // shouldn't need to accumulate effects?
 		}
 		return receiverType;
 	}
 	
-	@Override
-	public ValueType typeCheck(TypeContext ctx) {
-		return typeCheck(ctx, null);
-	}
+//	@Override
+//	public ValueType typeCheck(TypeContext ctx) {
+//		// If calling on a dynamic receiver, it types to Dyn (provided the args typecheck)
+//	if (Util.isDynamicType(getReceiverType(ctx))) {
+//	    for (IExpr arg : args) {
+//	        arg.typeCheck(ctx, methodCallsEffects);
+//	    }
+//	    return Util.dynType();
+//	}
+//	typeMethodDeclaration(ctx, methodCallsEffects);
+//	return getExprType();
+//}
 	
 	@Override
-	public ValueType typeCheck(TypeContext ctx, EffectAccumulator methodCallsEffects) {
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
 	    // If calling on a dynamic receiver, it types to Dyn (provided the args typecheck)
-		if (Util.isDynamicType(getReceiverType(ctx))) {
+		if (Util.isDynamicType(getReceiverType(ctx, effectAccumulator))) {
 		    for (IExpr arg : args) {
-		        arg.typeCheck(ctx);
+		        arg.typeCheck(ctx, effectAccumulator);
 		    }
 		    return Util.dynType();
 		}
-		typeMethodDeclaration(ctx, methodCallsEffects);
+		typeMethodDeclaration(ctx, effectAccumulator);
 		return getExprType();
 	}
 
@@ -124,8 +132,15 @@ public class MethodCall extends Expression {
 
 				@Override
 				public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-					// TODO Auto-generated method stub
-					return null;
+					// If calling on a dynamic receiver, it types to Dyn (provided the args typecheck)
+					if (Util.isDynamicType(getReceiverType(ctx, effectAccumulator))) {
+					    for (IExpr arg : args) {
+					        arg.typeCheck(ctx, effectAccumulator);
+					    }
+					    return Util.dynType();
+					}
+					typeMethodDeclaration(ctx, effectAccumulator);
+					return getExprType();
 				}
 				
 			};
@@ -156,10 +171,10 @@ public class MethodCall extends Expression {
 		return freeVars;
 	}
 
-	public List<ValueType> getArgTypes(TypeContext ctx) {
+	public List<ValueType> getArgTypes(TypeContext ctx, EffectAccumulator effectAccumulator) {
 		List<? extends IExpr> args = getArgs();
 		return args.stream()
-			.map(arg -> arg.typeCheck(ctx))
+			.map(arg -> arg.typeCheck(ctx, effectAccumulator)) // shouldn't contribute any effect to the accumulator?
 			.collect(Collectors.toList());
 	}
 
@@ -172,10 +187,10 @@ public class MethodCall extends Expression {
 		return typeMethodDeclaration(ctx, null);
 	}
 	
-	public DefDeclType typeMethodDeclaration(TypeContext ctx, EffectAccumulator methodCallsEffects) {
+	public DefDeclType typeMethodDeclaration(TypeContext ctx, EffectAccumulator effectAccumulator) {
 
 		// Typecheck receiver.
-		ValueType receiver = getReceiverType(ctx);
+		ValueType receiver = getReceiverType(ctx, effectAccumulator);
 		StructuralType receiverType = receiver.getStructuralType(ctx);
 
 		// Sanity check: make sure it has declarations.
@@ -185,7 +200,7 @@ public class MethodCall extends Expression {
 		}
 
 		// Go through all declarations, typechecking against the actual types passed in...
-		List<ValueType> actualArgTypes = getArgTypes(ctx);
+		List<ValueType> actualArgTypes = getArgTypes(ctx, effectAccumulator);
 		List<ValueType> formalArgTypes = null;
 		
 		// ...use this context to do that.
@@ -236,13 +251,13 @@ public class MethodCall extends Expression {
 			// We were able to typecheck; figure out the return type, and set the method declaration.
 			if (argsTypechecked) {
 				// Add effects to the collection methodCallsEffects
-				Set<Effect> methodCallE = defDeclType.getEffects();
+				Set<Effect> methodCallE = defDeclType.getEffectSet();
 				
-				if (methodCallE != null) {
-					if (methodCallsEffects == null) { 
-						methodCallsEffects= new EffectAccumulator(new HashSet<Effect>()); 
-					}
-					methodCallsEffects.addEffects(methodCallE); 
+//				if (methodName.equals("processData"))
+//					System.out.println("ready");
+				
+				if (methodCallE != null) { // specified
+					effectAccumulator.addEffects(methodCallE); // handles the case of if methodCallsEffects.effectSet was originally null and need to be initialized 
 				}
 				
 				ctx = newCtx;

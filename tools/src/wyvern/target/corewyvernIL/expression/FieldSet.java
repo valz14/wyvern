@@ -43,48 +43,48 @@ public class FieldSet extends Expression {
 		return exprToAssign;
 	}
 
-	private boolean settingDynamicObject(TypeContext ctx) {
+	private boolean settingDynamicObject(TypeContext ctx, EffectAccumulator effectAccumulator) {
 		ValueType receiverType = null;
 		if (objectExpr instanceof FieldGet) {
 			IExpr receiver = ((FieldGet)objectExpr).getObjectExpr();
-			receiverType = receiver.typeCheck(ctx);
+			receiverType = receiver.typeCheck(ctx, effectAccumulator);
 		} else if (objectExpr instanceof Variable) {
 			receiverType = ctx.lookupTypeOf(((Variable)objectExpr).getName());
 		} else if (objectExpr instanceof Cast) {
-		    receiverType = objectExpr.typeCheck(ctx);
+		    receiverType = objectExpr.typeCheck(ctx, effectAccumulator);
 		} else {
 		    throw new RuntimeException("Target of FieldSet is unsupported. Type: " + objectExpr.getClass());
 	    }
 		return Util.isDynamicType(receiverType);
 	}
 	
-	@Override
-	public ValueType typeCheck(TypeContext ctx) {
-
-	    // Setting the field of a dynamic object.
-		if (settingDynamicObject(ctx)) {
-		    exprToAssign.typeCheck(ctx);
-		    return Util.unitType();
-		}
-		
-		// Figure out types of object and expression.
-		StructuralType varTypeStructural = objectExpr.typeCheck(ctx).getStructuralType(ctx);
-		ValueType varTypeExpr = exprToAssign.typeCheck(ctx);
-
-		// Figure out the type of the field.
-		DeclType declTypeField = varTypeStructural.findDecl(fieldName, ctx);
-		if (declTypeField == null)
-			ToolError.reportError(ErrorMessage.NO_SUCH_FIELD, this, fieldName);
-		if (!(declTypeField instanceof VarDeclType))
-			ToolError.reportError(ErrorMessage.CANNOT_BE_ASSIGNED, this,
-								  declTypeField.getName());
-		ValueType valTypeField = ((VarDeclType) declTypeField).getResultType(View.from(objectExpr, ctx));
-
-		// Make sure assigned type is compatible with the field's type.
-		if (!varTypeExpr.isSubtypeOf(valTypeField, ctx))
-			ToolError.reportError(ErrorMessage.ASSIGNMENT_SUBTYPING, this);
-		return Util.unitType();
-	}
+//	@Override
+//	public ValueType typeCheck(TypeContext ctx) {
+//
+//	    // Setting the field of a dynamic object.
+//		if (settingDynamicObject(ctx)) {
+//		    exprToAssign.typeCheck(ctx);
+//		    return Util.unitType();
+//		}
+//		
+//		// Figure out types of object and expression.
+//		StructuralType varTypeStructural = objectExpr.typeCheck(ctx).getStructuralType(ctx);
+//		ValueType varTypeExpr = exprToAssign.typeCheck(ctx);
+//
+//		// Figure out the type of the field.
+//		DeclType declTypeField = varTypeStructural.findDecl(fieldName, ctx);
+//		if (declTypeField == null)
+//			ToolError.reportError(ErrorMessage.NO_SUCH_FIELD, this, fieldName);
+//		if (!(declTypeField instanceof VarDeclType))
+//			ToolError.reportError(ErrorMessage.CANNOT_BE_ASSIGNED, this,
+//								  declTypeField.getName());
+//		ValueType valTypeField = ((VarDeclType) declTypeField).getResultType(View.from(objectExpr, ctx));
+//
+//		// Make sure assigned type is compatible with the field's type.
+//		if (!varTypeExpr.isSubtypeOf(valTypeField, ctx))
+//			ToolError.reportError(ErrorMessage.ASSIGNMENT_SUBTYPING, this);
+//		return Util.unitType();
+//	}
 
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor <S, T> emitILVisitor,
@@ -135,8 +135,30 @@ public class FieldSet extends Expression {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
-		return null;
+
+	    // Setting the field of a dynamic object.
+		if (settingDynamicObject(ctx, effectAccumulator)) {
+		    exprToAssign.typeCheck(ctx, effectAccumulator);
+		    return Util.unitType();
+		}
+		
+		// Figure out types of object and expression.
+		StructuralType varTypeStructural = objectExpr.typeCheck(ctx, effectAccumulator).getStructuralType(ctx);
+		ValueType varTypeExpr = exprToAssign.typeCheck(ctx, effectAccumulator);
+
+		// Figure out the type of the field.
+		DeclType declTypeField = varTypeStructural.findDecl(fieldName, ctx);
+		if (declTypeField == null)
+			ToolError.reportError(ErrorMessage.NO_SUCH_FIELD, this, fieldName);
+		if (!(declTypeField instanceof VarDeclType))
+			ToolError.reportError(ErrorMessage.CANNOT_BE_ASSIGNED, this,
+								  declTypeField.getName());
+		ValueType valTypeField = ((VarDeclType) declTypeField).getResultType(View.from(objectExpr, ctx));
+
+		// Make sure assigned type is compatible with the field's type.
+		if (!varTypeExpr.isSubtypeOf(valTypeField, ctx))
+			ToolError.reportError(ErrorMessage.ASSIGNMENT_SUBTYPING, this);
+		return Util.unitType();
 	}
 
 }

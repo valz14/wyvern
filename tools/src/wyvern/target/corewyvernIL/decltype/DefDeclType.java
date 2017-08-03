@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import wyvern.tools.typedAST.core.declarations.DefDeclaration;
 import wyvern.target.corewyvernIL.FormalArg;
@@ -24,7 +25,7 @@ import wyvern.target.corewyvernIL.type.ValueType;
 public class DefDeclType extends DeclTypeWithResult {
 
 	private List<FormalArg> args;
-	private Set<Effect> effects;
+	private Set<Effect> effectSet;
 	
 	public DefDeclType(String method, ValueType returnType, List<FormalArg> args) {
 		this(method, returnType, args, null);
@@ -33,7 +34,7 @@ public class DefDeclType extends DeclTypeWithResult {
 	public DefDeclType(String method, ValueType returnType, List<FormalArg> args, Set<Effect> effects) {
 		super(method, returnType);
 		this.args = args;
-		this.effects = effects;
+		this.effectSet = effects;
 	}
 
 	public List<FormalArg> getFormalArgs ()
@@ -41,12 +42,12 @@ public class DefDeclType extends DeclTypeWithResult {
 		return args;
 	}
 
-	public Set<Effect> getEffects() {
-		return effects;
+	public Set<Effect> getEffectSet() {
+		return effectSet;
 	}
 	
 	public void setEffects(Set<Effect> e) {
-		if (!e.equals(effects)) { effects = e;}
+		if (!e.equals(effectSet)) { effectSet = e;}
 	}
 	
 	@Override
@@ -150,7 +151,26 @@ public class DefDeclType extends DeclTypeWithResult {
 		for (FormalArg a : args) {
 			newArgs.add(new FormalArg(a.getName(), a.getType().adapt(v)));
 		}
-		return new DefDeclType(this.getName(), this.getRawResultType().adapt(v), newArgs);
+		
+		Set<Effect> adaptedEffectSet = null; 
+		if (effectSet != null) {
+			adaptedEffectSet = new HashSet<Effect>();
+			
+			for (Effect e : effectSet) {
+				if (e.getPath()==null) {
+					adaptedEffectSet.add(new Effect(new Variable("dontcare"), e.getName(), e.getLocation()));
+				} else {
+					adaptedEffectSet.add(new Effect(((Variable)(e.adapt(v))), e.getName(), e.getLocation()));
+				}
+//				try {
+//					adaptedEffectSet.add(new Effect(((Variable)(e.adapt(v))), e.getName(), e.getLocation()));
+//				} catch (NullPointerException ex) {
+//					throw new RuntimeException(getName()+" "+e.getName());
+//				}
+			}
+		}
+		
+		return new DefDeclType(this.getName(), this.getRawResultType().adapt(v), newArgs, effectSet);
 	}
 	
 	@Override

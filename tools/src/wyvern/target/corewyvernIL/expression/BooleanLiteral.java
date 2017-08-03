@@ -52,10 +52,10 @@ public class BooleanLiteral extends Literal implements Invokable {
 		dest.append(value?"true":"false");
 	}
 
-    @Override
-    public ValueType typeCheck(TypeContext env) {
-        return Util.booleanType();
-    }
+//    @Override
+//    public ValueType typeCheck(TypeContext env) {
+//        return Util.booleanType();
+//    }
 
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor<S, T> emitILVisitor, S state) {
@@ -115,8 +115,7 @@ public class BooleanLiteral extends Literal implements Invokable {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
-		return null;
+		return Util.booleanType();
 	}
 }
 

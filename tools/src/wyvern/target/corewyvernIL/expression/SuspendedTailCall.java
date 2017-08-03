@@ -23,14 +23,19 @@ public abstract class SuspendedTailCall extends Expression implements Value {
 		throw new RuntimeException("should not try to visit a suspended tail call");
 	}
 
-	@Override
-	public ValueType typeCheck(TypeContext ctx) {
-		throw new RuntimeException("should not try to typecheck a suspended tail call");
-	}
+//	@Override
+//	public ValueType typeCheck(TypeContext ctx) {
+//		throw new RuntimeException("should not try to typecheck a suspended tail call");
+//	}
 
 	@Override
 	public Set<String> getFreeVariables() {
 		throw new RuntimeException("should not try to get the free variables of a suspended tail call");
+	}
+	
+	@Override
+	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
+		throw new RuntimeException("should not try to typecheck a suspended tail call");
 	}
 
 }

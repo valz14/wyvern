@@ -23,11 +23,11 @@ public class Cast extends Expression{
 		return toCastExpr;
 	}
 
-	@Override
-	public ValueType typeCheck(TypeContext ctx) {
-		toCastExpr.typeCheck(ctx);
-		return getExprType().getCanonicalType(ctx);
-	}
+//	@Override
+//	public ValueType typeCheck(TypeContext ctx) {
+//		toCastExpr.typeCheck(ctx, null);
+//		return getExprType().getCanonicalType(ctx);
+//	}
 
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor <S, T> emitILVisitor,
@@ -38,7 +38,7 @@ public class Cast extends Expression{
 	@Override
 	public Value interpret(EvalContext ctx) {
 		Value value = getToCastExpr().interpret(ctx);
-		ValueType actualType = value.typeCheck(ctx);
+		ValueType actualType = value.typeCheck(ctx, null);
 		ValueType goalType = getExprType();
 		if (!actualType.isSubtypeOf(goalType, ctx))
 			ToolError.reportError(ErrorMessage.NOT_SUBTYPE, getLocation(), actualType.toString(), goalType.toString());
@@ -61,8 +61,8 @@ public class Cast extends Expression{
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
-		return null;
+		toCastExpr.typeCheck(ctx, effectAccumulator);
+		return getExprType().getCanonicalType(ctx);
 	}
     
 	

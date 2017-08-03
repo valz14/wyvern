@@ -34,11 +34,11 @@ public class RationalLiteral extends Literal {
 		this.denominator = denominator;
 	}
 
-	@Override
-	public ValueType typeCheck(TypeContext env) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public ValueType typeCheck(TypeContext env) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor <S, T> emitILVisitor,
@@ -58,7 +58,6 @@ public class RationalLiteral extends Literal {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

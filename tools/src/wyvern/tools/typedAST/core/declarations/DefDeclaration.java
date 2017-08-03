@@ -19,6 +19,7 @@ import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.Effect;
 import wyvern.target.corewyvernIL.expression.MethodCall;
+import wyvern.target.corewyvernIL.expression.Path;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.GenContext;
@@ -61,13 +62,11 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 	private List<FormalArg> argILTypes = new LinkedList<FormalArg>();// store to preserve IL arguments types and return types
 	private wyvern.target.corewyvernIL.type.ValueType returnILType = null;
     private List<String> generics;
-//    private EffectDeclaration effects;
-    private Set<Effect> effects;
+    private Set<Effect> effectSet;
 
     public static final String GENERIC_PREFIX = "__generic__";
     public static final String GENERIC_MEMBER = "T";
 
-    /* Seems to be the only constructor called by WyvernASTBuilder (therefore the only one dealing w/ effects for now). */
 	public DefDeclaration(String name, Type returnType, List<String> generics, List<NameBinding> argNames,
 						  TypedAST body, boolean isClassDef, FileLocation location, String effects) {
 		if (argNames == null) { argNames = new LinkedList<NameBinding>(); }
@@ -77,8 +76,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		this.argNames = argNames;
 		this.isClass = isClassDef;
 		this.location = location;
-		this.effects = parseEffects(effects); 
-		//effects==null? null : new EffectDeclaration(name+"_method", effects, location, true);
+		this.effectSet = parseEffects(effects); 
 		
         this.generics = (generics != null) ? generics : new LinkedList<String>();
 	}
@@ -135,7 +133,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		Set<Effect> effectSet = null; 
 		
 		if (effects==null) {
-			effectSet=null; // fix
+			effectSet=null; // fix (w/ Enums)
 		} else if (effects=="") { // explicitly defined to be empty list of effects
 			effectSet = new HashSet<Effect>();
 		} else if (Pattern.compile("[^a-zA-Z,. ]").matcher(effects).find()) { // found any non-effect-related chars --> probably an actual DSL block
@@ -143,6 +141,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		} else {
 			effectSet = new HashSet<Effect>();
 			for (String e : effects.split(", *")) {
+				e = e.trim(); // account for leading/trailing whitespace; should not have whitespace in-between?
 				if (e.contains(".")) { // effect from another object
 					String[] pathAndID = e.split("\\.");
 					effectSet.add(new Effect(new Variable(pathAndID[0]), pathAndID[1], location));
@@ -246,7 +245,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 
         ctx = this.serializeArguments(args, ctx);
 
-		DefDeclType ret = new DefDeclType(getName(), getResultILType(ctx), args, effects);
+		DefDeclType ret = new DefDeclType(getName(), getResultILType(ctx), args, effectSet);
 		return ret;
 	}
 
@@ -314,13 +313,21 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		this.argILTypes = args;
 		
 //		wyvern.target.corewyvernIL.decl.Declaration effectIL = effects==null ? null : effects.generateDecl(ctx, thisContext);
-		
+
 		IExpr bodyIL = body.generateIL(methodContext, this.returnILType, null);
 		return new wyvern.target.corewyvernIL.decl.DefDeclaration(
-				        getName(), args, getResultILType(thisContext), bodyIL, getLocation(), effects);
+				        getName(), args, getResultILType(thisContext), bodyIL, getLocation(), effectSet);
 	}
 
-
+//	/** Add path to an effect if it doesn't already have one (i.e. if it's defined in the same type or module def). **/
+//	public void addPath(Effect e, GenContext ctx) { // same as the one in typedAST.EffectDeclaration...
+//		Path ePath = ctx.getContainerForTypeAbbrev(e.getName());
+//		if (ePath==null) { // effect not found
+//			ToolError.reportError(ErrorMessage.EFFECT_IN_SIG_NOT_FOUND, this, e.getName());
+//		}
+//		e.setPath(ePath);
+//	}
+	
 	@Override
 	public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies) {
 		return generateDecl(ctx, ctx);
@@ -340,7 +347,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		if (argILTypes == null)
 			throw new NullPointerException("need to call topLevelGen/generateDecl before addModuleDecl");
 		wyvern.target.corewyvernIL.decl.DefDeclaration decl =
-			new wyvern.target.corewyvernIL.decl.DefDeclaration(name, getArgILTypes(), getReturnILType(), body, getLocation(), effects);
+			new wyvern.target.corewyvernIL.decl.DefDeclaration(name, getArgILTypes(), getReturnILType(), body, getLocation(), effectSet);
 		
 		DeclType dt = genILType(tlc.getContext());
 		tlc.addModuleDecl(decl,dt);

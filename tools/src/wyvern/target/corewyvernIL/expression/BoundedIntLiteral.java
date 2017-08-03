@@ -51,10 +51,10 @@ public class BoundedIntLiteral extends Literal implements Invokable {
 		return value;
 	}
 
-	@Override
-	public ValueType typeCheck(TypeContext env) {
-		return Util.intType();
-	}
+//	@Override
+//	public ValueType typeCheck(TypeContext env) {
+//		return Util.intType();
+//	}
 
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor <S, T> emitILVisitor,
@@ -93,7 +93,6 @@ public class BoundedIntLiteral extends Literal implements Invokable {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
-		return null;
+		return Util.intType();
 	}
 }

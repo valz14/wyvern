@@ -34,11 +34,11 @@ public class Match extends Expression {
 		return cases;
 	}
 
-	@Override
-	public ValueType typeCheck(TypeContext env) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public ValueType typeCheck(TypeContext env) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor <S, T> emitILVisitor,
@@ -72,7 +72,6 @@ public class Match extends Expression {
 
 	@Override
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }
