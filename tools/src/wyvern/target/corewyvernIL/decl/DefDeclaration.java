@@ -9,6 +9,7 @@ import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.DefDeclType;
 import wyvern.target.corewyvernIL.effects.Effect;
+import wyvern.target.corewyvernIL.effects.EffectAccumulator;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.support.TypeContext;
@@ -98,14 +99,16 @@ public class DefDeclaration extends NamedDeclaration {
 		}
 		if (!this.containsResource(methodCtx)) {
 			for (String freeVar : this.getFreeVariables()) {
-				ValueType t = (new Variable(freeVar)).typeCheck(methodCtx);
+				ValueType t = (new Variable(freeVar)).typeCheck(methodCtx, null);
 				if (t != null && t.isResource(methodCtx)) {
 					this.setHasResource(true);
 					break;
 				}
 			}
 		}
-		ValueType bodyType = body.typeCheck(methodCtx);
+		
+		EffectAccumulator effectAccumulator = new EffectAccumulator(null);
+		ValueType bodyType = body.typeCheck(methodCtx, effectAccumulator);
 		if (!bodyType.isSubtypeOf(getType(), methodCtx)) {
 			// for debugging
 			ValueType resultType = getType();
@@ -113,7 +116,11 @@ public class DefDeclaration extends NamedDeclaration {
 			ToolError.reportError(ErrorMessage.NOT_SUBTYPE, this, "method body's type", "declared type");;
 			
 		}
-		return new DefDeclType(getName(), type, formalArgs);
+		return new DefDeclType(getName(), type, formalArgs, getEffectSet());
+	}
+
+	private Set<Effect> getEffectSet() {
+		return effectSet;
 	}
 
 	@Override
@@ -130,6 +137,6 @@ public class DefDeclaration extends NamedDeclaration {
 	
 	@Override
 	public DeclType getDeclType() {
-		return new DefDeclType(getName(), type, formalArgs);
+		return new DefDeclType(getName(), type, formalArgs, getEffectSet());
 	}
 }

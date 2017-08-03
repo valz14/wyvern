@@ -26,7 +26,7 @@ public class EffectDeclType extends DeclType implements IASTNode {
 	
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor<S, T> visitor, S state) {
-		return null; //visitor.visit(state, this);
+		return visitor.visit(state, this); // could return null here, though implication is unknown
 	}
 
 	@Override

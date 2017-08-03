@@ -65,7 +65,6 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
     public static final String GENERIC_PREFIX = "__generic__";
     public static final String GENERIC_MEMBER = "T";
 
-    /* Seems to be the only constructor called by WyvernASTBuilder (therefore the only one dealing w/ effects for now). */
 	public DefDeclaration(String name, Type returnType, List<String> generics, List<NameBinding> argNames,
 						  TypedAST body, boolean isClassDef, FileLocation location, String effects) {
 		if (argNames == null) { argNames = new LinkedList<NameBinding>(); }
@@ -166,7 +165,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 
 	@Override
 	public TypedAST cloneWithChildren(Map<String, TypedAST> newChildren) {
-	    DefDeclaration dd = new DefDeclaration(name, type, argNames, newChildren.get("body"), isClass);
+	    DefDeclaration dd = new DefDeclaration(name, type, argNames, newChildren.get("body"), isClass); // may need to add effectSet?
         dd.location = this.location;
         return dd;
 	}
@@ -247,7 +246,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 
         ctx = this.serializeArguments(args, ctx);
 
-		DefDeclType ret = new DefDeclType(getName(), getResultILType(ctx), args);
+		DefDeclType ret = new DefDeclType(getName(), getResultILType(ctx), args, getEffectSet());
 		return ret;
 	}
 
@@ -317,7 +316,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 //		wyvern.target.corewyvernIL.decl.Declaration effectIL = effects==null ? null : effects.generateDecl(ctx, thisContext);
 		
 		return new wyvern.target.corewyvernIL.decl.DefDeclaration(
-				        getName(), args, getResultILType(thisContext), body.generateIL(methodContext, this.returnILType, null), getLocation(), effectSet);
+				        getName(), args, getResultILType(thisContext), body.generateIL(methodContext, this.returnILType, null), getLocation(), getEffectSet());
 	}
 
 
@@ -340,7 +339,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		if (argILTypes == null)
 			throw new NullPointerException("need to call topLevelGen/generateDecl before addModuleDecl");
 		wyvern.target.corewyvernIL.decl.DefDeclaration decl =
-			new wyvern.target.corewyvernIL.decl.DefDeclaration(name, getArgILTypes(), getReturnILType(), body, getLocation());
+			new wyvern.target.corewyvernIL.decl.DefDeclaration(name, getArgILTypes(), getReturnILType(), body, getLocation(), getEffectSet());
 		
 		DeclType dt = genILType(tlc.getContext());
 		tlc.addModuleDecl(decl,dt);
@@ -373,7 +372,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		// Make and return the declaration.
 		wyvern.tools.typedAST.core.declarations.DefDeclaration getterDecl;
 		getterDecl = new wyvern.tools.typedAST.core.declarations.DefDeclaration(getterName, varType, new LinkedList<>(),
-																				getterBody, false, null);
+																				getterBody, false, null); // may need to add effectSet?
 		return getterDecl;
 		
 	}
@@ -404,7 +403,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		
 		// Make and return the declaration.
 		DefDeclaration setterDecl;
-		setterDecl = new DefDeclaration(setterName, unitType, setterArgs, setterBody, false, null);
+		setterDecl = new DefDeclaration(setterName, unitType, setterArgs, setterBody, false, null); // may need to add effectSet?
 		return setterDecl;
 		
 	}

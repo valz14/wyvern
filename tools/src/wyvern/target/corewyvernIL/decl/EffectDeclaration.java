@@ -69,7 +69,7 @@ public class EffectDeclaration extends NamedDeclaration {
 				// Without try/catch, this could result in a runtime exception due to EmptyGenContext 
 				// (which doesn't have FileLocation or HasLocation to call ToolError.reportError())
 				try {  
-					vt = e.getPath().typeCheck(ctx); // due to addPath() in generateDecl() in typedAST, e.getPath() will never be null
+					vt = e.getPath().typeCheck(ctx, null); // due to addPath() in generateDecl() in typedAST, e.getPath() will never be null
 				} catch (RuntimeException ex) { 
 					// also for a recursive effect declaration (ex. effect process = {process}), variable name would be "var_##"
 					// (could use regex to distinguish the two? May mistake a variable that is really named var_## though)
