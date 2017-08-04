@@ -120,7 +120,7 @@ public class DynCastsTransformer extends ASTVisitor<TypeContext, ASTNode> {
 		else {
 
 	        // Get formal arguments of the method being invoked.
-	        DefDeclType formalMethCall = methCall.typeMethodDeclaration(ctx);
+	        DefDeclType formalMethCall = methCall.typeMethodDeclaration(ctx, null);
 	        List<FormalArg> formalArgs = formalMethCall.getFormalArgs();
 	        
 	        // Transform the actual arguments supplied to the method call.

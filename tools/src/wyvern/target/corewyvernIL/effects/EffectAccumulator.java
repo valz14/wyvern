@@ -24,4 +24,9 @@ public class EffectAccumulator {
 	public Set<Effect> getEffectSet() {
 		return effectSet;
 	}
+	
+	@Override
+	public String toString() {
+		return effectSet==null ? "null" : effectSet.toString();
+	}
 }

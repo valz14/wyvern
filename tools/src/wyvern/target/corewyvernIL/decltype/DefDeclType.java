@@ -25,6 +25,10 @@ public class DefDeclType extends DeclTypeWithResult {
 	private List<FormalArg> args;
 	private Set<Effect> effectSet;
 	
+	public DefDeclType(String method, ValueType returnType, List<FormalArg> args) {
+		this(method, returnType, args, null);
+	}
+
 	public DefDeclType(String method, ValueType returnType, List<FormalArg> args, Set<Effect> effects) {
 		super(method, returnType);
 		this.args = args;

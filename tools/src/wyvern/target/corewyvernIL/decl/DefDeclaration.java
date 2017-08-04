@@ -109,6 +109,13 @@ public class DefDeclaration extends NamedDeclaration {
 		
 		EffectAccumulator effectAccumulator = new EffectAccumulator(null);
 		ValueType bodyType = body.typeCheck(methodCtx, effectAccumulator);
+		if (getName().equals("processData")) {
+			if (getEffectSet() != null) {
+				System.out.println(effectAccumulator.toString()+"vs."+getEffectSet().toString());
+			} else {
+				System.out.println(effectAccumulator.toString()+"vs."+"null");
+			}
+		}
 		if (!bodyType.isSubtypeOf(getType(), methodCtx)) {
 			// for debugging
 			ValueType resultType = getType();

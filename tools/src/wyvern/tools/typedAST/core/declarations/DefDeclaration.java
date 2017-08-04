@@ -143,6 +143,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		} else {
 			effectSet = new HashSet<Effect>();
 			for (String e : effects.split(", *")) {
+				e = e.trim();
 				if (e.contains(".")) { // effect from another object
 					String[] pathAndID = e.split("\\.");
 					effectSet.add(new Effect(new Variable(pathAndID[0]), pathAndID[1], location));

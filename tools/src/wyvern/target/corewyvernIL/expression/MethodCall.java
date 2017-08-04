@@ -11,6 +11,7 @@ import wyvern.target.corewyvernIL.FormalArg;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.DefDeclType;
+import wyvern.target.corewyvernIL.effects.Effect;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
 import wyvern.target.corewyvernIL.metadata.IsTailCall;
 import wyvern.target.corewyvernIL.metadata.Metadata;
@@ -224,8 +225,12 @@ public class MethodCall extends Expression {
 
 			// We were able to typecheck; figure out the return type, and set the method declaration.
 			if (argsTypechecked) {
-//				Set<Effect> methodCallE = defDeclType.getEffectSet();
-//				effectAccumulator
+				if (effectAccumulator != null) {
+					Set<Effect> methodCallE = defDeclType.getEffectSet();
+					if (methodCallE != null) {
+						effectAccumulator.addEffects(methodCallE);
+					}
+				}
 				
 				ctx = newCtx;
 				ValueType resultType = defDeclType.getResultType(v);
