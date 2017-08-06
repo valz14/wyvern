@@ -15,7 +15,9 @@ import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
 import wyvern.target.corewyvernIL.type.ValueType;
+import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.FileLocation;
+import wyvern.tools.errors.ToolError;
 
 public class Effect {
 	private Path path;
@@ -54,8 +56,6 @@ public class Effect {
 	}
 	
 	public Path adapt(View v) {
-		if (getName()=="send") 
-			System.out.println("send");
 		return getPath().adapt(v);
 	}	
 	
@@ -70,5 +70,26 @@ public class Effect {
 		if (eObj.getName().equals(getName()) &&
 				eObj.getPath().equals(getPath())) return true;
 		return false;
+	}
+	
+	public EffectDeclType effectCheck(TypeContext ctx) { // technically doesn't need thisCtx	
+		ValueType vt = null;
+		
+		// Without try/catch, this could result in a runtime exception due to EmptyGenContext 
+		// (which doesn't have FileLocation or HasLocation to call ToolError.reportError())
+		try {  
+			vt = getPath().typeCheck(ctx, null); // due to addPath() in generateDecl() in typedAST, e.getPath() will never be null
+		} catch (RuntimeException ex) { 
+			// also for a recursive effect declaration (ex. effect process = {process}), variable name would be "var_##"
+			// (could use regex to distinguish the two? May mistake a variable that is really named var_## though)
+			ToolError.reportError(ErrorMessage.VARIABLE_NOT_DECLARED, getLocation(), getPath().getName()); 
+		}
+		
+		DeclType eDT = vt.findDecl(getName(), ctx); // the effect definition as appeared in the type (ex. "effect receive = ")
+		if ((eDT==null) || (!(eDT instanceof EffectDeclType))){
+			ToolError.reportError(ErrorMessage.EFFECT_OF_VAR_NOT_FOUND, getLocation(), getName(), getPath().getName());
+		}
+		
+		return (EffectDeclType) eDT;
 	}
 }

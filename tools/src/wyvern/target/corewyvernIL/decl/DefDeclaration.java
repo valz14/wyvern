@@ -1,6 +1,7 @@
 package wyvern.target.corewyvernIL.decl;
 
 import java.io.IOException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -8,6 +9,7 @@ import wyvern.target.corewyvernIL.FormalArg;
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.DefDeclType;
+import wyvern.target.corewyvernIL.decltype.EffectDeclType;
 import wyvern.target.corewyvernIL.effects.Effect;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
 import wyvern.target.corewyvernIL.expression.IExpr;
@@ -109,13 +111,48 @@ public class DefDeclaration extends NamedDeclaration {
 		
 		EffectAccumulator effectAccumulator = new EffectAccumulator(null);
 		ValueType bodyType = body.typeCheck(methodCtx, effectAccumulator);
-		if (getName().equals("processData")) {
-			if (getEffectSet() != null) {
-				System.out.println(effectAccumulator.toString()+"vs."+getEffectSet().toString());
-			} else {
-				System.out.println(effectAccumulator.toString()+"vs."+"null");
-			}
-		}
+//		if (getName().equals("processData")) {
+//			if (getEffectSet() != null) {
+//				System.out.println(effectAccumulator.toString()+"vs."+getEffectSet().toString());
+//			} else {
+//				System.out.println(effectAccumulator.toString()+"vs."+"null");
+//			}
+//		}
+		
+		/* If null, then the method did not claim to have any set (or lack) of effects, so it is allowed 
+		 * to have any set of effects from its method calls. If it isn't null, then its annotated effect
+		 * set must be checked against the set from its method calls.
+		 * 
+		 * TODO: This is a problem for stdio method calls that don't specify effects... and require looking
+		 * more into the effect accumulation code in MethodCall.typecheck()
+		 */
+//		if (effectSet !=  null) { 
+//			if (effectAccumulator.getEffectSet()==null) throw new RuntimeException("Method with effect annotations attempted to call methods without."); // need to report error
+//			
+//			Set<Effect> annotatedEffects = new HashSet<Effect>();
+//			Set<Effect> actualEffects = new HashSet<Effect>();
+//			for (Effect e : effectSet) {
+//				ValueType vt = null;
+//				
+//				// Without try/catch, this could result in a runtime exception due to EmptyGenContext 
+//				// (which doesn't have FileLocation or HasLocation to call ToolError.reportError())
+//				try {  
+//					vt = e.getPath().typeCheck(ctx, null); // due to addPath() in generateDecl() in typedAST, e.getPath() will never be null
+//				} catch (RuntimeException ex) { 
+//					// also for a recursive effect declaration (ex. effect process = {process}), variable name would be "var_##"
+//					// (could use regex to distinguish the two? May mistake a variable that is really named var_## though)
+//					ToolError.reportError(ErrorMessage.VARIABLE_NOT_DECLARED, this, e.getPath().getName()); 
+//				}
+//				
+//				String eName = e.getName(); // "read"
+//				DeclType eDT = vt.findDecl(eName, ctx); // the effect definition as appeared in the type (ex. "effect receive = ")
+//				if ((eDT==null) || (!(eDT instanceof EffectDeclType))){
+//					ToolError.reportError(ErrorMessage.EFFECT_OF_VAR_NOT_FOUND, this, eName, e.getPath().getName());
+//				annotatedEffects.add(e)
+//				}
+//			}
+//		}
+		
 		if (!bodyType.isSubtypeOf(getType(), methodCtx)) {
 			// for debugging
 			ValueType resultType = getType();
@@ -125,8 +162,16 @@ public class DefDeclaration extends NamedDeclaration {
 		}
 		return new DefDeclType(getName(), type, formalArgs, getEffectSet());
 	}
+	
+	public [] recursiveEffectCheck(TypeContext ctx, TypeContext thisCtx, Set<Effect> effects) {
+		if (effects != null) {
+			for (Effect e : effects) {
+				e.effectCheck(ctx);
+			}
+		}
+	}
 
-	private Set<Effect> getEffectSet() {
+	public Set<Effect> getEffectSet() {
 		return effectSet;
 	}
 
