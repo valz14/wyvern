@@ -18,11 +18,13 @@ import wyvern.target.corewyvernIL.decltype.DefDeclType;
 import wyvern.target.corewyvernIL.effects.Effect;
 import wyvern.target.corewyvernIL.expression.Expression;
 import wyvern.target.corewyvernIL.expression.MethodCall;
+import wyvern.target.corewyvernIL.expression.Path;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TopLevelContext;
 import wyvern.target.corewyvernIL.support.TypeOrEffectGenContext;
+import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.StructuralType;
 import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.ErrorMessage;
@@ -225,6 +227,19 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
         ctx = this.serializeArguments(args, ctx);
 
 		DefDeclType ret = new DefDeclType(getName(), getResultILType(ctx), args, getEffectSet());
+//		if ((effectSet !=  null) && (ctx instanceof GenContext)) {
+//			for (Effect e : effectSet) { // would it be more efficient to do a !e.effectsCheck.isEmpty() here?
+////				try {
+//				if (e.getPath()==null) {
+//					Path ePath = ctx.getContainerForTypeAbbrev(e.getName());
+////					Path ePath = ctx.lookupTypeOf(getName()); //((GenContext) ctx).getContainerForTypeAbbrev(e.getName());
+//					if (ePath==null) { // effect not found
+//						ToolError.reportError(ErrorMessage.EFFECT_IN_SIG_NOT_FOUND, this, e.getName());
+//					}
+//					e.setPath(ePath);
+//				}
+//			}
+//		}
 		return ret;
 	}
 
@@ -267,6 +282,20 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 	@Override
 	public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) {
 		List<FormalArg> args = new LinkedList<FormalArg>();
+		if (getName().equals("processData")) {
+			System.out.println("here--typedAST.DefDecl");
+		}
+		if (effectSet != null) {
+			for (Effect e : getEffectSet()) {
+				if (e.getPath()==null) {
+					Path ePath = ((GenContext) ctx).getContainerForTypeAbbrev(e.getName());
+					if (ePath==null) { // effect not found
+						ToolError.reportError(ErrorMessage.EFFECT_IN_SIG_NOT_FOUND, this, e.getName());
+					}
+					e.setPath(ePath);
+				}
+			}
+		}
 		GenContext methodContext = thisContext;
 		if(isGeneric()) {
 

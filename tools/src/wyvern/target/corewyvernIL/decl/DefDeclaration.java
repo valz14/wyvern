@@ -13,8 +13,12 @@ import wyvern.target.corewyvernIL.decltype.EffectDeclType;
 import wyvern.target.corewyvernIL.effects.Effect;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
 import wyvern.target.corewyvernIL.expression.IExpr;
+import wyvern.target.corewyvernIL.expression.Path;
 import wyvern.target.corewyvernIL.expression.Variable;
+import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
+import wyvern.target.corewyvernIL.support.VarBindingContext;
+import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.FileLocation;
@@ -110,49 +114,38 @@ public class DefDeclaration extends NamedDeclaration {
 		}
 		
 		// if the method makes no claim about the effects it has, do not check its calls for effects
-		EffectAccumulator effectAccumulator = (effectSet==null) ? null : new EffectAccumulator(null);
+		EffectAccumulator effectAccumulator = (effectSet==null) ? null : new EffectAccumulator();
+		if (getName().equals("processData")) {
+			System.out.println("here--IL.DefDecl");
+		}
 		ValueType bodyType = body.typeCheck(methodCtx, effectAccumulator);
-//		if (getName().equals("processData")) {
-//			if (getEffectSet() != null) {
-//				System.out.println(effectAccumulator.toString()+"vs."+getEffectSet().toString());
-//			} else {
-//				System.out.println(effectAccumulator.toString()+"vs."+"null");
-//			}
-//		}
 		
-		/* If null, then the method did not claim to have any set (or lack) of effects, so it is allowed 
-		 * to have any set of effects from its method calls. If it isn't null, then its annotated effect
-		 * set must be checked against the set from its method calls.
-		 * 
-		 * TODO: This is a problem for stdio method calls that don't specify effects... and require looking
-		 * more into the effect accumulation code in MethodCall.typecheck()
-		 */
-//		if (effectSet !=  null) { 
-//			if (effectAccumulator.getEffectSet()==null) throw new RuntimeException("Method with effect annotations attempted to call methods without."); // need to report error
-//			
-//			Set<Effect> annotatedEffects = new HashSet<Effect>();
-//			Set<Effect> actualEffects = new HashSet<Effect>();
-//			for (Effect e : effectSet) {
-//				ValueType vt = null;
-//				
-//				// Without try/catch, this could result in a runtime exception due to EmptyGenContext 
-//				// (which doesn't have FileLocation or HasLocation to call ToolError.reportError())
-//				try {  
-//					vt = e.getPath().typeCheck(ctx, null); // due to addPath() in generateDecl() in typedAST, e.getPath() will never be null
-//				} catch (RuntimeException ex) { 
-//					// also for a recursive effect declaration (ex. effect process = {process}), variable name would be "var_##"
-//					// (could use regex to distinguish the two? May mistake a variable that is really named var_## though)
-//					ToolError.reportError(ErrorMessage.VARIABLE_NOT_DECLARED, this, e.getPath().getName()); 
-//				}
-//				
-//				String eName = e.getName(); // "read"
-//				DeclType eDT = vt.findDecl(eName, ctx); // the effect definition as appeared in the type (ex. "effect receive = ")
-//				if ((eDT==null) || (!(eDT instanceof EffectDeclType))){
-//					ToolError.reportError(ErrorMessage.EFFECT_OF_VAR_NOT_FOUND, this, eName, e.getPath().getName());
-//				annotatedEffects.add(e)
-//				}
-//			}
-//		}
+		if ((methodCtx instanceof GenContext) && (effectSet != null)) { // hack to avoid missing info in context 
+			for (Effect e : getEffectSet()) {
+				if (e.getPath()==null) {
+					Path ePath = ((GenContext) methodCtx).getContainerForTypeAbbrev(e.getName()); // ctx also work here for some reason
+					if (ePath==null) { // effect not found
+						ToolError.reportError(ErrorMessage.EFFECT_IN_SIG_NOT_FOUND, this, e.getName());
+					}
+					e.setPath(ePath);
+				}
+			}
+			for (Effect e : effectAccumulator.getEffectSet()) {
+				if (e.getPath()==null) {
+					Path ePath2 = ((GenContext) methodCtx).getContainerForTypeAbbrev(e.getName());
+					if (ePath2==null) { // effect not found
+						ToolError.reportError(ErrorMessage.EFFECT_IN_SIG_NOT_FOUND, this, e.getName());
+					}
+					e.setPath(ePath2);
+				}
+			}
+			if ((getEffectSet() != null) && (effectAccumulator != null)) {
+				Set<Effect> methodCallsE = recursiveEffectCheck(ctx, effectAccumulator.getEffectSet());
+				Set<Effect> annotatedE = recursiveEffectCheck(ctx, getEffectSet());
+//				System.out.println(getName()+": "+effectAccumulator.toString()+" vs. "+getEffectSet().toString());
+				System.out.println(getName()+": "+methodCallsE.toString()+" vs. "+annotatedE.toString());
+			}
+		}	
 		
 		if (!bodyType.isSubtypeOf(getType(), methodCtx)) {
 			// for debugging
@@ -164,13 +157,20 @@ public class DefDeclaration extends NamedDeclaration {
 		return new DefDeclType(getName(), type, formalArgs, getEffectSet());
 	}
 	
-//	public [] recursiveEffectCheck(TypeContext ctx, TypeContext thisCtx, Set<Effect> effects) {
-//		if (effects != null) {
-//			for (Effect e : effects) {
-//				e.effectCheck(ctx);
-//			}
-//		}
-//	}
+	public Set<Effect> recursiveEffectCheck(TypeContext ctx, Set<Effect> effects) {
+		Set<Effect> allEffects =  new HashSet<Effect>();
+		for (Effect e : effects) { // would it be more efficient to do a !e.effectsCheck.isEmpty() here?
+			Set<Effect> moreEffects = e.effectsCheck(ctx);
+			if (moreEffects != null) {
+				allEffects.addAll(moreEffects);
+			}
+//			allEffects.addAll(e.effectsCheck(ctx)); // e.effectsCheck() should never be null...?
+		}
+		if (!allEffects.isEmpty()) { // need to be changed when built-in, base-level effects are implemented
+			recursiveEffectCheck(ctx, allEffects);
+		}
+		return allEffects;
+	}
 
 	public Set<Effect> getEffectSet() {
 		return effectSet;

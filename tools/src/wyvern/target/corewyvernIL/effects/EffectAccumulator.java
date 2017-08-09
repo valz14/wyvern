@@ -9,8 +9,8 @@ import java.util.Set;
 public class EffectAccumulator {
 	private Set<Effect> effectSet;
 	
-	public EffectAccumulator(Set<Effect> effects) {
-		effectSet = effects;
+	public EffectAccumulator() {
+		effectSet = new HashSet<Effect>(); // start off empty
 	}
 	
 	public void initializeSet() {
@@ -30,7 +30,7 @@ public class EffectAccumulator {
 	
 	@Override
 	public String toString() {
-		return ((effectSet==null) ? "null" : effectSet.toString());
+		return effectSet.toString();
 	}
 	
 //	@Override

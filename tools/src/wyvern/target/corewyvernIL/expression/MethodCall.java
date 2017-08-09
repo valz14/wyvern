@@ -228,11 +228,17 @@ public class MethodCall extends Expression {
 				
 				// accumulate effects from method calls
 				if (effectAccumulator != null) {
+					if (getMethodName().equals("processData")) {
+						System.out.println("here--MethodCall");
+					}
 					Set<Effect> methodCallE = defDeclType.getEffectSet();
-					if (methodCallE==null) {
-						throw new RuntimeException("Ambiguous effects from "+methodName);
-					} else {
-						effectAccumulator.addEffects(methodCallE);
+					if (methodCallE != null) {
+						for (Effect e : methodCallE) {
+							if (e.getPath() == null) {
+								e.setPath((Variable) objectExpr); // or receiver.path
+							}
+						}
+						effectAccumulator.addEffects(methodCallE); // fix later
 					}
 				}
 				

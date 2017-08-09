@@ -14,6 +14,7 @@ import wyvern.target.corewyvernIL.decltype.EffectDeclType;
 import wyvern.target.corewyvernIL.expression.Path;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.support.EvalContext;
+import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
 import wyvern.target.corewyvernIL.type.ValueType;
@@ -25,7 +26,7 @@ public class Effect {
 	private Path path;
 	private String name;
 	private FileLocation loc;
-	
+
 	public static Set<Effect> parseEffects(String name, String effects, FileLocation fileLocation) {
 		Set<Effect> effectSet = null; 
 		
@@ -39,6 +40,7 @@ public class Effect {
 		} else {
 			effectSet = new HashSet<Effect>();
 			for (String e : effects.split(", *")) {
+				e = e.trim(); // remove leading/trailing whitespace, if any
 				if (e.contains(".")) { // effect from another object
 					String[] pathAndID = e.split("\\.");
 					effectSet.add(new Effect(new Variable(pathAndID[0]), pathAndID[1], fileLocation));
@@ -67,6 +69,16 @@ public class Effect {
 	public void setPath(Path p) { 
 		path = p;
 	}
+	
+//	public void addPath() {
+//		if (getPath()==null) {
+//			Path ePath = ((GenContext) ctx).getContainerForTypeAbbrev(getName());
+//			if (ePath==null) { // effect not found
+//				ToolError.reportError(ErrorMessage.EFFECT_IN_SIG_NOT_FOUND, this, e.getName());
+//			}
+//			setPath(ePath);
+//		}
+//	}
 	
 	public String getName() {
 		return name;
@@ -103,7 +115,7 @@ public class Effect {
 	}
 	
 	/** Check that an effect exists in the context. */
-	public void effectsCheck(TypeContext ctx) {	
+	public Set<Effect> effectsCheck(TypeContext ctx) {	
 		ValueType vt = null;
 		
 		// Without try/catch, this could result in a runtime exception due to EmptyGenContext 
@@ -122,5 +134,6 @@ public class Effect {
 		if ((eDT==null) || (!(eDT instanceof EffectDeclType))){
 			ToolError.reportError(ErrorMessage.EFFECT_OF_VAR_NOT_FOUND, getLocation(), getName(), getPath().getName());
 		}
+		return ((EffectDeclType) eDT).getEffectSet();
 	}
 }
