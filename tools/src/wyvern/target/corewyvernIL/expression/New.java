@@ -53,7 +53,6 @@ public class New extends Expression {
 		super(type, loc);
 		this.decls = decls;
 		this.selfName = selfName;
-//		throw new RuntimeException(decls.toString());
 		for (Declaration d : decls) {
 			if (d == null)
 				throw new NullPointerException();
