@@ -225,9 +225,13 @@ public class MethodCall extends Expression {
 
 			// We were able to typecheck; figure out the return type, and set the method declaration.
 			if (argsTypechecked) {
+				
+				// accumulate effects from method calls
 				if (effectAccumulator != null) {
 					Set<Effect> methodCallE = defDeclType.getEffectSet();
-					if (methodCallE != null) {
+					if (methodCallE==null) {
+						throw new RuntimeException("Ambiguous effects from "+methodName);
+					} else {
 						effectAccumulator.addEffects(methodCallE);
 					}
 				}

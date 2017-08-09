@@ -94,6 +94,7 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		this.argNames = argNames;
 		this.isClass = isClassDef;
         this.generics = new LinkedList<String>();
+//        this.effectSet = null;
 	}
 
 	public static Arrow getMethodType(List<NameBinding> args, Type returnType) {

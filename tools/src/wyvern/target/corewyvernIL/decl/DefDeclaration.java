@@ -109,7 +109,8 @@ public class DefDeclaration extends NamedDeclaration {
 			}
 		}
 		
-		EffectAccumulator effectAccumulator = new EffectAccumulator(null);
+		// if the method makes no claim about the effects it has, do not check its calls for effects
+		EffectAccumulator effectAccumulator = (effectSet==null) ? null : new EffectAccumulator(null);
 		ValueType bodyType = body.typeCheck(methodCtx, effectAccumulator);
 //		if (getName().equals("processData")) {
 //			if (getEffectSet() != null) {
