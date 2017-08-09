@@ -163,13 +163,13 @@ public class DefDeclaration extends NamedDeclaration {
 		return new DefDeclType(getName(), type, formalArgs, getEffectSet());
 	}
 	
-	public [] recursiveEffectCheck(TypeContext ctx, TypeContext thisCtx, Set<Effect> effects) {
-		if (effects != null) {
-			for (Effect e : effects) {
-				e.effectCheck(ctx);
-			}
-		}
-	}
+//	public [] recursiveEffectCheck(TypeContext ctx, TypeContext thisCtx, Set<Effect> effects) {
+//		if (effects != null) {
+//			for (Effect e : effects) {
+//				e.effectCheck(ctx);
+//			}
+//		}
+//	}
 
 	public Set<Effect> getEffectSet() {
 		return effectSet;

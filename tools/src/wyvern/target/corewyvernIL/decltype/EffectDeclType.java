@@ -3,17 +3,15 @@ package wyvern.target.corewyvernIL.decltype;
 import wyvern.target.corewyvernIL.IASTNode;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.Set;
 
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.effects.Effect;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
-import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.FileLocation;
 
-
+/* TODO: adapt(), doAvoid() */
 public class EffectDeclType extends DeclType implements IASTNode {
 	private Set<Effect> effectSet;
 	private FileLocation loc;
@@ -57,7 +55,6 @@ public class EffectDeclType extends DeclType implements IASTNode {
 	@Override
 	public void checkWellFormed(TypeContext ctx) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -95,24 +92,21 @@ public class EffectDeclType extends DeclType implements IASTNode {
 
 	@Override
 	public DeclType adapt(View v) {
+		// TODO: the returned EffectDeclType should have, as its effect set, the set
+		// of results from calling adapt(v) on each Effect in this.EffectSet
+		
 //		return new EffectDeclType(getName(), this.getRawResultType().adapt(v));
 		return new EffectDeclType(getName(), getEffectSet(), getLocation());
 	}
 
 	@Override
 	public DeclType doAvoid(String varName, TypeContext ctx, int count) {
-//		ValueType t = this.getRawResultType().doAvoid(varName, ctx, count);
-//		if (t.equals(this.getRawResultType())) {
-//			return this;
-//		} else {
-//			
-//		}
+		// TODO: similar to NominalType.doAvoid()
 		return new EffectDeclType(getName(), getEffectSet(), getLocation());
 	}
 
 	@Override
 	public boolean isTypeDecl() {
 		return false;
-	}
-	
+	}	
 }
