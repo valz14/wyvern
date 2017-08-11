@@ -70,24 +70,27 @@ public class EffectDeclaration extends Declaration {
 	
 	@Override
 	public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) {
-		for (Effect e : effectSet) {
-			if (e.getPath() == null) { 
-				// an effect that (if valid) was defined in the same type or module def 
-				// (and therefore did not come with a path)
-				addPath(e, ctx);
-			}
-		}
+		effectSet.stream().forEach(e -> e.addPath(ctx));
+//		for (Effect e : effectSet) {
+//			if (e.getPath() == null) { 
+//				// an effect that (if valid) was defined in the same type or module def 
+//				// (and therefore did not come with a path)
+//				addPath(e, ctx);
+//			}
+//		}
 		return new wyvern.target.corewyvernIL.decl.EffectDeclaration(getName(), getEffectSet(), getLocation());
 	}
 	
-	/** Add path to an effect if it doesn't already have one (i.e. if it's defined in the same type or module def). **/
-	public void addPath(Effect e, GenContext ctx) {
-		Path ePath = ctx.getContainerForTypeAbbrev(e.getName());
-		if (ePath==null) { // effect not found
-			ToolError.reportError(ErrorMessage.EFFECT_IN_SIG_NOT_FOUND, this, e.getName());
-		}
-		e.setPath(ePath);
-	}
+//	/** Add path to an effect if it doesn't already have one (i.e. if it's defined in the same type or module def). **/
+//	public void addPath(Effect e, GenContext ctx) {
+//		if (e.getPath()==null) {
+//			Path ePath = ctx.getContainerForTypeAbbrev(e.getName());
+//			if (ePath==null) { // effect not found
+//				ToolError.reportError(ErrorMessage.EFFECT_IN_SIG_NOT_FOUND, this, e.getName());
+//			}
+//			e.setPath(ePath);
+//		}
+//	}
 	
 	@Override
 	public wyvern.target.corewyvernIL.decl.Declaration topLevelGen(GenContext ctx, List<TypedModuleSpec> dependencies) {

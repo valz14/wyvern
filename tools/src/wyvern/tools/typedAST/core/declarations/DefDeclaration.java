@@ -282,20 +282,15 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 	@Override
 	public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) {
 		List<FormalArg> args = new LinkedList<FormalArg>();
-		if (getName().equals("processData")) {
-			System.out.println("here--typedAST.DefDecl");
-		}
-		if (effectSet != null) {
-			for (Effect e : getEffectSet()) {
-				if (e.getPath()==null) {
-					Path ePath = ((GenContext) ctx).getContainerForTypeAbbrev(e.getName());
-					if (ePath==null) { // effect not found
-						ToolError.reportError(ErrorMessage.EFFECT_IN_SIG_NOT_FOUND, this, e.getName());
-					}
-					e.setPath(ePath);
-				}
-			}
-		}
+//		if (getName().equals("processData")) {
+//			System.out.println("here--typedAST.DefDecl");
+//		}
+//		if (effectSet != null) {
+//			System.out.println("hey");
+//		}
+//		if (effectSet != null) {
+//			effectSet.stream().forEach(e -> e.addPath(ctx));
+//		}
 		GenContext methodContext = thisContext;
 		if(isGeneric()) {
 
@@ -438,6 +433,10 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
         sb.append(type.toString());
         sb.append(" = ");
         sb.append(body.prettyPrint());
+		if (effectSet != null) {
+			sb.append(" with "); // temp, just for distinction
+			sb.append(effectSet.toString()); // [] instead of {}, hopefully won't be too confusing
+		}
         return sb;
     }
 }

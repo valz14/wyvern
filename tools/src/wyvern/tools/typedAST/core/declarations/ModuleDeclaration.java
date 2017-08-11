@@ -3,11 +3,13 @@ package wyvern.tools.typedAST.core.declarations;
 import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.util.stream.Stream;
@@ -16,9 +18,12 @@ import wyvern.stdlib.Globals;
 import wyvern.target.corewyvernIL.FormalArg;
 import wyvern.target.corewyvernIL.VarBinding;
 import wyvern.target.corewyvernIL.decltype.DeclType;
+import wyvern.target.corewyvernIL.effects.Effect;
+import wyvern.target.corewyvernIL.effects.EffectAccumulator;
 import wyvern.target.corewyvernIL.expression.IExpr;
 import wyvern.target.corewyvernIL.expression.Let;
 import wyvern.target.corewyvernIL.expression.MethodCall;
+import wyvern.target.corewyvernIL.expression.New;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.modules.LoadedType;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
@@ -480,7 +485,32 @@ public class ModuleDeclaration extends Declaration implements CoreAST {
 			/* non resource module translated into value */
 			return new wyvern.target.corewyvernIL.decl.ValDeclaration(name, returnType, body, getLocation());
 		}
+		
+		/* recover the effect set from the body and add them to the module, if any */
+		// plan: loop through loop body (recursion on getToReplace(), similar to typecheck) and get all effect declarations
+		EffectAccumulator effects = new EffectAccumulator();
+		if (body instanceof Let) { // not sure if necessary
+			Let bodyToCheck = (Let) body;
+			recoverEffects(bodyToCheck, effects); // might not even be necessary
+		}
+		
 		/* resource module translated into method */
-		return new wyvern.target.corewyvernIL.decl.DefDeclaration(name, formalArgs, returnType, body, getLocation());
+		return new wyvern.target.corewyvernIL.decl.DefDeclaration(name, formalArgs, returnType, body, getLocation(), effects.getEffectSet());
+	}
+	
+	public void recoverEffects(Let bodyToCheck, EffectAccumulator effects) {
+		if (bodyToCheck.getToReplace() instanceof New) { // TODO: fix/simplify
+			New newBodyToCheck = (New) bodyToCheck.getToReplace();
+			for (wyvern.target.corewyvernIL.decl.Declaration decl : newBodyToCheck.getDecls()) { // Let.binding.expression.decls // hack
+				if (decl instanceof wyvern.target.corewyvernIL.decl.EffectDeclaration) {
+//					if (effects == null) { effects = new HashSet<Effect>(); }
+					effects.addEffect(new Effect(new Variable(newBodyToCheck.getSelfName()), decl.getName(), decl.getLocation())); // I think decl.getLocation? not getLocation()???
+				}
+			}
+		}
+		
+		if ((bodyToCheck.getInExpr() != null) && (bodyToCheck.getInExpr() instanceof Let)) {
+			recoverEffects(((Let) bodyToCheck.getInExpr()), effects);
+		}
 	}
 }

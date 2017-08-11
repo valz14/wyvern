@@ -157,11 +157,11 @@ public class EffectSystemTests {
     	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork0E", Util.unitType(), Util.unitValue());
 	}
     
-//    @Test
-//    public void testEffectNetwork11() throws ParseException {
-//    	/* Same as network01 but without type ascription (for testing DataProcessor). */
-//    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork11", Util.unitType(), Util.unitValue());
-//    }
+    @Test
+    public void testEffectNetwork11() throws ParseException {
+    	/* Same as network01 but with all effects defined in type and module def (for testing DataProcessor). */
+    	TestUtil.doTestScriptModularly(PATH, "effects.testNetwork11", Util.unitType(), Util.unitValue());
+    }
     
     @Test
     public void testDataProcessor() throws ParseException {

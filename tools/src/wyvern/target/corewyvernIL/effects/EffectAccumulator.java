@@ -13,14 +13,20 @@ public class EffectAccumulator {
 		effectSet = new HashSet<Effect>(); // start off empty
 	}
 	
-	public void initializeSet() {
-		if (effectSet==null) {
-			effectSet = new HashSet<Effect>();
-		}
+//	public void initializeSet() {
+//		if (effectSet==null) {
+//			effectSet = new HashSet<Effect>();
+//		}
+//	}
+	
+	
+	public void addEffect(Effect e) {
+//		initializeSet();
+		effectSet.add(e);
 	}
 	
 	public void addEffects(Set<Effect> effects) {
-		initializeSet();
+//		initializeSet();
 		effectSet.addAll(effects);
 	}
 	

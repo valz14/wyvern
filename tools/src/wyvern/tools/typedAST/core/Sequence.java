@@ -356,7 +356,7 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 			ast.genTopLevel(tlc);
 			if (ast instanceof Declaration) {
 				((Declaration)ast).addModuleDecl(tlc);
-			}
+			} 
 		}
 	}
 	
@@ -397,8 +397,8 @@ public class Sequence extends AbstractExpressionAST implements CoreAST, Iterable
 	private Sequence combine() {
 		boolean recBlock = false;
 		Sequence normalSeq = new Sequence();
-		Sequence recSequence = new DeclSequence(); // not sure definition is needed here (Valerie)
-		Sequence effectSequence; // = new DeclSequence(); // each will only have one EffectDeclaration
+		Sequence recSequence = new DeclSequence();
+		Sequence effectSequence; // = new DeclSequence(); // each block will only have one EffectDeclaration
 		for (TypedAST ast : this.getIterator()) {
 			
 			if(ast instanceof TypeVarDecl || ast instanceof DefDeclaration || ast instanceof TypeAbbrevDeclaration) {

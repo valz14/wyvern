@@ -40,7 +40,7 @@ public class Effect {
 		} else {
 			effectSet = new HashSet<Effect>();
 			for (String e : effects.split(", *")) {
-				e = e.trim(); // remove leading/trailing whitespace, if any
+				e = e.trim(); // remove leading/trailing spaces
 				if (e.contains(".")) { // effect from another object
 					String[] pathAndID = e.split("\\.");
 					effectSet.add(new Effect(new Variable(pathAndID[0]), pathAndID[1], fileLocation));
@@ -52,6 +52,10 @@ public class Effect {
 		
 		return effectSet;
 	}
+	
+//	public static boolean isDefined(Set<Effect> effects) {
+//		return (effects != null);
+//	}
 	
 	public Effect(Variable p, String n, FileLocation l) {
 		path = p;
@@ -70,15 +74,16 @@ public class Effect {
 		path = p;
 	}
 	
-//	public void addPath() {
-//		if (getPath()==null) {
-//			Path ePath = ((GenContext) ctx).getContainerForTypeAbbrev(getName());
-//			if (ePath==null) { // effect not found
-//				ToolError.reportError(ErrorMessage.EFFECT_IN_SIG_NOT_FOUND, this, e.getName());
-//			}
-//			setPath(ePath);
-//		}
-//	}
+	/** Add path to an effect if it doesn't already have one (i.e. if it's defined in the same type or module def). **/
+	public void addPath(GenContext ctx) {
+		if (getPath()==null) {
+			Path ePath = ((GenContext) ctx).getContainerForTypeAbbrev(getName());
+			if (ePath==null) { // effect not found
+				ToolError.reportError(ErrorMessage.EFFECT_IN_SIG_NOT_FOUND, getLocation(), getName());
+			}
+			setPath(ePath);
+		}
+	}
 	
 	public String getName() {
 		return name;

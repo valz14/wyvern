@@ -68,6 +68,19 @@ public class DefDeclaration extends NamedDeclaration {
 		}
 		String newIndent = indent+"    ";
 		dest.append(") : ");
+		if (effectSet != null) {
+			dest.append("{");
+			effectSet.stream().forEach(e -> {
+				try {
+					dest.append(e.toString());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			});
+//			dest.append(effectSet.toString()); // [] instead of {}, hopefully won't be too confusing
+			dest.append("} ");
+		}
 		type.doPrettyPrint(dest, newIndent);
 		dest.append('\n').append(newIndent);
 		body.doPrettyPrint(dest,newIndent);
@@ -115,30 +128,16 @@ public class DefDeclaration extends NamedDeclaration {
 		
 		// if the method makes no claim about the effects it has, do not check its calls for effects
 		EffectAccumulator effectAccumulator = (effectSet==null) ? null : new EffectAccumulator();
-		if (getName().equals("processData")) {
-			System.out.println("here--IL.DefDecl");
-		}
+//		if (getName().equals("processData")) { // remove
+//			System.out.println("here--IL.DefDecl");
+//		}
 		ValueType bodyType = body.typeCheck(methodCtx, effectAccumulator);
 		
 		if ((methodCtx instanceof GenContext) && (effectSet != null)) { // hack to avoid missing info in context 
-			for (Effect e : getEffectSet()) {
-				if (e.getPath()==null) {
-					Path ePath = ((GenContext) methodCtx).getContainerForTypeAbbrev(e.getName()); // ctx also work here for some reason
-					if (ePath==null) { // effect not found
-						ToolError.reportError(ErrorMessage.EFFECT_IN_SIG_NOT_FOUND, this, e.getName());
-					}
-					e.setPath(ePath);
-				}
-			}
-			for (Effect e : effectAccumulator.getEffectSet()) {
-				if (e.getPath()==null) {
-					Path ePath2 = ((GenContext) methodCtx).getContainerForTypeAbbrev(e.getName());
-					if (ePath2==null) { // effect not found
-						ToolError.reportError(ErrorMessage.EFFECT_IN_SIG_NOT_FOUND, this, e.getName());
-					}
-					e.setPath(ePath2);
-				}
-			}
+			GenContext methodGenCtx = (GenContext) methodCtx; // hack
+			effectSet.stream().forEach(e -> e.addPath(methodGenCtx)); // ctx also work here for some reason
+			effectAccumulator.getEffectSet().stream().forEach(e -> e.addPath(methodGenCtx)); // need null check too?
+
 			if ((getEffectSet() != null) && (effectAccumulator != null)) {
 				Set<Effect> methodCallsE = recursiveEffectCheck(ctx, effectAccumulator.getEffectSet());
 				Set<Effect> annotatedE = recursiveEffectCheck(ctx, getEffectSet());
@@ -160,14 +159,13 @@ public class DefDeclaration extends NamedDeclaration {
 	public Set<Effect> recursiveEffectCheck(TypeContext ctx, Set<Effect> effects) {
 		Set<Effect> allEffects =  new HashSet<Effect>();
 		for (Effect e : effects) { // would it be more efficient to do a !e.effectsCheck.isEmpty() here?
-			Set<Effect> moreEffects = e.effectsCheck(ctx);
+			Set<Effect> moreEffects = e.effectsCheck(ctx); // effectCheck() returns the effectSet defined by EffectDeclType
 			if (moreEffects != null) {
 				allEffects.addAll(moreEffects);
 			}
-//			allEffects.addAll(e.effectsCheck(ctx)); // e.effectsCheck() should never be null...?
 		}
 		if (!allEffects.isEmpty()) { // need to be changed when built-in, base-level effects are implemented
-			recursiveEffectCheck(ctx, allEffects);
+			allEffects = recursiveEffectCheck(ctx, allEffects);
 		}
 		return allEffects;
 	}
