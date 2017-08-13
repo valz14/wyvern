@@ -165,7 +165,8 @@ public class EffectSystemTests {
     
     @Test
     public void testDataProcessor() throws ParseException {
-    	/* Involve real effect abstraction ("effect process = {net.receive}"). */
+    	/* Involve real effect abstraction ("effect process = {net.receive}"). 
+    	 * Uses network11 because effects in its type are defined, to make sure that effect-checking for methods do work. */
     	TestUtil.doTestScriptModularly(PATH, "effects.testDataProcessor", Util.unitType(), Util.unitValue());
     }
     

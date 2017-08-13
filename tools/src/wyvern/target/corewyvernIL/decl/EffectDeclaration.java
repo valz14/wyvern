@@ -52,9 +52,6 @@ public class EffectDeclaration extends NamedDeclaration {
 	public DeclType typeCheck(TypeContext ctx, TypeContext thisCtx) {
 		if (effectSet != null) {
 			effectSet.stream().forEach(e -> e.effectsCheck(ctx));
-//			for (Effect e : effectSet) {
-//				e.effectsCheck(ctx);
-//			}
 		}
 		return getDeclType();
 	}
@@ -62,8 +59,18 @@ public class EffectDeclaration extends NamedDeclaration {
 	@Override
 	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
 		dest.append(indent).append("effect ").append(getName()).append(" = ");
-		if (effectSet != null)
-			dest.append(effectSet.toString());
+		if (effectSet != null) {
+			dest.append("{");
+			effectSet.stream().forEach(e -> {
+				try {
+					dest.append(e.toString());
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			});
+			dest.append("} ");
+		}
 		dest.append('\n');
 	}
 	
@@ -71,9 +78,6 @@ public class EffectDeclaration extends NamedDeclaration {
 	public Set<String> getFreeVariables() {
 		Set<String> freeVars = new HashSet<String>();
 		effectSet.stream().forEach(e -> freeVars.add(e.getPath().getName()));
-//		for (Effect e : effectSet) {
-//			freeVars.add(e.getPath().getName()); // e.getPath() should never be null because of addPath() being called earlier
-//		}
 		return freeVars;
 	}
 }

@@ -67,9 +67,7 @@ public class Effect {
 		return (Variable) path;
 	}
 	
-	/** For effects defined in the same signature 
-	 * (whose paths are null until typechecked) 
-	 */
+	/** For effects defined in the same signature (whose paths are null until typechecked) */
 	public void setPath(Path p) { 
 		path = p;
 	}

@@ -11,7 +11,7 @@ import wyvern.target.corewyvernIL.type.ValueType;
 
 public interface IExpr extends IASTNode {
 	public ValueType typeCheck(TypeContext ctx, EffectAccumulator effectAccumulator);
-	/* if no use for effectAccumulator, pass ino null --> this has a different meaning than passing in 
+	/* if no use for effectAccumulator, pass in null --> this has a different meaning than passing in 
 	 * EffectAccumulator(null) (i.e. whose effectSet is null)
 	 */
 		

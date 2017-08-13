@@ -1,5 +1,6 @@
 package wyvern.target.corewyvernIL.effects;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -10,23 +11,14 @@ public class EffectAccumulator {
 	private Set<Effect> effectSet;
 	
 	public EffectAccumulator() {
-		effectSet = new HashSet<Effect>(); // start off empty
-	}
-	
-//	public void initializeSet() {
-//		if (effectSet==null) {
-//			effectSet = new HashSet<Effect>();
-//		}
-//	}
-	
+		effectSet = new HashSet<Effect>(); // start off empty (never null)
+	}	
 	
 	public void addEffect(Effect e) {
-//		initializeSet();
 		effectSet.add(e);
 	}
 	
 	public void addEffects(Set<Effect> effects) {
-//		initializeSet();
 		effectSet.addAll(effects);
 	}
 	
@@ -36,14 +28,25 @@ public class EffectAccumulator {
 	
 	@Override
 	public String toString() {
-		return effectSet.toString();
+		String s = effectSet.toString(); 
+		return s.replace("[", "{").replace("]", "}");
 	}
 	
 //	@Override
 //	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
 //		dest.append(indent).append("effect ").append(getName()).append(" = ");
-//		if (effectSet != null)
-//			dest.append(effectSet.toString());
+//		if (effectSet != null) {
+//			dest.append("{");
+//			effectSet.stream().forEach(e -> {
+//				try {
+//					dest.append(e.toString());
+//				} catch (IOException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
+//			});
+//			dest.append("} ");
+//		}
 //		dest.append('\n');
 //	}
 }

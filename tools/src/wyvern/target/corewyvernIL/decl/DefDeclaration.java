@@ -78,7 +78,6 @@ public class DefDeclaration extends NamedDeclaration {
 					e1.printStackTrace();
 				}
 			});
-//			dest.append(effectSet.toString()); // [] instead of {}, hopefully won't be too confusing
 			dest.append("} ");
 		}
 		type.doPrettyPrint(dest, newIndent);
@@ -126,24 +125,22 @@ public class DefDeclaration extends NamedDeclaration {
 			}
 		}
 		
-		// if the method makes no claim about the effects it has, do not check its calls for effects
+		// if the method makes no claim about the effects it has, do not check its calls for effects (i.e. null)
 		EffectAccumulator effectAccumulator = (effectSet==null) ? null : new EffectAccumulator();
-//		if (getName().equals("processData")) { // remove
-//			System.out.println("here--IL.DefDecl");
-//		}
 		ValueType bodyType = body.typeCheck(methodCtx, effectAccumulator);
 		
-		if ((methodCtx instanceof GenContext) && (effectSet != null)) { // hack to avoid missing info in context 
+		/* If in the process of generating code, and the method has effect annotations, check its effects
+		 * (A hack to avoid missing info in certain stages of context) */
+		if ((methodCtx instanceof GenContext) && (effectSet != null)) { 
 			GenContext methodGenCtx = (GenContext) methodCtx; // hack
-			effectSet.stream().forEach(e -> e.addPath(methodGenCtx)); // ctx also work here for some reason
-			effectAccumulator.getEffectSet().stream().forEach(e -> e.addPath(methodGenCtx)); // need null check too?
-
-			if ((getEffectSet() != null) && (effectAccumulator != null)) {
-				Set<Effect> methodCallsE = recursiveEffectCheck(ctx, effectAccumulator.getEffectSet());
-				Set<Effect> annotatedE = recursiveEffectCheck(ctx, getEffectSet());
-//				System.out.println(getName()+": "+effectAccumulator.toString()+" vs. "+getEffectSet().toString());
-				System.out.println(getName()+": "+methodCallsE.toString()+" vs. "+annotatedE.toString());
-			}
+			
+			// fill in empty paths for effects
+			effectSet.stream().forEach(e -> e.addPath(methodGenCtx)); // ctx also work here // move to before?
+			effectAccumulator.getEffectSet().stream().forEach(e -> e.addPath(methodGenCtx));
+			
+			Set<Effect> methodCallsE = recursiveEffectCheck(ctx, effectAccumulator.getEffectSet()); 
+			Set<Effect> annotatedE = recursiveEffectCheck(ctx, getEffectSet()); // make into EffectDeclType for comparison?
+			System.out.println(getName()+": "+methodCallsE.toString()+" vs. "+annotatedE.toString()); // replace w/ comparison
 		}	
 		
 		if (!bodyType.isSubtypeOf(getType(), methodCtx)) {
@@ -156,6 +153,7 @@ public class DefDeclaration extends NamedDeclaration {
 		return new DefDeclType(getName(), type, formalArgs, getEffectSet());
 	}
 	
+	// may move to EffectDeclType instead, in which case e.effectCheck() will return EffectDeclType (instead of its effectSet instead)
 	public Set<Effect> recursiveEffectCheck(TypeContext ctx, Set<Effect> effects) {
 		Set<Effect> allEffects =  new HashSet<Effect>();
 		for (Effect e : effects) { // would it be more efficient to do a !e.effectsCheck.isEmpty() here?
