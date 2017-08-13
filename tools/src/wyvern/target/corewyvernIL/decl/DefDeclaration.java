@@ -102,6 +102,10 @@ public class DefDeclaration extends NamedDeclaration {
 	public IExpr getBody() {
 		return body;
 	}
+	
+	public Set<Effect> getEffectSet() {
+		return effectSet;
+	}
 
 	@Override
 	public <S, T> T acceptVisitor(ASTVisitor <S, T> emitILVisitor,
@@ -166,10 +170,6 @@ public class DefDeclaration extends NamedDeclaration {
 			allEffects = recursiveEffectCheck(ctx, allEffects);
 		}
 		return allEffects;
-	}
-
-	public Set<Effect> getEffectSet() {
-		return effectSet;
 	}
 
 	@Override

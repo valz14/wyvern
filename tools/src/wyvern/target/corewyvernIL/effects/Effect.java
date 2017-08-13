@@ -41,15 +41,19 @@ public class Effect {
 			effectSet = new HashSet<Effect>();
 			for (String e : effects.split(", *")) {
 				e = e.trim(); // remove leading/trailing spaces
+				Effect newE; 
 				if (e.contains(".")) { // effect from another object
 					String[] pathAndID = e.split("\\.");
-					effectSet.add(new Effect(new Variable(pathAndID[0]), pathAndID[1], fileLocation));
+					newE = new Effect(new Variable(pathAndID[0]), pathAndID[1], fileLocation);
 				} else { // effect defined in the same type or module def
-					effectSet.add(new Effect(null, e, fileLocation));
+					if (name.equals(e)) { // recursive definition (ex. "effect process = {send, process}")
+						ToolError.reportError(ErrorMessage.RECURSIVE_EFFECT, fileLocation, e);
+					}
+					newE = new Effect(null, e, fileLocation);
 				}
+				effectSet.add(newE);
 			}
 		}
-		
 		return effectSet;
 	}
 	

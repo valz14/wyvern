@@ -102,48 +102,40 @@ public class EffectDeclaration extends Declaration {
 	public Environment extendType(Environment env, Environment against) {
 		// TODO Auto-generated method stub
 		throw new RuntimeException("extendType not implemented");
-//		return null;
 	}
 	@Override
 	public Environment extendName(Environment env, Environment against) {
 		// TODO Auto-generated method stub
 		throw new RuntimeException("extendName not implemented");
-//		return null;
 	}
 	@Override
 	public Type getType() { // effects have no parsed "type" like variables/values do
 		throw new RuntimeException("extendName not implemented");
-//		return null;
 	}
 	@Override
 	public Map<String, TypedAST> getChildren() {
 		// TODO Auto-generated method stub
 		throw new RuntimeException("getChildren not implemented");
-//		return null;
 	}
 	@Override
 	public TypedAST cloneWithChildren(Map<String, TypedAST> newChildren) {
 		// TODO Auto-generated method stub
 		throw new RuntimeException("getChildren not implemented");
-//		return null;
 	}
 
 	@Override
 	protected Type doTypecheck(Environment env) { 
 		throw new RuntimeException("doTypecheck not implemented");
-//		return null;
 	}
 	@Override
 	protected Environment doExtend(Environment old, Environment against) {
 		// TODO Auto-generated method stub
 		throw new RuntimeException("doExtend not implemented");
-//		return null;
 	}
 	@Override
 	public EvaluationEnvironment extendWithValue(EvaluationEnvironment old) {
 		// TODO Auto-generated method stub
 		throw new RuntimeException("extendWithValue not implemented");
-//		return null;
 	}
 	@Override
 	public void evalDecl(EvaluationEnvironment evalEnv, EvaluationEnvironment declEnv) {
