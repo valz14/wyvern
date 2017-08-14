@@ -137,14 +137,26 @@ public class DefDeclaration extends NamedDeclaration {
 		 * (A hack to avoid missing info in certain stages of context) */
 		if ((methodCtx instanceof GenContext) && (effectSet != null)) { 
 			GenContext methodGenCtx = (GenContext) methodCtx; // hack
-			
+			Set<Effect> actualEffectSet = effectAccumulator.getEffectSet();
 			// fill in empty paths for effects
 			effectSet.stream().forEach(e -> e.addPath(methodGenCtx)); // ctx also work here // move to before?
-			effectAccumulator.getEffectSet().stream().forEach(e -> e.addPath(methodGenCtx));
-			
-			Set<Effect> methodCallsE = recursiveEffectCheck(ctx, effectAccumulator.getEffectSet()); 
-			Set<Effect> annotatedE = recursiveEffectCheck(ctx, getEffectSet()); // make into EffectDeclType for comparison?
-			System.out.println(getName()+": "+methodCallsE.toString()+" vs. "+annotatedE.toString()); // replace w/ comparison
+			actualEffectSet.stream().forEach(e -> e.addPath(methodGenCtx));
+		
+			EffectDeclType actualEffects = new EffectDeclType(getName()+" actualEffects", effectSet, getLocation());
+			EffectDeclType annotatedEffects = new EffectDeclType(getName()+" annotatedEffects", actualEffectSet, getLocation());
+			if (!actualEffects.isSubtypeOf(annotatedEffects, ctx)) {
+				ToolError.reportError(ErrorMessage.NOT_SUBTYPE, getLocation(), 
+						"set of effects from the method calls ("+effectSet.toString()+")",
+						"set effects specified by "+getName()+"("+actualEffectSet.toString()+")");
+			}
+//			Set<Effect> methodCallsE = recursiveEffectCheck(ctx, effectAccumulator.getEffectSet()); 
+//			Set<Effect> annotatedE = recursiveEffectCheck(ctx, getEffectSet()); // make into EffectDeclType for comparison?
+//			System.out.println(getName()+": "+methodCallsE.toString()+" vs. "+annotatedE.toString()); // replace w/ comparison
+//			if (!methodCallsE.equals(annotatedE)) { // if methodCallE does not have less effects than annotatedE
+//				ToolError.reportError(ErrorMessage.NOT_SUBTYPE, getLocation(), 
+//						"set of effects from the method calls ("+methodCallsE.toString()+")",
+//						"set effects specified by "+getName()+"("+annotatedE.toString()+")");
+//			}
 		}	
 		
 		if (!bodyType.isSubtypeOf(getType(), methodCtx)) {
@@ -154,22 +166,7 @@ public class DefDeclaration extends NamedDeclaration {
 			ToolError.reportError(ErrorMessage.NOT_SUBTYPE, this, "method body's type", "declared type");;
 			
 		}
-		return new DefDeclType(getName(), type, formalArgs, getEffectSet());
-	}
-	
-	// may move to EffectDeclType instead, in which case e.effectCheck() will return EffectDeclType (instead of its effectSet instead)
-	public Set<Effect> recursiveEffectCheck(TypeContext ctx, Set<Effect> effects) {
-		Set<Effect> allEffects =  new HashSet<Effect>();
-		for (Effect e : effects) { // would it be more efficient to do a !e.effectsCheck.isEmpty() here?
-			Set<Effect> moreEffects = e.effectsCheck(ctx); // effectCheck() returns the effectSet defined by EffectDeclType
-			if (moreEffects != null) {
-				allEffects.addAll(moreEffects);
-			}
-		}
-		if (!allEffects.isEmpty()) { // need to be changed when built-in, base-level effects are implemented
-			allEffects = recursiveEffectCheck(ctx, allEffects);
-		}
-		return allEffects;
+		return new DefDeclType(getName(), type, formalArgs, effectSet);
 	}
 
 	@Override

@@ -105,7 +105,7 @@ public enum ErrorMessage {
 	UNDEFINED_EFFECT("Effect undefined outside of type signature: \"%ARG\"", 1),
 	EFFECT_IN_SIG_NOT_FOUND("Effect \"%ARG\" not found in the signature", 1),
 	EFFECT_OF_VAR_NOT_FOUND("Effect \"%ARG\" not found for variable \"%ARG\"", 2),
-	RECURSIVE_EFFECT("Effect \"%ARG\" is being defined based on itself", 1),
+	RECURSIVE_EFFECT("Effect \"%ARG\" is being defined recursively", 1),
 	;
 
 	private ErrorMessage(String message, int numArgs) {
