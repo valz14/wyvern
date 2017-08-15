@@ -231,7 +231,7 @@ public class MethodCall extends Expression {
 					Set<Effect> methodCallE = defDeclType.getEffectSet();
 					if (methodCallE != null) {
 						for (Effect e : methodCallE) {
-							if (e.getPath() == null) {e.setPath((Variable) objectExpr); }// or receiver.path
+							if (e.getPath() == null) {e.setPath((Variable) objectExpr); }
 						}
 						effectAccumulator.addEffects(methodCallE);
 					}

@@ -14,10 +14,6 @@ import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.EffectDeclType;
 import wyvern.target.corewyvernIL.effects.Effect;
-import wyvern.target.corewyvernIL.expression.IExpr;
-import wyvern.target.corewyvernIL.expression.Path;
-import wyvern.target.corewyvernIL.expression.Variable;
-import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.tools.errors.FileLocation;
 
@@ -50,34 +46,21 @@ public class EffectDeclaration extends NamedDeclaration {
 	 */ 
 	@Override
 	public DeclType typeCheck(TypeContext ctx, TypeContext thisCtx) {
-		if (effectSet != null) {
-			effectSet.stream().forEach(e -> e.effectsCheck(ctx));
-		}
+		if (effectSet != null) { effectSet.stream().forEach(e -> e.effectsCheck(ctx)); }
 		return getDeclType();
 	}
 
 	@Override
 	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
 		dest.append(indent).append("effect ").append(getName()).append(" = ");
-		if (effectSet != null) {
-			dest.append("{");
-			effectSet.stream().forEach(e -> {
-				try {
-					dest.append(e.toString());
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			});
-			dest.append("} ");
-		}
+		if (effectSet != null) {effectSet.toString().replace("[", "{").replace("]", "}");	}
 		dest.append('\n');
 	}
 	
 	@Override
 	public Set<String> getFreeVariables() {
 		Set<String> freeVars = new HashSet<String>();
-		effectSet.stream().forEach(e -> freeVars.add(e.getPath().getName()));
+		if (effectSet!=null) {effectSet.stream().forEach(e -> freeVars.add(e.getPath().getName()));}
 		return freeVars;
 	}
 }

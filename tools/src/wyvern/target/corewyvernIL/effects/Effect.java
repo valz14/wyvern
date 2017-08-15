@@ -6,14 +6,12 @@ package wyvern.target.corewyvernIL.effects;
 import java.util.HashSet;
 import java.util.Set;
 
-import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import java.util.regex.Pattern;
 
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.EffectDeclType;
 import wyvern.target.corewyvernIL.expression.Path;
 import wyvern.target.corewyvernIL.expression.Variable;
-import wyvern.target.corewyvernIL.support.EvalContext;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
@@ -27,6 +25,7 @@ public class Effect {
 	private String name;
 	private FileLocation loc;
 
+	/** Parse string into set of effects. */
 	public static Set<Effect> parseEffects(String name, String effects, FileLocation fileLocation) {
 		Set<Effect> effectSet = null; 
 		
@@ -40,31 +39,32 @@ public class Effect {
 		} else {
 			effectSet = new HashSet<Effect>();
 			for (String e : effects.split(", *")) {
-				e = e.trim(); // remove leading/trailing spaces
-				Effect newE; 
-				if (e.contains(".")) { // effect from another object
-					String[] pathAndID = e.split("\\.");
-					newE = new Effect(new Variable(pathAndID[0]), pathAndID[1], fileLocation);
-				} else { // effect defined in the same type or module def
-					if (name.equals(e)) { // recursive definition (ex. "effect process = {send, process}")
-						ToolError.reportError(ErrorMessage.RECURSIVE_EFFECT, fileLocation, e);
-					}
-					newE = new Effect(null, e, fileLocation);
-				}
+				Effect newE = parseEffect(e, name, fileLocation);
 				effectSet.add(newE);
 			}
 		}
 		return effectSet;
 	}
 	
-//	public static boolean isDefined(Set<Effect> effects) {
-//		return (effects != null);
-//	}
+	/** Parse string into single Effect object. */
+	private static Effect parseEffect(String e, String name, FileLocation fileLocation) {
+		e = e.trim(); // remove leading/trailing spaces
+		
+		if (e.contains(".")) { // effect from another object
+			String[] pathAndID = e.split("\\.");
+			return new Effect(new Variable(pathAndID[0]), pathAndID[1], fileLocation);
+		} else { // effect defined in the same type or module def
+			if (name.equals(e)) { // recursive definition (ex. "effect process = {send, process}")
+				ToolError.reportError(ErrorMessage.RECURSIVE_EFFECT, fileLocation, e);
+			}
+			return new Effect(null, e, fileLocation);
+		}
+	}
 	
 	public Effect(Variable p, String n, FileLocation l) {
-		path = p;
-		name = n;
-		loc = l;
+		this.path = p;
+		this.name = n;
+		this.loc = l;
 	}
 
 	public Variable getPath() {
@@ -79,7 +79,7 @@ public class Effect {
 	/** Add path to an effect if it doesn't already have one (i.e. if it's defined in the same type or module def). **/
 	public void addPath(GenContext ctx) {
 		if (getPath()==null) {
-			Path ePath = ((GenContext) ctx).getContainerForTypeAbbrev(getName());
+			Path ePath = ctx.getContainerForTypeAbbrev(getName());
 			if (ePath==null) { // effect not found
 				ToolError.reportError(ErrorMessage.EFFECT_IN_SIG_NOT_FOUND, getLocation(), getName());
 			}
@@ -121,7 +121,7 @@ public class Effect {
 		return false;
 	}
 	
-	/** Check that an effect exists in the context. */
+	/** Check that an effect exists in the context, returning its corresponding effect set at the end. */
 	public Set<Effect> effectsCheck(TypeContext ctx) {	
 		ValueType vt = null;
 		

@@ -1,5 +1,5 @@
 /**
- * Typed AST of an effect; translates the definition of the effect 
+ * Typed AST of an effect; parses the definition of the effect 
  * from a String into a set of effects.
  * 
  * @author vzhao
@@ -14,13 +14,10 @@ import java.util.Set;
 import wyvern.target.corewyvernIL.decltype.DeclType;
 import wyvern.target.corewyvernIL.decltype.EffectDeclType;
 import wyvern.target.corewyvernIL.effects.Effect;
-import wyvern.target.corewyvernIL.expression.Path;
 import wyvern.target.corewyvernIL.modules.TypedModuleSpec;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TopLevelContext;
-import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.FileLocation;
-import wyvern.tools.errors.ToolError;
 import wyvern.tools.typedAST.abs.Declaration;
 import wyvern.tools.typedAST.interfaces.TypedAST;
 import wyvern.tools.types.Environment;
@@ -34,8 +31,11 @@ public class EffectDeclaration extends Declaration {
 	
 	public EffectDeclaration(String name, String effects, FileLocation fileLocation) {	
 		this.name = name;
-		effectSet = Effect.parseEffects(name, effects, fileLocation);
-		loc = fileLocation;
+		this.loc = fileLocation;
+		
+		/* Parses the String effects into a set. If it was not defined: 
+		 * effectSet==null if in type signature, else error is reported */
+		this.effectSet = Effect.parseEffects(name, effects, fileLocation);
 	}
 	
 	public Effect getEffect() {
@@ -44,18 +44,7 @@ public class EffectDeclaration extends Declaration {
 	
 	public void doPrettyPrint(Appendable dest, String indent) throws IOException {
 		dest.append(indent).append("effect ").append(getName()).append(" = ");
-		if (effectSet != null) {
-			dest.append("{");
-			effectSet.stream().forEach(e -> {
-				try {
-					dest.append(e.toString());
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			});
-			dest.append("} ");
-		}
+		if (effectSet != null) { effectSet.toString().replace("[", "{").replace("]", "}"); }
 		dest.append('\n');
 	}
 	
@@ -80,7 +69,7 @@ public class EffectDeclaration extends Declaration {
 	
 	@Override
 	public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) {
-		effectSet.stream().forEach(e -> e.addPath(ctx));
+		if (effectSet != null) {effectSet.stream().forEach(e -> e.addPath(ctx)); }
 		return new wyvern.target.corewyvernIL.decl.EffectDeclaration(getName(), getEffectSet(), getLocation());
 	}
 	

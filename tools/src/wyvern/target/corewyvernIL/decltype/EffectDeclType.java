@@ -1,3 +1,5 @@
+/** @author vzhao */
+
 package wyvern.target.corewyvernIL.decltype;
 
 import wyvern.target.corewyvernIL.IASTNode;
@@ -8,7 +10,6 @@ import java.util.Set;
 
 import wyvern.target.corewyvernIL.astvisitor.ASTVisitor;
 import wyvern.target.corewyvernIL.effects.Effect;
-import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
 import wyvern.target.corewyvernIL.support.View;
 import wyvern.tools.errors.FileLocation;
@@ -29,6 +30,9 @@ public class EffectDeclType extends DeclType implements IASTNode {
 		return visitor.visit(state, this); // could return null here, though implication is unknown
 	}
 
+	/** Conduct semantics check, by decomposing the effect sets of the two
+	 * (effect)DeclTypes before comparing them.
+	 */
 	@Override
 	public boolean isSubtypeOf(DeclType dt, TypeContext ctx) { 
 		// TODO: instead of the code below, implement semantics comparison
@@ -37,46 +41,49 @@ public class EffectDeclType extends DeclType implements IASTNode {
 		}
 		EffectDeclType edt = (EffectDeclType) dt;
 		
-		/* edt == effect declared (and possibly defined in the type),
-		 * this == effect declared and defined in the module def.
-		 * If effect undefined in the type, anything defined in the module
-		 * def works; if defined in the type, then the effect in the module
-		 * def can only be defined using a subset of the definition in the type.
+		/* edt == type or method annotations, vs. 
+		 * this == module def or method calls:
+		 * if edt.getEffectSet()==null: this.getEffectSet() can be anything (null or not)
+		 * else: this.getEffectSet() can't be null (though can't happen in the first place), 
+		 * and edt.getEffectSet().containsAll(this.getEffectSet())
 		 */
-		if (edt.getEffectSet()!=null) {
-			// conduct semantics check, first decomposing the two effect sets to the very base-level effects
+		/* POTENTIAL BUG: if edt is an undefined effect in a type, but 
+		 * "this" is a collection of effects from method calls of a method?
+		 */
+		if (edt.getEffectSet()!=null) { 
 			Set<Effect> thisEffects = recursiveEffectCheck(ctx, getEffectSet());
 			Set<Effect> edtEffects =  recursiveEffectCheck(ctx, edt.getEffectSet());
 			if (!edtEffects.containsAll(thisEffects)) {
-				return false; // this is not a subtype of dt, i.e. not all of its effects are covered by edt's effectSet
-			}
-			
-//			if (!edt.getEffectSet().containsAll(getEffectSet())) 
-//				return false; // effect E = S ("this") <: effect E = S' (edt)	if S <= S' (both are concrete)	
+				return false; // "this" is not a subtype of dt, i.e. not all of its effects are covered by edt's effectSet
+			} // effect E = S ("this") <: effect E = S' (edt)	if S <= S' (both are concrete)
 		}
-		return true; // if edt.getEffectSet()==null (i.e. undefined in the type), anything is a subtype
+		
+		/* if edt.getEffectSet()==null (i.e. undefined in the type, or no method anntations), 
+		 * anything (defined in the module def, or the effeects of the method calls) is a subtype
+		 */
 		// i.e. effect E = {} (concrete "this") <: effect E (abstract dt which is undefined)
+		return true; 
 	}
 
 	public Set<Effect> recursiveEffectCheck(TypeContext ctx, Set<Effect> effects) {
-		Set<Effect> allEffects =  new HashSet<Effect>();
-		Set<Effect> moreEffects = null;
+		if (effects==null) { return null; }
+		
+		Set<Effect> allEffects =  new HashSet<Effect>(); // collects lower-level effects from effectSets of arg "effects"
+		Set<Effect> moreEffects = null; // get the effectSet belonging to an effect in arg "effects"
 		for (Effect e : effects) {
 			try {
-				moreEffects = e.effectsCheck(ctx); // effectCheck() returns the effectSet defined by EffectDeclType
+				/* effectCheck() returns the effectSet defined by EffectDeclType, or reports an error
+				 * if EffectDeclType for e is not found in the context */
+				moreEffects = e.effectsCheck(ctx); 
 			} catch (RuntimeException ex) { // seems to have reached the lowest-level effect in scope
 				allEffects.add(e);
 			}
-			if (moreEffects != null) {
-				allEffects.addAll(moreEffects);
-			}
+			
+			if (moreEffects != null) {	allEffects.addAll(moreEffects);	}
 		}
-//		if (!allEffects.isEmpty()) { // need to be changed when built-in, base-level effects are implemented
-//			allEffects = recursiveEffectCheck(ctx, allEffects);
-//		}
-		if (moreEffects != null) { // if it is null, then we've decomposed all effects to the lowest level in scope
-			allEffects = recursiveEffectCheck(ctx, allEffects);
-		}
+		
+		// if it is null, then everything in "effects" are of the lowest-level in scope
+		if (moreEffects != null) { allEffects = recursiveEffectCheck(ctx, allEffects);	}
 		return allEffects;
 	}
 	

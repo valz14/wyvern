@@ -1,7 +1,6 @@
 package wyvern.target.corewyvernIL.decl;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -13,12 +12,9 @@ import wyvern.target.corewyvernIL.decltype.EffectDeclType;
 import wyvern.target.corewyvernIL.effects.Effect;
 import wyvern.target.corewyvernIL.effects.EffectAccumulator;
 import wyvern.target.corewyvernIL.expression.IExpr;
-import wyvern.target.corewyvernIL.expression.Path;
 import wyvern.target.corewyvernIL.expression.Variable;
 import wyvern.target.corewyvernIL.support.GenContext;
 import wyvern.target.corewyvernIL.support.TypeContext;
-import wyvern.target.corewyvernIL.support.VarBindingContext;
-import wyvern.target.corewyvernIL.type.NominalType;
 import wyvern.target.corewyvernIL.type.ValueType;
 import wyvern.tools.errors.ErrorMessage;
 import wyvern.tools.errors.FileLocation;
@@ -68,18 +64,7 @@ public class DefDeclaration extends NamedDeclaration {
 		}
 		String newIndent = indent+"    ";
 		dest.append(") : ");
-		if (effectSet != null) {
-			dest.append("{");
-			effectSet.stream().forEach(e -> {
-				try {
-					dest.append(e.toString());
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-			});
-			dest.append("} ");
-		}
+		if (effectSet != null) {effectSet.toString().replace("[", "{").replace("]", "}");	}
 		type.doPrettyPrint(dest, newIndent);
 		dest.append('\n').append(newIndent);
 		body.doPrettyPrint(dest,newIndent);
@@ -131,6 +116,7 @@ public class DefDeclaration extends NamedDeclaration {
 		
 		// if the method makes no claim about the effects it has, do not check its calls for effects (i.e. null)
 		EffectAccumulator effectAccumulator = (effectSet==null) ? null : new EffectAccumulator();
+		
 		ValueType bodyType = body.typeCheck(methodCtx, effectAccumulator);
 		
 		/* If in the process of generating code, and the method has effect annotations, check its effects
@@ -138,25 +124,19 @@ public class DefDeclaration extends NamedDeclaration {
 		if ((methodCtx instanceof GenContext) && (effectSet != null)) { 
 			GenContext methodGenCtx = (GenContext) methodCtx; // hack
 			Set<Effect> actualEffectSet = effectAccumulator.getEffectSet();
-			// fill in empty paths for effects
-			effectSet.stream().forEach(e -> e.addPath(methodGenCtx)); // ctx also work here // move to before?
-			actualEffectSet.stream().forEach(e -> e.addPath(methodGenCtx));
+			
+			/* fill in empty paths for effects (necessary to place here, instead of 
+			 * in typedAST.DefDeclaration.generateDecl() for obj defn) */
+			effectSet.stream().forEach(e -> e.addPath(methodGenCtx));
+//			actualEffectSet.stream().forEach(e -> e.addPath(methodGenCtx)); // not necessary
 		
 			EffectDeclType actualEffects = new EffectDeclType(getName()+" actualEffects", effectSet, getLocation());
 			EffectDeclType annotatedEffects = new EffectDeclType(getName()+" annotatedEffects", actualEffectSet, getLocation());
 			if (!actualEffects.isSubtypeOf(annotatedEffects, ctx)) {
 				ToolError.reportError(ErrorMessage.NOT_SUBTYPE, getLocation(), 
-						"set of effects from the method calls ("+effectSet.toString()+")",
-						"set effects specified by "+getName()+"("+actualEffectSet.toString()+")");
+						"set of effects from the method calls ("+effectSet.toString().replace("[", "{").replace("]", "}")+")",
+						"set of effects specified by "+getName()+"("+actualEffectSet.toString().replace("[", "{").replace("]", "}")+")");
 			}
-//			Set<Effect> methodCallsE = recursiveEffectCheck(ctx, effectAccumulator.getEffectSet()); 
-//			Set<Effect> annotatedE = recursiveEffectCheck(ctx, getEffectSet()); // make into EffectDeclType for comparison?
-//			System.out.println(getName()+": "+methodCallsE.toString()+" vs. "+annotatedE.toString()); // replace w/ comparison
-//			if (!methodCallsE.equals(annotatedE)) { // if methodCallE does not have less effects than annotatedE
-//				ToolError.reportError(ErrorMessage.NOT_SUBTYPE, getLocation(), 
-//						"set of effects from the method calls ("+methodCallsE.toString()+")",
-//						"set effects specified by "+getName()+"("+annotatedE.toString()+")");
-//			}
 		}	
 		
 		if (!bodyType.isSubtypeOf(getType(), methodCtx)) {

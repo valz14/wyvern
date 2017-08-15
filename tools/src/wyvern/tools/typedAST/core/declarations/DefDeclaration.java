@@ -78,7 +78,6 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		this.isClass = isClassDef;
 		this.location = location;
 		this.effectSet = Effect.parseEffects(name, effects, location); 
-		
         this.generics = (generics != null) ? generics : new LinkedList<String>();
 	}
 
@@ -225,21 +224,8 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 		List<FormalArg> args = new LinkedList<FormalArg>();
 
         ctx = this.serializeArguments(args, ctx);
-
+        
 		DefDeclType ret = new DefDeclType(getName(), getResultILType(ctx), args, getEffectSet());
-//		if ((effectSet !=  null) && (ctx instanceof GenContext)) {
-//			for (Effect e : effectSet) { // would it be more efficient to do a !e.effectsCheck.isEmpty() here?
-////				try {
-//				if (e.getPath()==null) {
-//					Path ePath = ctx.getContainerForTypeAbbrev(e.getName());
-////					Path ePath = ctx.lookupTypeOf(getName()); //((GenContext) ctx).getContainerForTypeAbbrev(e.getName());
-//					if (ePath==null) { // effect not found
-//						ToolError.reportError(ErrorMessage.EFFECT_IN_SIG_NOT_FOUND, this, e.getName());
-//					}
-//					e.setPath(ePath);
-//				}
-//			}
-//		}
 		return ret;
 	}
 
@@ -282,15 +268,6 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
 	@Override
 	public wyvern.target.corewyvernIL.decl.Declaration generateDecl(GenContext ctx, GenContext thisContext) {
 		List<FormalArg> args = new LinkedList<FormalArg>();
-//		if (getName().equals("processData")) {
-//			System.out.println("here--typedAST.DefDecl");
-//		}
-//		if (effectSet != null) {
-//			System.out.println("hey");
-//		}
-//		if (effectSet != null) {
-//			effectSet.stream().forEach(e -> e.addPath(ctx));
-//		}
 		GenContext methodContext = thisContext;
 		if(isGeneric()) {
 
@@ -434,8 +411,8 @@ public class DefDeclaration extends Declaration implements CoreAST, BoundCode, T
         sb.append(" = ");
         sb.append(body.prettyPrint());
 		if (effectSet != null) {
-			sb.append(" with "); // temp, just for distinction
-			sb.append(effectSet.toString()); // [] instead of {}, hopefully won't be too confusing
+			sb.append(" with "); // just for distinction
+			sb.append(effectSet.toString().replace("[", "{").replace("]", "}")); 
 		}
         return sb;
     }
